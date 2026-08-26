@@ -1,0 +1,291 @@
+.page {
+   width: 100%;
+    max-width: 1100px;
+
+    margin: 0 auto;
+    padding-bottom: 80px;
+}
+
+.back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    margin-bottom: var(--spacing-xl);
+
+    color: var(--color-text-muted);
+
+    font-size: 0.8rem;
+
+    transition: color 150ms ease;
+}
+
+.back:hover {
+    color: var(--color-text-primary);
+}
+
+.header {
+    margin-bottom: var(--spacing-xl);
+}
+
+.header h1 {
+    margin: 0;
+
+    color: var(--color-text-primary);
+
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+}
+
+.header p {
+    margin: var(--spacing-sm) 0 0;
+
+    color: var(--color-text-secondary);
+
+    font-size: 0.9rem;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.field label {
+    color: var(--color-text-primary);
+
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.field input,
+.field textarea,
+.field select {
+    width: 100%;
+
+    padding: 11px 12px;
+
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+
+    outline: none;
+
+    background-color: var(--color-background-secondary);
+    color: var(--color-text-primary);
+
+    font-size: 0.875rem;
+
+    transition:
+        border-color 150ms ease,
+        background-color 150ms ease;
+}
+
+.field textarea {
+    resize: vertical;
+
+    line-height: 1.6;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+    border-color: var(--color-border-strong);
+
+    background-color: var(--color-background);
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+    color: var(--color-text-muted);
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+
+    padding-top: var(--spacing-md);
+
+    border-top: 1px solid var(--color-border-primary);
+}
+
+.cancelButton,
+.saveButton {
+    padding: 9px 14px;
+
+    border-radius: var(--radius-sm);
+
+    font-size: 0.825rem;
+    font-weight: 500;
+}
+
+.cancelButton {
+    border: 1px solid var(--color-border-primary);
+
+    background-color: transparent;
+    color: var(--color-text-secondary);
+}
+
+.cancelButton:hover {
+    background-color: var(--color-hover);
+    color: var(--color-text-primary);
+}
+
+.saveButton {
+    border: 1px solid var(--color-button-primary);
+
+    background-color: var(--color-button-primary);
+    color: var(--color-button-primary-text);
+}
+
+.saveButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.editorWrapper {
+    width: 100%;
+
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+
+    background-color: var(--color-background-secondary);
+
+    overflow: visible;
+}
+
+.editorWrapper :global([role="toolbar"]) {
+    width: 100%;
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+   
+    overflow-y: hidden;
+
+    padding: 0 var(--spacing-sm);
+
+    border-bottom: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+
+    background-color: var(--color-background-tertiary);
+
+    scrollbar-width: none;
+}
+
+.editorWrapper :global([role="toolbar"] > :first-child) {
+    margin-left: auto;
+}
+
+.editorWrapper :global([role="toolbar"] > :last-child) {
+    margin-right: auto;
+}
+
+.editorWrapper :global([role="toolbar"])::-webkit-scrollbar {
+    display: none;
+}
+
+.editorWrapper :global([role="toolbar"] button) {
+    color: var(--color-text-secondary);
+}
+
+.editorWrapper :global([role="toolbar"] button:hover) {
+    background-color: var(--color-hover);
+    color: var(--color-text-primary);
+}
+
+.editorWrapper :global(.ProseMirror) {
+    width: 100%;
+    max-width: 720px;
+
+    margin: 0 auto;
+
+    outline: none;
+}
+
+.editorWrapper :global(.ProseMirror)::selection,
+.editorWrapper :global(.ProseMirror *)::selection {
+    background-color: var(--color-text-selection);
+}
+.editorWrapper :global(.ProseMirror pre) {
+    margin: var(--spacing-lg) 0;
+    padding: var(--spacing-md);
+
+    overflow-x: auto;
+
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+
+    background-color: var(--color-background-tertiary);
+
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+.editorWrapper :global(.ProseMirror pre code) {
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+    color: var(--color-text-primary);
+
+    font-family: inherit;
+}
+
+.editorWrapper :global(.ProseMirror :not(pre) > code) {
+    padding: 2px 5px;
+
+    border: 1px solid var(--color-border-primary);
+    border-radius: 4px;
+
+    background-color: var(--color-code-background);
+    color: var(--color-text-primary);
+
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+}
+
+.editorWrapper :global(.ProseMirror img) {
+    display: block;
+
+    max-width: 100%;
+    height: auto;
+
+    margin: var(--spacing-lg) auto;
+
+    border-radius: var(--radius-md);
+}
+
+
+@media (max-width: 640px) {
+    .page {
+        padding-bottom: 40px;
+    }
+
+    .header h1 {
+        font-size: 1.65rem;
+    }
+
+    .actions {
+        flex-direction: column-reverse;
+    }
+
+    .cancelButton,
+    .saveButton {
+        width: 100%;
+
+        text-align: center;
+    }
+}

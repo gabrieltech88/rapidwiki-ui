@@ -1,0 +1,27 @@
+.button {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+
+    padding: 8px 10px;
+
+    border: 0;
+    border-radius: var(--radius-sm);
+
+    background: transparent;
+    color: var(--color-text-secondary);
+
+    font-size: 0.875rem;
+    text-align: left;
+
+    transition:
+        background-color 150ms ease,
+        color 150ms ease;
+}
+
+.button:hover {
+    background-color: var(--color-hover);
+    color: var(--color-text-primary);
+}

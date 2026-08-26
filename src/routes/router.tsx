@@ -1,0 +1,51 @@
+import { createBrowserRouter } from "react-router";
+
+import { AppLayout } from "@/components/AppLayout/AppLayout";
+import { ProtectedRoute } from "@/components/ProtectedRoute/ProtectedRoute";
+
+import { Department } from "@/pages/Department/Department";
+import { Home } from "@/pages/Home/Home";
+import { Login } from "@/pages/Login/Login";
+import { Procedure } from "@/pages/Procedure/Procedure";
+import { ProcedureForm } from "@/pages/ProcedureForm/ProcedureForm";
+
+export const router = createBrowserRouter([
+    {
+        path: "/login",
+        element: <Login />,
+    },
+
+    {
+        element: <ProtectedRoute />,
+
+        children: [
+            {
+                path: "/",
+                element: <AppLayout />,
+
+                children: [
+                    {
+                        index: true,
+                        element: <Home />,
+                    },
+                    {
+                        path: "departments/:departmentId",
+                        element: <Department />,
+                    },
+                    {
+                        path: "procedures/:procedureId",
+                        element: <Procedure />,
+                    },
+                    {
+                        path: "procedures/new",
+                        element: <ProcedureForm />,
+                    },
+                    {
+                        path: "procedures/:procedureId/edit",
+                        element: <ProcedureForm />,
+                    },
+                ],
+            },
+        ],
+    },
+]);

@@ -1,0 +1,66 @@
+:root {
+    /* Backgrounds */
+    --color-background: #ffffff;
+    --color-background-secondary: #fafafa;
+    --color-background-tertiary: #f4f4f5;
+
+    /* Text */
+    --color-text-primary: #18181b;
+    --color-text-secondary: #71717a;
+    --color-text-muted: #a1a1aa;
+
+    /* Borders */
+    --color-border-primary: #e4e4e7;
+    --color-border-secondary: #f0f0f1;
+
+    /* Interactive */
+    --color-hover: #f4f4f5;
+    --color-active: #e4e4e7;
+
+    /* Button */
+    --color-button-primary: #18181b;
+    --color-button-primary-text: #ffffff;
+    --color-text-selection: rgba(24, 24, 27, 0.16);
+
+    /* Layout */
+    --sidebar-width: 260px;
+
+    /* Radius */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-xxl: 48px;
+   
+
+    --font-sans: "Geist", sans-serif;
+    --font-mono: "Geist Mono", monospace;
+
+}
+
+[data-theme="dark"] {
+    --color-background: #0d0d0f;
+    --color-background-secondary: #121214;
+    --color-background-tertiary: #18181b;
+
+    --color-text-primary: #f4f4f5;
+    
+    --color-text-secondary: #a1a1aa;
+    --color-text-muted: #71717a;
+    --color-text-selection: rgba(255, 255, 255, 0.18);
+
+    --color-border-primary: #27272a;
+    --color-border-secondary: #1f1f22;
+
+    --color-hover: #1c1c1f;
+    --color-active: #27272a;
+
+    --color-button-primary: #f4f4f5;
+    --color-button-primary-text: #18181b;
+}
