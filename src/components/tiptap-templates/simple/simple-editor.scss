@@ -1,23 +1,33 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
+/* =========================================================
+   TIPTAP VARIABLES
+   ========================================================= */
+
 body {
   --tt-toolbar-height: 44px;
-  --tt-theme-text: var(--tt-gray-light-900);
 
-  .dark & {
-    --tt-theme-text: var(--tt-gray-dark-900);
-  }
-}
+  /*
+   * Usa as variáveis do próprio RapidWiki.
+   */
+  --tt-theme-text: var(--color-text-primary);
 
-body {
   font-family: "Inter", sans-serif;
+
   color: var(--tt-theme-text);
+
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
+
   padding: 0;
+
   overscroll-behavior-y: none;
 }
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
 
 html,
 body {
@@ -29,20 +39,30 @@ body,
 #root,
 #app {
   height: 100%;
-  background-color: var(--tt-bg-color);
+
+  background-color: var(--color-background);
 }
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
 
 ::-webkit-scrollbar {
   width: 0.25rem;
+  height: 0.25rem;
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--tt-scrollbar-color) transparent;
+
+  scrollbar-color:
+    var(--color-border-primary)
+    transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--tt-scrollbar-color);
+  background-color: var(--color-border-primary);
+
   border-radius: 9999px;
 }
 
@@ -50,24 +70,34 @@ body,
   background: transparent;
 }
 
+/* =========================================================
+   TIPTAP
+   ========================================================= */
+
 .tiptap.ProseMirror {
   font-family: "DM Sans", sans-serif;
+
+  color: var(--color-text-primary);
+
+  outline: none;
 }
+
+/* =========================================================
+   EDITOR WRAPPER
+   ========================================================= */
 
 .simple-editor-wrapper {
   width: 100%;
   min-height: 500px;
 
   overflow: auto;
+
+  background-color: var(--color-background);
 }
 
-.simple-editor-search-and-replace {
-  position: fixed;
-  top: calc(var(--tt-toolbar-height) + 0.5rem);
-  right: 0.5rem;
-  z-index: 51;
-  max-height: calc(100dvh - var(--tt-toolbar-height) - 1rem);
-}
+/* =========================================================
+   EDITOR CONTENT
+   ========================================================= */
 
 .simple-editor-content {
   width: 100%;
@@ -80,21 +110,327 @@ body,
   flex: 1;
 }
 
-.simple-editor-content .tiptap.ProseMirror.simple-editor {
+.simple-editor-content
+  .tiptap.ProseMirror.simple-editor {
   flex: 1;
 
+  width: 100%;
+  min-height: 500px;
+
   padding: 2rem;
+
+  color: var(--color-text-primary);
 }
+
+/* =========================================================
+   BLOCKQUOTE
+   ========================================================= */
+
+.simple-editor {
+  blockquote {
+    margin: 1.25rem 0;
+
+    padding:
+      0.35rem
+      0
+      0.35rem
+      1rem;
+
+    border-left:
+      3px solid
+      var(--color-text-muted);
+
+    color: var(--color-text-secondary);
+
+    p {
+      margin: 0;
+    }
+  }
+}
+
+/* =========================================================
+   SEARCH AND REPLACE
+   ========================================================= */
+
+.simple-editor-search-and-replace {
+  position: fixed;
+
+  top:
+    calc(
+      var(--tt-toolbar-height) +
+      0.5rem
+    );
+
+  right: 0.5rem;
+
+  z-index: 51;
+
+  max-height:
+    calc(
+      100dvh -
+      var(--tt-toolbar-height) -
+      1rem
+    );
+}
+
+/* =========================================================
+   TABLE WRAPPER
+   ========================================================= */
+
+.simple-editor {
+  .tableWrapper {
+    width: 100%;
+
+    margin: 1.5rem 0;
+
+    overflow-x: auto;
+  }
+}
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.simple-editor {
+  table {
+    width: 100%;
+
+    min-width: 100%;
+
+    margin: 0;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+  }
+
+  th,
+  td {
+    position: relative;
+
+    min-width: 80px;
+
+    padding:
+      10px
+      12px;
+
+    border:
+      1px solid
+      var(--color-border-primary);
+
+    vertical-align: top;
+
+    box-sizing: border-box;
+  }
+
+  /* =========================
+     HEADER
+     ========================= */
+
+  th {
+    background-color:
+      var(--color-background-secondary);
+
+    color:
+      var(--color-text-primary);
+
+    font-weight: 600;
+
+    text-align: left;
+  }
+
+  /* =========================
+     NORMAL CELL
+     ========================= */
+
+  td {
+    background-color:
+      var(--color-background);
+
+    color:
+      var(--color-text-primary);
+  }
+
+  /* =========================
+     CELL CONTENT
+     ========================= */
+
+  th p,
+  td p {
+    margin: 0;
+
+    min-height: 1.5em;
+  }
+
+  /* =========================
+     SELECTED CELL
+     ========================= */
+
+  .selectedCell {
+    position: relative;
+  }
+
+  .selectedCell::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 2;
+
+    pointer-events: none;
+
+    background-color:
+      var(--color-text-selection);
+  }
+
+  /* =========================
+     RESIZE HANDLE
+     ========================= */
+
+  .column-resize-handle {
+    position: absolute;
+
+    top: 0;
+    right: -2px;
+    bottom: 0;
+
+    z-index: 10;
+
+    width: 4px;
+
+    pointer-events: none;
+
+    background-color:
+      var(--color-text-muted);
+  }
+
+  &.resize-cursor {
+    cursor: col-resize;
+  }
+}
+
+/* =========================================================
+   TABLE HOVER
+   ========================================================= */
+
+.simple-editor {
+  td:hover,
+  th:hover {
+    background-color:
+      var(--color-hover);
+  }
+
+  th:hover {
+    background-color:
+      var(--color-background-tertiary);
+  }
+}
+
+/* =========================================================
+   LINKS
+   ========================================================= */
+
+.simple-editor {
+  a {
+    color: inherit;
+
+    text-decoration: underline;
+
+    text-underline-offset: 2px;
+
+    cursor: pointer;
+  }
+}
+
+/* =========================================================
+   INLINE CODE
+   ========================================================= */
+
+.simple-editor {
+  code {
+    padding:
+      2px
+      5px;
+
+    border:
+      1px solid
+      var(--color-border-primary);
+
+    border-radius:
+      var(--radius-sm);
+
+    background-color:
+      var(--color-background-secondary);
+
+    color:
+      var(--color-text-primary);
+
+    font-family:
+      var(--font-mono);
+
+    font-size: 0.875em;
+  }
+
+  pre code {
+    padding: 0;
+
+    border: 0;
+
+    background: transparent;
+
+    color: inherit;
+
+    font-size: inherit;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
 
 @media screen and (max-width: 480px) {
   .simple-editor-search-and-replace {
     top: 0.5rem;
     left: 0.5rem;
+    right: 0.5rem;
+
     width: auto;
-    max-height: calc(100dvh - 1rem);
+
+    max-height:
+      calc(
+        100dvh -
+        1rem
+      );
   }
 
-  .simple-editor-content .tiptap.ProseMirror.simple-editor {
-    padding: 1rem 1.5rem 30vh;
+  .simple-editor-content
+    .tiptap.ProseMirror.simple-editor {
+    padding:
+      1rem
+      1.5rem
+      30vh;
+  }
+
+  .simple-editor {
+    .tableWrapper {
+      width: 100%;
+
+      overflow-x: auto;
+    }
+
+    table {
+      min-width: 600px;
+    }
+
+    th,
+    td {
+      min-width: 120px;
+
+      padding:
+        8px
+        10px;
+    }
   }
 }

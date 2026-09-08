@@ -1,3 +1,5 @@
+"use client"
+
 import { forwardRef, useCallback, useState } from "react"
 
 // --- Icons ---

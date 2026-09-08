@@ -4,6 +4,7 @@ import { AppLayout } from "@/components/AppLayout/AppLayout";
 import { ProtectedRoute } from "@/components/ProtectedRoute/ProtectedRoute";
 
 import { Department } from "@/pages/Department/Department";
+import { Admin } from "@/pages/Admin/Admin";
 import { Home } from "@/pages/Home/Home";
 import { Login } from "@/pages/Login/Login";
 import { Procedure } from "@/pages/Procedure/Procedure";
@@ -28,6 +29,11 @@ export const router = createBrowserRouter([
                         index: true,
                         element: <Home />,
                     },
+                    {
+                        path: "admin",
+                        element: <Admin />,
+                    },
+
                     {
                         path: "departments/:departmentId",
                         element: <Department />,

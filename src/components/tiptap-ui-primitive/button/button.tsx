@@ -16,7 +16,8 @@ import { cn, parseShortcutKeys } from "@/lib/tiptap-utils"
 import "@/components/tiptap-ui-primitive/button/button-colors.scss"
 import "@/components/tiptap-ui-primitive/button/button.scss"
 
-export type ButtonStyle = "ghost" | "primary"
+export type ButtonStyle =
+  "ghost" | "primary" | "secondary" | "tertiary" | "subtle"
 export type ButtonVariant = ButtonStyle | "check"
 export type ButtonSize = "small" | "default" | "large"
 
@@ -26,6 +27,12 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   shortcutKeys?: string
   /**
    * Visual treatment or feature variant.
+   *
+   * Style values map to `data-style` and pull their colors from
+   * `button-colors.scss`: `subtle` is the neutral default (a faint gray
+   * fill), `ghost` is transparent, `primary` is the brand fill, `secondary`
+   * is a solid neutral (dark fill in light mode, light fill in dark mode),
+   * and `tertiary` currently mirrors `ghost`.
    *
    * The `check` variant is a checkbox-style toggle button. It defaults to
    * the ghost style and small size, supplies `role="checkbox"`, and renders

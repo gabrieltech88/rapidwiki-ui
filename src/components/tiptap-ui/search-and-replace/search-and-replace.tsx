@@ -1,5 +1,3 @@
-"use client"
-
 import { forwardRef, useCallback, useEffect, useRef } from "react"
 import { useHotkeys } from "react-hotkeys-hook"
 

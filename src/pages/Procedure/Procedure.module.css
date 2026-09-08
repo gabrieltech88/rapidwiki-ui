@@ -7,6 +7,10 @@
     padding-bottom: 100px;
 }
 
+/* =========================
+   Breadcrumb
+   ========================= */
+
 .breadcrumb {
     display: flex;
     align-items: center;
@@ -26,6 +30,10 @@
 .breadcrumb a:hover {
     color: var(--color-text-primary);
 }
+
+/* =========================
+   Header
+   ========================= */
 
 .header {
     display: flex;
@@ -55,6 +63,10 @@
     font-size: 0.75rem;
 }
 
+/* =========================
+   Edit button
+   ========================= */
+
 .editButton {
     display: flex;
     align-items: center;
@@ -80,6 +92,10 @@
     color: var(--color-text-primary);
 }
 
+/* =========================
+   Divider
+   ========================= */
+
 .divider {
     height: 1px;
 
@@ -88,95 +104,305 @@
     background-color: var(--color-border-primary);
 }
 
-.page {
+/* =========================
+   Procedure content
+   ========================= */
+
+.markdown {
+    color: var(--color-text-primary);
+
+    font-size: 1rem;
+    line-height: 1.75;
+}
+
+/* Parágrafos */
+
+.markdown p {
+    margin: 0.75rem 0;
+}
+
+/* =========================
+   Blockquote
+   ========================= */
+
+.markdown blockquote {
+    margin: 1.25rem 0;
+
+    padding: 0.25rem 0 0.25rem 1rem;
+
+    border-left: 3px solid var(--color-text-muted);
+
+    color: var(--color-text-secondary);
+}
+
+/* remove margens desnecessárias dentro */
+.markdown blockquote p {
+    margin: 0;
+}
+
+/* =========================
+   Code Block
+   ========================= */
+
+.markdown pre {
+    margin: 1.25rem 0;
+
+    padding: 1rem 1.15rem;
+
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+
+    background-color: var(--color-background-secondary);
+    color: var(--color-text-primary);
+
+    overflow-x: auto;
+
+    line-height: 1.6;
+}
+
+.markdown pre code {
+    padding: 0;
+
+    border: 0;
+
+    background: transparent;
+    color: inherit;
+
+    font-family:
+        "JetBrains Mono",
+        "Cascadia Code",
+        "Consolas",
+        monospace;
+
+    font-size: 0.875rem;
+}
+
+/* Inline code */
+
+.markdown :not(pre) > code {
+    padding: 2px 5px;
+
+    border-radius: 4px;
+
+    background-color: var(--color-background-secondary);
+
+    font-family:
+        "JetBrains Mono",
+        "Cascadia Code",
+        "Consolas",
+        monospace;
+
+    font-size: 0.875em;
+}
+
+/* =========================
+   Headings
+   ========================= */
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4 {
+    color: var(--color-text-primary);
+
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.markdown h1 {
+    margin: 2rem 0 1rem;
+
+    font-size: 2rem;
+}
+
+.markdown h2 {
+    margin: 1.75rem 0 0.875rem;
+
+    font-size: 1.5rem;
+}
+
+.markdown h3 {
+    margin: 1.5rem 0 0.75rem;
+
+    font-size: 1.25rem;
+}
+
+.markdown h4 {
+    margin: 1.25rem 0 0.625rem;
+
+    font-size: 1.1rem;
+}
+
+/* =========================
+   Lists
+   ========================= */
+
+.markdown ul,
+.markdown ol {
+    margin: 1rem 0;
+
+    padding-left: 1.5rem;
+}
+
+.markdown li {
+    margin: 0.25rem 0;
+}
+
+/* =========================
+   Links
+   ========================= */
+
+.markdown a {
+    color: var(--color-accent);
+
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* =========================
+   Highlight
+   ========================= */
+
+.markdown mark {
+    padding: 1px 3px;
+
+    border-radius: 3px;
+}
+
+/* =========================
+   Images
+   ========================= */
+
+.markdown img {
+    display: block;
+
+    max-width: 100%;
+    height: auto;
+
+    margin: 1.5rem auto;
+
+    border-radius: var(--radius-md);
+}
+
+.markdown :global(.simple-editor) {
+    color: var(--color-text-primary);
+}
+
+/* =========================================
+   CODE BLOCK
+   ========================================= */
+
+.markdown :global(.simple-editor) pre {
+    display: block;
+
     width: 100%;
-    max-width: 800px;
 
-    margin: 0 auto;
-
-    padding-bottom: 100px;
-}
-
-.breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-
-    margin-bottom: var(--spacing-xl);
-
-    color: var(--color-text-muted);
-
-    font-size: 0.75rem;
-}
-
-.breadcrumb a {
-    transition: color 150ms ease;
-}
-
-.breadcrumb a:hover {
-    color: var(--color-text-primary);
-}
-
-.header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: var(--spacing-lg);
-}
-
-.header h1 {
-    margin: 0;
-
-    font-size: 2.25rem;
-    font-weight: 600;
-    letter-spacing: -0.045em;
-    line-height: 1.15;
-}
-
-.metadata {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-
-    margin-top: var(--spacing-md);
-
-    color: var(--color-text-muted);
-
-    font-size: 0.75rem;
-}
-
-.editButton {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-
-    padding: 7px 10px;
+    margin: 1.25rem 0;
+    padding: 1rem 1.25rem;
 
     border: 1px solid var(--color-border-primary);
-    border-radius: var(--radius-sm);
+    border-radius: 8px;
+
+    background-color: var(--color-background-secondary) !important;
+    color: var(--color-text-primary) !important;
+
+    overflow-x: auto;
+}
+
+.markdown :global(.simple-editor) pre code {
+    display: block;
+
+    padding: 0 !important;
+
+    background: transparent !important;
+    color: inherit !important;
+
+    font-family:
+        "JetBrains Mono",
+        "Cascadia Code",
+        Consolas,
+        monospace;
+
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+/* =========================================
+   INLINE CODE
+   ========================================= */
+
+.markdown :global(.simple-editor) :not(pre) > code {
+    padding: 2px 5px;
+
+    border-radius: 4px;
 
     background-color: var(--color-background-secondary);
-    color: var(--color-text-secondary);
 
-    font-size: 0.8rem;
-
-    transition:
-        background-color 150ms ease,
-        color 150ms ease;
-}
-
-.editButton:hover {
-    background-color: var(--color-hover);
     color: var(--color-text-primary);
+
+    font-family:
+        "JetBrains Mono",
+        "Cascadia Code",
+        Consolas,
+        monospace;
+
+    font-size: 0.875em;
 }
 
-.divider {
-    height: 1px;
+/* =========================================
+   BLOCKQUOTE
+   ========================================= */
 
-    margin: var(--spacing-xl) 0;
+.markdown :global(.simple-editor) blockquote {
+    display: block;
 
-    background-color: var(--color-border-primary);
+    margin: 1.25rem 0;
+    padding: 0.35rem 0 0.35rem 1rem;
+
+    border-left: 3px solid var(--color-text-muted) !important;
+
+    color: var(--color-text-secondary);
 }
+
+.markdown :global(.simple-editor) blockquote p {
+    margin: 0;
+}
+
+/* =========================================
+   HIGHLIGHT
+   ========================================= */
+
+.markdown :global(.simple-editor) mark {
+    padding: 1px 3px;
+
+    border-radius: 3px;
+}
+
+
+.markdown :global(.simple-editor) code {
+    padding: 2px 6px;
+
+    border: 1px solid var(--color-border-primary);
+    border-radius: 5px;
+
+    background-color: var(--color-background-secondary);
+    color: var(--color-text-primary);
+
+    font-family:
+        "JetBrains Mono",
+        "Cascadia Code",
+        Consolas,
+        monospace;
+
+    font-size: 0.875em;
+
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+}
+
+/* =========================
+   Responsive
+   ========================= */
 
 @media (max-width: 640px) {
     .page {
