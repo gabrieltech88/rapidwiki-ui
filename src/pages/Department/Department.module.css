@@ -6,7 +6,7 @@
 }
 
 .header {
-    margin-bottom: var(--spacing-xxl);
+    margin-bottom: var(--spacing-xl);
 }
 
 .header h1 {
@@ -25,18 +25,26 @@
     font-size: 0.95rem;
 }
 
+.sectionTop {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+
+    margin-bottom: var(--spacing-md);
+}
+
 .sectionHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    margin-bottom: var(--spacing-md);
+    gap: var(--spacing-md);
 }
 
 .sectionHeader h2 {
     margin: 0;
 
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     font-weight: 500;
 }
 
@@ -45,6 +53,59 @@
 
     font-size: 0.75rem;
 }
+
+/* ============================= */
+/* Search                        */
+/* ============================= */
+
+.search {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+
+    padding: 9px 12px;
+
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+
+    background-color: var(--color-background);
+
+    color: var(--color-text-muted);
+
+    transition:
+        border-color 150ms ease,
+        background-color 150ms ease;
+}
+
+.search:focus-within {
+    border-color: var(--color-text-secondary);
+}
+
+.search input {
+    width: 100%;
+
+    padding: 0;
+
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+
+    color: var(--color-text-primary);
+
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+}
+
+.search input::placeholder {
+    color: var(--color-text-muted);
+}
+
+/* ============================= */
+/* Procedures                    */
+/* ============================= */
 
 .procedureList {
     border-top: 1px solid var(--color-border-primary);
@@ -60,6 +121,37 @@
     text-align: center;
     font-size: 0.875rem;
 }
+
+/* ============================= */
+/* Documents                     */
+/* ============================= */
+
+.documentsEmpty {
+    min-height: 180px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: var(--spacing-sm);
+
+    margin-top: var(--spacing-md);
+
+    border-top: 1px solid var(--color-border-primary);
+
+    color: var(--color-text-muted);
+
+    font-size: 0.875rem;
+}
+
+.documentsEmpty p {
+    margin: 0;
+}
+
+/* ============================= */
+/* Responsive                    */
+/* ============================= */
 
 @media (max-width: 640px) {
     .header {

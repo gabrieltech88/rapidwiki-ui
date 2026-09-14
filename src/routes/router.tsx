@@ -29,23 +29,38 @@ export const router = createBrowserRouter([
                         index: true,
                         element: <Home />,
                     },
+
                     {
                         path: "admin",
                         element: <Admin />,
                     },
 
+                    // Mantém compatibilidade com a rota antiga.
                     {
                         path: "departments/:departmentId",
-                        element: <Department />,
+                        element: <Department section="procedures" />,
                     },
+
                     {
-                        path: "procedures/:procedureId",
-                        element: <Procedure />,
+                        path: "departments/:departmentId/procedures",
+                        element: <Department section="procedures" />,
                     },
+
+                    {
+                        path: "departments/:departmentId/documents",
+                        element: <Department section="documents" />,
+                    },
+
                     {
                         path: "procedures/new",
                         element: <ProcedureForm />,
                     },
+
+                    {
+                        path: "procedures/:procedureId",
+                        element: <Procedure />,
+                    },
+
                     {
                         path: "procedures/:procedureId/edit",
                         element: <ProcedureForm />,

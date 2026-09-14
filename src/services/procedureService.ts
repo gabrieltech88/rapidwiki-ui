@@ -1,102 +1,244 @@
+import { api } from "@/api/api";
+
 import { proceduresMock } from "@/mocks/procedures";
-import type { Procedure, ProcedureInput} from "@/types/Procedure";
 import { departmentsMock } from "@/mocks/departments";
+
+import type {
+    Procedure,
+    ProcedureInput,
+} from "@/types/Procedure";
+
+
+interface ApiAuthor {
+    id: string;
+    nome: string;
+}
+
+
+interface ApiProcedure {
+    id: string;
+    titulo: string;
+    descricao: string;
+    conteudo: string;
+
+    autor: ApiAuthor;
+
+    atualizadoEm: string;
+}
+
+
+interface GetProceduresResponse {
+    page: number;
+    totalItems: number;
+    items: ApiProcedure[];
+    pageSize: number;
+}
 
 
 export async function getRecentProcedures(): Promise<Procedure[]> {
     return proceduresMock;
 }
 
+
 export async function getProceduresByDepartment(
-    departmentId: string
+    departmentId: string,
+    page = 1,
+    search?: string
 ): Promise<Procedure[]> {
-    return proceduresMock.filter(
-        (procedure) => procedure.departmentId === departmentId
+
+    const response =
+        await api.get<GetProceduresResponse>(
+            "/procedimento/get_procedimentos",
+            {
+                params: {
+                    departamentoId: departmentId,
+                    page,
+                    search: search || undefined,
+                },
+            }
+        );
+
+
+    const department =
+        departmentsMock.find(
+            (department) =>
+                department.id === departmentId
+        );
+
+
+    return response.data.items.map(
+        (procedure) => ({
+            id: procedure.id,
+
+            title: procedure.titulo,
+
+            description:
+                procedure.descricao,
+
+            content:
+                procedure.conteudo,
+
+            departmentId,
+
+            departmentName:
+                department?.name ?? "",
+
+            writerName:
+                procedure.autor.nome,
+
+            lastUpdate:
+                procedure.atualizadoEm,
+        })
     );
 }
+
 
 export async function getProcedureById(
     procedureId: string
 ): Promise<Procedure | undefined> {
+
     return proceduresMock.find(
-        (procedure) => procedure.id === procedureId
+        (procedure) =>
+            procedure.id === procedureId
     );
 }
+
 
 export async function searchProcedures(
     search: string
 ): Promise<Procedure[]> {
-    const term = search.trim().toLowerCase();
+
+    const term =
+        search
+            .trim()
+            .toLowerCase();
+
 
     if (!term) {
         return proceduresMock;
     }
 
-    return proceduresMock.filter((procedure) =>
-        procedure.title.toLowerCase().includes(term) ||
-        procedure.description.toLowerCase().includes(term) ||
-        procedure.departmentName.toLowerCase().includes(term)
+
+    return proceduresMock.filter(
+        (procedure) =>
+            procedure.title
+                .toLowerCase()
+                .includes(term) ||
+
+            procedure.description
+                .toLowerCase()
+                .includes(term) ||
+
+            procedure.departmentName
+                .toLowerCase()
+                .includes(term)
     );
 }
+
 
 export async function createProcedure(
     input: ProcedureInput
 ): Promise<Procedure> {
-    const department = departmentsMock.find(
-        (department) => department.id === input.departmentId
-    );
+
+    const department =
+        departmentsMock.find(
+            (department) =>
+                department.id === input.departmentId
+        );
+
 
     if (!department) {
-        throw new Error("Departamento não encontrado.");
+        throw new Error(
+            "Departamento não encontrado."
+        );
     }
+
 
     const procedure: Procedure = {
         id: crypto.randomUUID(),
 
         title: input.title,
-        description: input.description,
-        content: input.content,
 
-        departmentId: department.id,
-        departmentName: department.name,
+        description:
+            input.description,
 
-        writerName: "Gabriel",
-        lastUpdate: "Agora",
+        content:
+            input.content,
+
+        departmentId:
+            department.id,
+
+        departmentName:
+            department.name,
+
+        writerName:
+            "Gabriel",
+
+        lastUpdate:
+            "Agora",
     };
 
-    proceduresMock.push(procedure);
+
+    proceduresMock.push(
+        procedure
+    );
+
 
     return procedure;
 }
+
 
 export async function updateProcedure(
     procedureId: string,
     input: ProcedureInput
 ): Promise<Procedure> {
-    const procedure = proceduresMock.find(
-        (procedure) => procedure.id === procedureId
-    );
+
+    const procedure =
+        proceduresMock.find(
+            (procedure) =>
+                procedure.id === procedureId
+        );
+
 
     if (!procedure) {
-        throw new Error("Procedimento não encontrado.");
+        throw new Error(
+            "Procedimento não encontrado."
+        );
     }
 
-    const department = departmentsMock.find(
-        (department) => department.id === input.departmentId
-    );
+
+    const department =
+        departmentsMock.find(
+            (department) =>
+                department.id === input.departmentId
+        );
+
 
     if (!department) {
-        throw new Error("Departamento não encontrado.");
+        throw new Error(
+            "Departamento não encontrado."
+        );
     }
 
-    procedure.title = input.title;
-    procedure.description = input.description;
-    procedure.content = input.content;
 
-    procedure.departmentId = department.id;
-    procedure.departmentName = department.name;
+    procedure.title =
+        input.title;
 
-    procedure.lastUpdate = "Agora";
+    procedure.description =
+        input.description;
+
+    procedure.content =
+        input.content;
+
+    procedure.departmentId =
+        department.id;
+
+    procedure.departmentName =
+        department.name;
+
+    procedure.lastUpdate =
+        "Agora";
+
 
     return procedure;
 }

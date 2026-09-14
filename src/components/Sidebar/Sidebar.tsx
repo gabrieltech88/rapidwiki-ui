@@ -1,14 +1,21 @@
 import {
     BookOpen,
+    ChevronRight,
+    FileText,
+    Files,
     Home,
+    LogOut,
     Plus,
     Settings,
 } from "lucide-react";
 
+import {
+    NavLink,
+    useLocation,
+    useNavigate,
+} from "react-router";
+
 import { ThemeToggle } from "@/components/ThemeToggle/ThemeToggle";
-import { NavLink } from "react-router";
-import { LogOut } from "lucide-react";
-import { useNavigate } from "react-router";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { departmentsMock } from "@/mocks/departments";
@@ -24,14 +31,8 @@ export function Sidebar({
     isOpen,
     onClose,
 }: SidebarProps) {
-
     const navigate = useNavigate();
-
-    function handleLogout() {
-        logout();
-        onClose();
-        navigate("/login");
-    }
+    const location = useLocation();
 
     const {
         user,
@@ -39,18 +40,32 @@ export function Sidebar({
         hasRole,
     } = useAuth();
 
+    const canCreateProcedure =
+        hasRole("Admin") ||
+        hasRole("Editor");
 
-    const canCreateProcedure = hasRole("Admin");
-    const canAccessAdmin = hasRole("Admin");
+    const canAccessAdmin =
+        hasRole("Admin");
+
+    function handleLogout() {
+        logout();
+        onClose();
+        navigate("/login");
+    }
 
     return (
-        <aside className={`${styles.sidebar} ${isOpen ? styles.open : ""
-            }`}>
+        <aside
+            className={`${styles.sidebar} ${
+                isOpen ? styles.open : ""
+            }`}
+        >
             <div className={styles.top}>
                 <div className={styles.brand}>
                     <BookOpen size={18} />
 
-                    <span>RapidWiki</span>
+                    <span>
+                        RapidWiki
+                    </span>
                 </div>
 
                 <nav className={styles.navigation}>
@@ -59,28 +74,120 @@ export function Sidebar({
                         end
                         onClick={onClose}
                         className={({ isActive }) =>
-                            `${styles.navItem} ${isActive ? styles.active : ""
+                            `${styles.navItem} ${
+                                isActive
+                                    ? styles.active
+                                    : ""
                             }`
                         }
                     >
                         <Home size={16} />
-                        <span>Início</span>
+
+                        <span>
+                            Início
+                        </span>
                     </NavLink>
 
                     <div className={styles.section}>
-                        {departmentsMock.map((department) => (
-                            <NavLink
-                                key={department.id}
-                                to={`/departments/${department.id}`}
-                                onClick={onClose}
-                                className={({ isActive }) =>
-                                    `${styles.navItem} ${isActive ? styles.active : ""
-                                    }`
-                                }
-                            >
-                                {department.name}
-                            </NavLink>
-                        ))}
+                        <span className={styles.sectionTitle}>
+                            Departamentos
+                        </span>
+
+                        {departmentsMock.map(
+                            (department) => {
+                                const departmentPath =
+                                    `/departments/${department.id}`;
+
+                                const isDepartmentActive =
+                                    location.pathname.startsWith(
+                                        departmentPath
+                                    );
+
+                                return (
+                                    <div
+                                        key={department.id}
+                                        className={
+                                            styles.departmentGroup
+                                        }
+                                    >
+                                        <NavLink
+                                            to={`${departmentPath}/procedures`}
+                                            onClick={onClose}
+                                            className={`${styles.departmentButton} ${
+                                                isDepartmentActive
+                                                    ? styles.departmentActive
+                                                    : ""
+                                            }`}
+                                        >
+                                            <span>
+                                                {department.name}
+                                            </span>
+
+                                            <ChevronRight
+                                                size={14}
+                                                className={`${styles.chevron} ${
+                                                    isDepartmentActive
+                                                        ? styles.chevronOpen
+                                                        : ""
+                                                }`}
+                                            />
+                                        </NavLink>
+
+                                        {isDepartmentActive && (
+                                            <div
+                                                className={
+                                                    styles.departmentSubmenu
+                                                }
+                                            >
+                                                <NavLink
+                                                    to={`${departmentPath}/procedures`}
+                                                    onClick={onClose}
+                                                    className={({
+                                                        isActive,
+                                                    }) =>
+                                                        `${styles.subNavItem} ${
+                                                            isActive
+                                                                ? styles.subNavActive
+                                                                : ""
+                                                        }`
+                                                    }
+                                                >
+                                                    <FileText
+                                                        size={14}
+                                                    />
+
+                                                    <span>
+                                                        Procedimentos
+                                                    </span>
+                                                </NavLink>
+
+                                                <NavLink
+                                                    to={`${departmentPath}/documents`}
+                                                    onClick={onClose}
+                                                    className={({
+                                                        isActive,
+                                                    }) =>
+                                                        `${styles.subNavItem} ${
+                                                            isActive
+                                                                ? styles.subNavActive
+                                                                : ""
+                                                        }`
+                                                    }
+                                                >
+                                                    <Files
+                                                        size={14}
+                                                    />
+
+                                                    <span>
+                                                        Documentos
+                                                    </span>
+                                                </NavLink>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            }
+                        )}
                     </div>
                 </nav>
             </div>
@@ -93,7 +200,10 @@ export function Sidebar({
                         className={styles.navItem}
                     >
                         <Plus size={16} />
-                        <span>Novo procedimento</span>
+
+                        <span>
+                            Novo procedimento
+                        </span>
                     </NavLink>
                 )}
 
@@ -102,21 +212,32 @@ export function Sidebar({
                         to="/admin"
                         onClick={onClose}
                         className={({ isActive }) =>
-                            `${styles.navItem} ${isActive ? styles.active : ""
+                            `${styles.navItem} ${
+                                isActive
+                                    ? styles.active
+                                    : ""
                             }`
                         }
                     >
                         <Settings size={16} />
-                        <span>Administração</span>
+
+                        <span>
+                            Administração
+                        </span>
                     </NavLink>
                 )}
+
                 <ThemeToggle />
+
                 <button
                     className={styles.navItem}
                     onClick={handleLogout}
                 >
                     <LogOut size={16} />
-                    <span>Sair</span>
+
+                    <span>
+                        Sair
+                    </span>
                 </button>
 
                 <div className={styles.user}>
@@ -130,7 +251,9 @@ export function Sidebar({
                     </div>
 
                     <div>
-                        <strong>{user?.name}</strong>
+                        <strong>
+                            {user?.name}
+                        </strong>
 
                         <span>
                             {user?.roles.join(", ")}

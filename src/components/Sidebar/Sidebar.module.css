@@ -17,6 +17,8 @@
 }
 
 .top {
+    min-height: 0;
+
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xl);
@@ -35,9 +37,13 @@
 }
 
 .navigation {
+    min-height: 0;
+
     display: flex;
     flex-direction: column;
     gap: var(--spacing-lg);
+
+    overflow-y: auto;
 }
 
 .section {
@@ -73,6 +79,9 @@
 
     font-size: 0.875rem;
     text-align: left;
+    text-decoration: none;
+
+    cursor: pointer;
 
     transition:
         background-color 150ms ease,
@@ -84,25 +93,110 @@
     color: var(--color-text-primary);
 }
 
+.active {
+    background-color: var(--color-hover);
+    color: var(--color-text-primary);
+}
+
+/* ============================= */
+/* Departments                   */
+/* ============================= */
+
+.departmentGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.departmentButton {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 8px 10px;
+
+    border-radius: var(--radius-sm);
+
+    color: var(--color-text-secondary);
+
+    font-size: 0.875rem;
+    text-decoration: none;
+
+    transition:
+        background-color 150ms ease,
+        color 150ms ease;
+}
+
+.departmentButton:hover {
+    background-color: var(--color-hover);
+    color: var(--color-text-primary);
+}
+
+.departmentActive {
+    color: var(--color-text-primary);
+    font-weight: 500;
+}
+
+.chevron {
+    flex-shrink: 0;
+
+    color: var(--color-text-muted);
+
+    transition: transform 150ms ease;
+}
+
+.chevronOpen {
+    transform: rotate(90deg);
+}
+
+.departmentSubmenu {
+    display: flex;
+    flex-direction: column;
+
+    margin: 2px 0 6px 13px;
+    padding-left: 10px;
+
+    border-left: 1px solid var(--color-border-primary);
+}
+
+.subNavItem {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 7px 9px;
+
+    border-radius: var(--radius-sm);
+
+    color: var(--color-text-muted);
+
+    font-size: 0.8rem;
+    text-decoration: none;
+
+    transition:
+        background-color 150ms ease,
+        color 150ms ease;
+}
+
+.subNavItem:hover {
+    background-color: var(--color-hover);
+    color: var(--color-text-primary);
+}
+
+.subNavActive {
+    color: var(--color-text-primary);
+    background-color: var(--color-hover);
+}
+
+/* ============================= */
+/* Bottom                        */
+/* ============================= */
+
 .bottom {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xs);
-}
-
-.user {
-    margin-top: var(--spacing-sm);
-    padding: var(--spacing-sm);
-
-    border-top: 1px solid var(--color-border-primary);
-
-    color: var(--color-text-secondary);
-    font-size: 0.875rem;
-}
-
-.active {
-    background-color: var(--color-hover);
-    color: var(--color-text-primary);
 }
 
 .user {
