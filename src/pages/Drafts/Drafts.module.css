@@ -1,0 +1,202 @@
+.page {
+    width: 100%;
+    max-width: 900px;
+
+    margin: 0 auto;
+
+    padding-bottom: 80px;
+}
+
+.header {
+    margin-bottom: var(--spacing-xl);
+}
+
+.title {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    color: var(--color-text-primary);
+}
+
+.title h1 {
+    margin: 0;
+
+    font-size: 2rem;
+    font-weight: 600;
+
+    letter-spacing: -0.04em;
+}
+
+.header p {
+    margin:
+        var(--spacing-sm)
+        0
+        0;
+
+    color:
+        var(--color-text-secondary);
+
+    font-size: 0.9rem;
+}
+
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    margin-bottom:
+        var(--spacing-md);
+
+    color:
+        var(--color-text-muted);
+
+    font-size: 0.8rem;
+}
+
+.procedureList {
+    display: flex;
+    flex-direction: column;
+
+    gap: var(--spacing-sm);
+}
+
+.loading {
+    min-height: 240px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color:
+        var(--color-text-muted);
+}
+
+.loadingIcon {
+    animation:
+        spin
+        800ms
+        linear
+        infinite;
+}
+
+@keyframes spin {
+    from {
+        transform:
+            rotate(0deg);
+    }
+
+    to {
+        transform:
+            rotate(360deg);
+    }
+}
+
+.empty {
+    min-height: 220px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: var(--spacing-sm);
+
+    border:
+        1px solid
+        var(--color-border-primary);
+
+    border-radius:
+        var(--radius-md);
+
+    color:
+        var(--color-text-muted);
+
+    font-size: 0.85rem;
+}
+
+.empty p {
+    margin: 0;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: var(--spacing-md);
+
+    margin-top:
+        var(--spacing-xl);
+}
+
+.pagination span {
+    color:
+        var(--color-text-muted);
+
+    font-size: 0.8rem;
+}
+
+.pagination button {
+    padding:
+        8px
+        12px;
+
+    border:
+        1px solid
+        var(--color-border-primary);
+
+    border-radius:
+        var(--radius-sm);
+
+    background-color:
+        var(--color-background-secondary);
+
+    color:
+        var(--color-text-secondary);
+
+    cursor: pointer;
+
+    font-size: 0.8rem;
+
+    transition:
+        background-color 150ms ease,
+        color 150ms ease;
+}
+
+.pagination button:hover:not(:disabled) {
+    background-color:
+        var(--color-hover);
+
+    color:
+        var(--color-text-primary);
+}
+
+.pagination button:disabled {
+    cursor:
+        not-allowed;
+
+    opacity: 0.4;
+}
+
+
+@media (max-width: 640px) {
+    .page {
+        padding-bottom:
+            40px;
+    }
+
+    .title h1 {
+        font-size:
+            1.65rem;
+    }
+
+    .pagination {
+        justify-content:
+            space-between;
+
+        gap:
+            var(--spacing-sm);
+    }
+}

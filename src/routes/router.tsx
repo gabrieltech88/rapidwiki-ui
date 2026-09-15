@@ -5,10 +5,12 @@ import { ProtectedRoute } from "@/components/ProtectedRoute/ProtectedRoute";
 
 import { Department } from "@/pages/Department/Department";
 import { Admin } from "@/pages/Admin/Admin";
+import { Drafts } from "@/pages/Drafts/Drafts";
 import { Home } from "@/pages/Home/Home";
 import { Login } from "@/pages/Login/Login";
 import { Procedure } from "@/pages/Procedure/Procedure";
 import { ProcedureForm } from "@/pages/ProcedureForm/ProcedureForm";
+
 
 export const router = createBrowserRouter([
     {
@@ -38,22 +40,33 @@ export const router = createBrowserRouter([
                     // Mantém compatibilidade com a rota antiga.
                     {
                         path: "departments/:departmentId",
-                        element: <Department section="procedures" />,
+                        element: (
+                            <Department section="procedures" />
+                        ),
                     },
 
                     {
                         path: "departments/:departmentId/procedures",
-                        element: <Department section="procedures" />,
+                        element: (
+                            <Department section="procedures" />
+                        ),
                     },
 
                     {
                         path: "departments/:departmentId/documents",
-                        element: <Department section="documents" />,
+                        element: (
+                            <Department section="documents" />
+                        ),
                     },
 
                     {
                         path: "procedures/new",
                         element: <ProcedureForm />,
+                    },
+
+                    {
+                        path: "procedures/drafts",
+                        element: <Drafts />,
                     },
 
                     {

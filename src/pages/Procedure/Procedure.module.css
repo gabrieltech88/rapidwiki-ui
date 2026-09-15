@@ -7,6 +7,92 @@
     padding-bottom: 100px;
 }
 
+
+/* =========================
+   Loading
+   ========================= */
+
+.loading {
+    width: 100%;
+    min-height: 300px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--color-text-muted);
+}
+
+.loadingIcon {
+    animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================
+   Not Found / Error
+   ========================= */
+
+.notFound {
+    width: 100%;
+    max-width: 600px;
+
+    margin: 80px auto 0;
+
+    text-align: center;
+}
+
+.notFound h2 {
+    margin: 0;
+
+    color: var(--color-text-primary);
+
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.notFound p {
+    margin: var(--spacing-sm) 0 var(--spacing-lg);
+
+    color: var(--color-text-muted);
+
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+.notFound a {
+    display: inline-flex;
+
+    padding: 7px 10px;
+
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-sm);
+
+    color: var(--color-text-secondary);
+
+    font-size: 0.8rem;
+
+    transition:
+        background-color 150ms ease,
+        color 150ms ease;
+}
+
+.notFound a:hover {
+    background-color: var(--color-background-secondary);
+
+    color: var(--color-text-primary);
+}
+
+
 /* =========================
    Breadcrumb
    ========================= */
@@ -14,6 +100,8 @@
 .breadcrumb {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
+
     gap: 4px;
 
     margin-bottom: var(--spacing-xl);
@@ -31,6 +119,17 @@
     color: var(--color-text-primary);
 }
 
+.breadcrumb > span {
+    max-width: 280px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
 /* =========================
    Header
    ========================= */
@@ -39,7 +138,14 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
+
     gap: var(--spacing-lg);
+}
+
+.headerContent {
+    min-width: 0;
+
+    flex: 1;
 }
 
 .header h1 {
@@ -51,9 +157,32 @@
     line-height: 1.15;
 }
 
+
+/* =========================
+   Description
+   ========================= */
+
+.description {
+    max-width: 700px;
+
+    margin: var(--spacing-md) 0 0;
+
+    color: var(--color-text-secondary);
+
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+
+/* =========================
+   Metadata
+   ========================= */
+
 .metadata {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
+
     gap: 6px;
 
     margin-top: var(--spacing-md);
@@ -63,6 +192,53 @@
     font-size: 0.75rem;
 }
 
+
+/* =========================
+   Departments
+   ========================= */
+
+.departments {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-top: var(--spacing-md);
+}
+
+.departmentTag {
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 26px;
+
+    padding: 4px 8px;
+
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-sm);
+
+    background-color: var(--color-background-secondary);
+
+    color: var(--color-text-secondary);
+
+    font-size: 0.72rem;
+
+    transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        color 150ms ease;
+}
+
+.departmentTag:hover {
+    border-color: var(--color-border-secondary);
+
+    background-color: var(--color-hover);
+
+    color: var(--color-text-primary);
+}
+
+
 /* =========================
    Edit button
    ========================= */
@@ -70,6 +246,9 @@
 .editButton {
     display: flex;
     align-items: center;
+
+    flex-shrink: 0;
+
     gap: 6px;
 
     padding: 7px 10px;
@@ -78,6 +257,7 @@
     border-radius: var(--radius-sm);
 
     background-color: var(--color-background-secondary);
+
     color: var(--color-text-secondary);
 
     font-size: 0.8rem;
@@ -89,8 +269,10 @@
 
 .editButton:hover {
     background-color: var(--color-hover);
+
     color: var(--color-text-primary);
 }
+
 
 /* =========================
    Divider
@@ -104,6 +286,7 @@
     background-color: var(--color-border-primary);
 }
 
+
 /* =========================
    Procedure content
    ========================= */
@@ -115,11 +298,15 @@
     line-height: 1.75;
 }
 
-/* Parágrafos */
+
+/* =========================
+   Paragraphs
+   ========================= */
 
 .markdown p {
     margin: 0.75rem 0;
 }
+
 
 /* =========================
    Blockquote
@@ -128,17 +315,24 @@
 .markdown blockquote {
     margin: 1.25rem 0;
 
-    padding: 0.25rem 0 0.25rem 1rem;
+    padding:
+        0.25rem
+        0
+        0.25rem
+        1rem;
 
-    border-left: 3px solid var(--color-text-muted);
+    border-left:
+        3px solid
+        var(--color-text-muted);
 
-    color: var(--color-text-secondary);
+    color:
+        var(--color-text-secondary);
 }
 
-/* remove margens desnecessárias dentro */
 .markdown blockquote p {
     margin: 0;
 }
+
 
 /* =========================
    Code Block
@@ -149,11 +343,18 @@
 
     padding: 1rem 1.15rem;
 
-    border: 1px solid var(--color-border-primary);
-    border-radius: var(--radius-md);
+    border:
+        1px solid
+        var(--color-border-primary);
 
-    background-color: var(--color-background-secondary);
-    color: var(--color-text-primary);
+    border-radius:
+        var(--radius-md);
+
+    background-color:
+        var(--color-background-secondary);
+
+    color:
+        var(--color-text-primary);
 
     overflow-x: auto;
 
@@ -166,6 +367,7 @@
     border: 0;
 
     background: transparent;
+
     color: inherit;
 
     font-family:
@@ -177,14 +379,18 @@
     font-size: 0.875rem;
 }
 
-/* Inline code */
+
+/* =========================
+   Inline code
+   ========================= */
 
 .markdown :not(pre) > code {
     padding: 2px 5px;
 
     border-radius: 4px;
 
-    background-color: var(--color-background-secondary);
+    background-color:
+        var(--color-background-secondary);
 
     font-family:
         "JetBrains Mono",
@@ -195,6 +401,7 @@
     font-size: 0.875em;
 }
 
+
 /* =========================
    Headings
    ========================= */
@@ -203,35 +410,50 @@
 .markdown h2,
 .markdown h3,
 .markdown h4 {
-    color: var(--color-text-primary);
+    color:
+        var(--color-text-primary);
 
     font-weight: 600;
+
     line-height: 1.25;
 }
 
 .markdown h1 {
-    margin: 2rem 0 1rem;
+    margin:
+        2rem
+        0
+        1rem;
 
     font-size: 2rem;
 }
 
 .markdown h2 {
-    margin: 1.75rem 0 0.875rem;
+    margin:
+        1.75rem
+        0
+        0.875rem;
 
     font-size: 1.5rem;
 }
 
 .markdown h3 {
-    margin: 1.5rem 0 0.75rem;
+    margin:
+        1.5rem
+        0
+        0.75rem;
 
     font-size: 1.25rem;
 }
 
 .markdown h4 {
-    margin: 1.25rem 0 0.625rem;
+    margin:
+        1.25rem
+        0
+        0.625rem;
 
     font-size: 1.1rem;
 }
+
 
 /* =========================
    Lists
@@ -248,16 +470,22 @@
     margin: 0.25rem 0;
 }
 
+
 /* =========================
    Links
    ========================= */
 
 .markdown a {
-    color: var(--color-accent);
+    color:
+        var(--color-accent);
 
-    text-decoration: underline;
-    text-underline-offset: 3px;
+    text-decoration:
+        underline;
+
+    text-underline-offset:
+        3px;
 }
+
 
 /* =========================
    Highlight
@@ -268,6 +496,7 @@
 
     border-radius: 3px;
 }
+
 
 /* =========================
    Images
@@ -281,15 +510,23 @@
 
     margin: 1.5rem auto;
 
-    border-radius: var(--radius-md);
+    border-radius:
+        var(--radius-md);
 }
+
+
+/* =========================
+   Tiptap
+   ========================= */
 
 .markdown :global(.simple-editor) {
-    color: var(--color-text-primary);
+    color:
+        var(--color-text-primary);
 }
 
+
 /* =========================================
-   CODE BLOCK
+   Tiptap Code Block
    ========================================= */
 
 .markdown :global(.simple-editor) pre {
@@ -298,13 +535,22 @@
     width: 100%;
 
     margin: 1.25rem 0;
-    padding: 1rem 1.25rem;
 
-    border: 1px solid var(--color-border-primary);
+    padding:
+        1rem
+        1.25rem;
+
+    border:
+        1px solid
+        var(--color-border-primary);
+
     border-radius: 8px;
 
-    background-color: var(--color-background-secondary) !important;
-    color: var(--color-text-primary) !important;
+    background-color:
+        var(--color-background-secondary) !important;
+
+    color:
+        var(--color-text-primary) !important;
 
     overflow-x: auto;
 }
@@ -314,8 +560,11 @@
 
     padding: 0 !important;
 
-    background: transparent !important;
-    color: inherit !important;
+    background:
+        transparent !important;
+
+    color:
+        inherit !important;
 
     font-family:
         "JetBrains Mono",
@@ -324,21 +573,29 @@
         monospace;
 
     font-size: 0.875rem;
+
     line-height: 1.6;
 }
 
+
 /* =========================================
-   INLINE CODE
+   Tiptap Inline Code
    ========================================= */
 
 .markdown :global(.simple-editor) :not(pre) > code {
-    padding: 2px 5px;
+    padding: 2px 6px;
 
-    border-radius: 4px;
+    border:
+        1px solid
+        var(--color-border-primary);
 
-    background-color: var(--color-background-secondary);
+    border-radius: 5px;
 
-    color: var(--color-text-primary);
+    background-color:
+        var(--color-background-secondary);
+
+    color:
+        var(--color-text-primary);
 
     font-family:
         "JetBrains Mono",
@@ -347,29 +604,47 @@
         monospace;
 
     font-size: 0.875em;
+
+    box-decoration-break:
+        clone;
+
+    -webkit-box-decoration-break:
+        clone;
 }
 
+
 /* =========================================
-   BLOCKQUOTE
+   Tiptap Blockquote
    ========================================= */
 
 .markdown :global(.simple-editor) blockquote {
     display: block;
 
-    margin: 1.25rem 0;
-    padding: 0.35rem 0 0.35rem 1rem;
+    margin:
+        1.25rem
+        0;
 
-    border-left: 3px solid var(--color-text-muted) !important;
+    padding:
+        0.35rem
+        0
+        0.35rem
+        1rem;
 
-    color: var(--color-text-secondary);
+    border-left:
+        3px solid
+        var(--color-text-muted) !important;
+
+    color:
+        var(--color-text-secondary);
 }
 
 .markdown :global(.simple-editor) blockquote p {
     margin: 0;
 }
 
+
 /* =========================================
-   HIGHLIGHT
+   Tiptap Highlight
    ========================================= */
 
 .markdown :global(.simple-editor) mark {
@@ -378,27 +653,6 @@
     border-radius: 3px;
 }
 
-
-.markdown :global(.simple-editor) code {
-    padding: 2px 6px;
-
-    border: 1px solid var(--color-border-primary);
-    border-radius: 5px;
-
-    background-color: var(--color-background-secondary);
-    color: var(--color-text-primary);
-
-    font-family:
-        "JetBrains Mono",
-        "Cascadia Code",
-        Consolas,
-        monospace;
-
-    font-size: 0.875em;
-
-    box-decoration-break: clone;
-    -webkit-box-decoration-break: clone;
-}
 
 /* =========================
    Responsive
@@ -421,8 +675,17 @@
         align-self: flex-start;
     }
 
+    .metadata {
+        align-items: flex-start;
+    }
+
+    .description {
+        font-size: 0.9rem;
+    }
+
     .markdown {
         font-size: 0.925rem;
+
         line-height: 1.7;
     }
 
@@ -435,11 +698,21 @@
     }
 
     .markdown pre {
-        margin-left: calc(var(--spacing-md) * -1);
-        margin-right: calc(var(--spacing-md) * -1);
+        margin-left:
+            calc(
+                var(--spacing-md) *
+                -1
+            );
+
+        margin-right:
+            calc(
+                var(--spacing-md) *
+                -1
+            );
 
         border-left: 0;
         border-right: 0;
+
         border-radius: 0;
     }
 }

@@ -5,7 +5,9 @@ import { departmentsMock } from "@/mocks/departments";
 
 import type {
     Procedure,
+    ProcedureDetails,
     ProcedureInput,
+    ProcedureStatus,
 } from "@/types/Procedure";
 
 
@@ -15,10 +17,19 @@ interface ApiAuthor {
 }
 
 
+interface ApiDepartment {
+    id: string;
+    nome: string;
+}
+
+
 interface ApiProcedure {
     id: string;
+
     titulo: string;
+
     descricao: string;
+
     conteudo: string;
 
     autor: ApiAuthor;
@@ -29,9 +40,119 @@ interface ApiProcedure {
 
 interface GetProceduresResponse {
     page: number;
-    totalItems: number;
-    items: ApiProcedure[];
+
     pageSize: number;
+
+    totalItems: number;
+
+    items: ApiProcedure[];
+}
+
+
+interface GetProcedureByIdResponse {
+    id: string;
+
+    titulo: string;
+
+    descricao: string;
+
+    conteudo: string;
+
+    autor: ApiAuthor;
+
+    departamentos: ApiDepartment[];
+
+    criadoEm: string;
+
+    atualizadoEm: string;
+
+    status: ProcedureStatus;
+}
+
+
+interface CreateProcedureRequest {
+    titulo: string;
+
+    descricao: string;
+
+    departamentosIds: string[];
+
+    conteudo: string;
+
+    status: ProcedureStatus;
+}
+
+
+export interface PaginatedProcedures {
+    items: Procedure[];
+
+    page: number;
+
+    pageSize: number;
+
+    totalItems: number;
+
+    totalPages: number;
+}
+
+
+function formatDate(
+    date: string
+): string {
+    const parsedDate =
+        new Date(date);
+
+
+    if (
+        Number.isNaN(
+            parsedDate.getTime()
+        )
+    ) {
+        return date;
+    }
+
+
+    return parsedDate.toLocaleDateString(
+        "pt-BR",
+        {
+            day: "2-digit",
+            month: "2-digit",
+            year: "2-digit",
+        }
+    );
+}
+
+
+function mapProcedure(
+    procedure: ApiProcedure,
+    departmentId = "",
+    departmentName = ""
+): Procedure {
+    return {
+        id:
+            procedure.id,
+
+        title:
+            procedure.titulo,
+
+        description:
+            procedure.descricao,
+
+        content:
+            procedure.conteudo,
+
+        departmentId,
+
+        departmentName,
+
+        writerName:
+            procedure.autor.nome,
+
+        lastUpdate:
+            formatDate(
+                procedure.atualizadoEm
+            ),
+    };
 }
 
 
@@ -44,16 +165,24 @@ export async function getProceduresByDepartment(
     departmentId: string,
     page = 1,
     search?: string
-): Promise<Procedure[]> {
-
+): Promise<PaginatedProcedures> {
     const response =
         await api.get<GetProceduresResponse>(
             "/procedimento/get_procedimentos",
             {
                 params: {
-                    departamentoId: departmentId,
+                    departamentoId:
+                        departmentId,
+
                     page,
-                    search: search || undefined,
+
+                    search:
+                        search || undefined,
+
+                    /*
+                     * Publicado
+                     */
+                    status: 1,
                 },
             }
         );
@@ -62,52 +191,164 @@ export async function getProceduresByDepartment(
     const department =
         departmentsMock.find(
             (department) =>
-                department.id === departmentId
+                department.id ===
+                departmentId
         );
 
 
-    return response.data.items.map(
-        (procedure) => ({
-            id: procedure.id,
+    const items =
+        response.data.items.map(
+            (procedure) =>
+                mapProcedure(
+                    procedure,
+                    departmentId,
+                    department?.name ?? ""
+                )
+        );
 
-            title: procedure.titulo,
 
-            description:
-                procedure.descricao,
+    return {
+        items,
 
-            content:
-                procedure.conteudo,
+        page:
+            response.data.page,
 
-            departmentId,
+        pageSize:
+            response.data.pageSize,
 
-            departmentName:
-                department?.name ?? "",
+        totalItems:
+            response.data.totalItems,
 
-            writerName:
-                procedure.autor.nome,
+        totalPages:
+            Math.ceil(
+                response.data.totalItems /
+                    response.data.pageSize
+            ),
+    };
+}
 
-            lastUpdate:
-                procedure.atualizadoEm,
-        })
-    );
+
+export async function getDraftProcedures(
+    page = 1,
+    search?: string
+): Promise<PaginatedProcedures> {
+    const response =
+        await api.get<GetProceduresResponse>(
+            "/procedimento/get_procedimentos",
+            {
+                params: {
+                    page,
+
+                    search:
+                        search || undefined,
+
+                    /*
+                     * Rascunho
+                     */
+                    status: 0,
+                },
+            }
+        );
+
+
+    const items =
+        response.data.items.map(
+            (procedure) =>
+                mapProcedure(
+                    procedure
+                )
+        );
+
+
+    return {
+        items,
+
+        page:
+            response.data.page,
+
+        pageSize:
+            response.data.pageSize,
+
+        totalItems:
+            response.data.totalItems,
+
+        totalPages:
+            Math.ceil(
+                response.data.totalItems /
+                    response.data.pageSize
+            ),
+    };
 }
 
 
 export async function getProcedureById(
     procedureId: string
-): Promise<Procedure | undefined> {
+): Promise<ProcedureDetails> {
+    const response =
+        await api.get<GetProcedureByIdResponse>(
+            `/procedimento/get_procedimento_by_id/${procedureId}`
+        );
 
-    return proceduresMock.find(
-        (procedure) =>
-            procedure.id === procedureId
-    );
+
+    const procedure =
+        response.data;
+
+
+    const departments =
+        procedure.departamentos.map(
+            (department) => ({
+                id:
+                    department.id,
+
+                name:
+                    department.nome,
+            })
+        );
+
+
+    return {
+        id:
+            procedure.id,
+
+        title:
+            procedure.titulo,
+
+        description:
+            procedure.descricao,
+
+        content:
+            procedure.conteudo,
+
+        departmentId:
+            departments[0]?.id ?? "",
+
+        departmentName:
+            departments[0]?.name ?? "",
+
+        departments,
+
+        writerName:
+            procedure.autor.nome,
+
+        createdAt:
+            formatDate(
+                procedure.criadoEm
+            ),
+
+        lastUpdate:
+            formatDate(
+                procedure.atualizadoEm
+            ),
+
+        status:
+            procedure.status,
+    };
 }
 
 
 export async function searchProcedures(
     search: string
 ): Promise<Procedure[]> {
-
     const term =
         search
             .trim()
@@ -138,65 +379,62 @@ export async function searchProcedures(
 
 export async function createProcedure(
     input: ProcedureInput
-): Promise<Procedure> {
-
-    const department =
-        departmentsMock.find(
-            (department) =>
-                department.id === input.departmentId
-        );
-
-
-    if (!department) {
+): Promise<ProcedureDetails> {
+    if (
+        input.departmentIds.length ===
+        0
+    ) {
         throw new Error(
-            "Departamento não encontrado."
+            "Selecione pelo menos um departamento."
         );
     }
 
 
-    const procedure: Procedure = {
-        id: crypto.randomUUID(),
+    const request:
+        CreateProcedureRequest = {
+        titulo:
+            input.title,
 
-        title: input.title,
-
-        description:
+        descricao:
             input.description,
 
-        content:
+        departamentosIds:
+            input.departmentIds,
+
+        conteudo:
             input.content,
 
-        departmentId:
-            department.id,
-
-        departmentName:
-            department.name,
-
-        writerName:
-            "Gabriel",
-
-        lastUpdate:
-            "Agora",
+        status:
+            input.status,
     };
 
 
-    proceduresMock.push(
-        procedure
+    const response =
+        await api.post<string>(
+            "/procedimento/create_procedimento",
+            request
+        );
+
+
+    return await getProcedureById(
+        response.data
     );
-
-
-    return procedure;
 }
 
 
+/*
+ * Continua mockado até começarmos
+ * a implementação do PUT.
+ */
 export async function updateProcedure(
     procedureId: string,
     input: ProcedureInput
 ): Promise<Procedure> {
-
     const procedure =
         proceduresMock.find(
             (procedure) =>
-                procedure.id === procedureId
+                procedure.id ===
+                procedureId
         );
 
 
@@ -207,18 +445,27 @@ export async function updateProcedure(
     }
 
 
-    const department =
-        departmentsMock.find(
+    const selectedDepartments =
+        departmentsMock.filter(
             (department) =>
-                department.id === input.departmentId
+                input.departmentIds.includes(
+                    department.id
+                )
         );
 
 
-    if (!department) {
+    if (
+        selectedDepartments.length ===
+        0
+    ) {
         throw new Error(
-            "Departamento não encontrado."
+            "Selecione pelo menos um departamento."
         );
     }
+
+
+    const primaryDepartment =
+        selectedDepartments[0];
 
 
     procedure.title =
@@ -231,10 +478,10 @@ export async function updateProcedure(
         input.content;
 
     procedure.departmentId =
-        department.id;
+        primaryDepartment.id;
 
     procedure.departmentName =
-        department.name;
+        primaryDepartment.name;
 
     procedure.lastUpdate =
         "Agora";

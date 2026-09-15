@@ -20,7 +20,7 @@ export function ProcedureItem({ procedure }: ProcedureItemProps) {
                 </p>
 
                 <div className={styles.metadata}>
-                    <span>{procedure.departmentName}</span>
+                    <span>Última atualização</span>
                     <span>·</span>
                     <span>{procedure.lastUpdate}</span>
                 </div>

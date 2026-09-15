@@ -1,10 +1,45 @@
 .page {
-   width: 100%;
+    width: 100%;
     max-width: 1100px;
 
     margin: 0 auto;
     padding-bottom: 80px;
 }
+
+
+/* =========================
+   Loading
+   ========================= */
+
+.loading {
+    width: 100%;
+    min-height: 300px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--color-text-muted);
+}
+
+.loadingIcon {
+    animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================
+   Back
+   ========================= */
 
 .back {
     display: inline-flex;
@@ -23,6 +58,11 @@
 .back:hover {
     color: var(--color-text-primary);
 }
+
+
+/* =========================
+   Header
+   ========================= */
 
 .header {
     margin-bottom: var(--spacing-xl);
@@ -46,6 +86,11 @@
     font-size: 0.9rem;
 }
 
+
+/* =========================
+   Form
+   ========================= */
+
 .form {
     display: flex;
     flex-direction: column;
@@ -66,8 +111,7 @@
 }
 
 .field input,
-.field textarea,
-.field select {
+.field textarea {
     width: 100%;
 
     padding: 11px 12px;
@@ -94,8 +138,7 @@
 }
 
 .field input:focus,
-.field textarea:focus,
-.field select:focus {
+.field textarea:focus {
     border-color: var(--color-border-strong);
 
     background-color: var(--color-background);
@@ -106,10 +149,260 @@
     color: var(--color-text-muted);
 }
 
+
+/* =========================
+   Department selector
+   ========================= */
+
+.departmentSelector {
+    width: 100%;
+}
+
+.selectedDepartments {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-bottom: 8px;
+}
+
+.departmentChip {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    min-height: 28px;
+
+    padding: 4px 6px 4px 9px;
+
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-sm);
+
+    background-color: var(--color-background-secondary);
+    color: var(--color-text-secondary);
+
+    font-size: 0.75rem;
+}
+
+.removeDepartment {
+    width: 20px;
+    height: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 4px;
+
+    background: transparent;
+
+    color: var(--color-text-muted);
+
+    cursor: pointer;
+
+    transition:
+        background-color 150ms ease,
+        color 150ms ease;
+}
+
+.removeDepartment:hover {
+    background-color: var(--color-hover);
+
+    color: var(--color-text-primary);
+}
+
+
+/* =========================
+   Select control
+   ========================= */
+
+.selectControl {
+    width: 100%;
+    min-height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: var(--spacing-sm);
+
+    padding: 10px 12px;
+
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+
+    background-color: var(--color-background-secondary);
+
+    color: var(--color-text-secondary);
+
+    font-size: 0.875rem;
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        border-color 150ms ease,
+        background-color 150ms ease,
+        color 150ms ease;
+}
+
+.selectControl:hover {
+    background-color: var(--color-background);
+
+    color: var(--color-text-primary);
+}
+
+.selectControlOpen {
+    border-color: var(--color-border-strong);
+
+    background-color: var(--color-background);
+
+    color: var(--color-text-primary);
+}
+
+.selectChevron {
+    flex-shrink: 0;
+
+    transition: transform 150ms ease;
+}
+
+.selectChevronOpen {
+    transform: rotate(180deg);
+}
+
+
+/* =========================
+   Department options
+   ========================= */
+
+.departmentOptions {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+
+    max-height: 240px;
+
+    margin-top: 6px;
+    padding: 6px;
+
+    overflow-y: auto;
+
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+
+    background-color: var(--color-background-secondary);
+}
+
+.departmentOption {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 9px 10px;
+
+    border: 0;
+    border-radius: var(--radius-sm);
+
+    background: transparent;
+
+    color: var(--color-text-secondary);
+
+    font-size: 0.825rem;
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background-color 150ms ease,
+        color 150ms ease;
+}
+
+.departmentOption:hover {
+    background-color: var(--color-hover);
+
+    color: var(--color-text-primary);
+}
+
+.departmentOptionSelected {
+    background-color: var(--color-hover);
+
+    color: var(--color-text-primary);
+}
+
+
+/* =========================
+   Checkbox
+   ========================= */
+
+.checkbox {
+    width: 18px;
+    height: 18px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--color-border-strong);
+    border-radius: 4px;
+
+    color: var(--color-button-primary-text);
+}
+
+.checkboxSelected {
+    border-color: var(--color-button-primary);
+
+    background-color: var(--color-button-primary);
+}
+
+.noDepartments {
+    padding: 12px 10px;
+
+    color: var(--color-text-muted);
+
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+
+/* =========================
+   Error
+   ========================= */
+
+.error {
+    padding: 10px 12px;
+
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+
+    color: var(--color-text-secondary);
+
+    font-size: 0.825rem;
+}
+
+
+/* =========================
+   Actions
+   ========================= */
+
 .actions {
     display: flex;
     align-items: center;
     justify-content: flex-end;
+
     gap: var(--spacing-sm);
 
     padding-top: var(--spacing-md);
@@ -131,11 +424,13 @@
     border: 1px solid var(--color-border-primary);
 
     background-color: transparent;
+
     color: var(--color-text-secondary);
 }
 
 .cancelButton:hover {
     background-color: var(--color-hover);
+
     color: var(--color-text-primary);
 }
 
@@ -143,13 +438,20 @@
     border: 1px solid var(--color-button-primary);
 
     background-color: var(--color-button-primary);
+
     color: var(--color-button-primary-text);
 }
 
 .saveButton:disabled {
     cursor: not-allowed;
+
     opacity: 0.5;
 }
+
+
+/* =========================
+   Editor
+   ========================= */
 
 .editorWrapper {
     width: 100%;
@@ -170,13 +472,16 @@
     align-items: center;
     justify-content: flex-start;
 
-   
     overflow-y: hidden;
 
     padding: 0 var(--spacing-sm);
 
     border-bottom: 1px solid var(--color-border-primary);
-    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    border-radius:
+        var(--radius-md)
+        var(--radius-md)
+        0
+        0;
 
     background-color: var(--color-background-tertiary);
 
@@ -201,6 +506,7 @@
 
 .editorWrapper :global([role="toolbar"] button:hover) {
     background-color: var(--color-hover);
+
     color: var(--color-text-primary);
 }
 
@@ -217,8 +523,15 @@
 .editorWrapper :global(.ProseMirror *)::selection {
     background-color: var(--color-text-selection);
 }
+
+
+/* =========================
+   Editor code blocks
+   ========================= */
+
 .editorWrapper :global(.ProseMirror pre) {
     margin: var(--spacing-lg) 0;
+
     padding: var(--spacing-md);
 
     overflow-x: auto;
@@ -239,6 +552,7 @@
     border: none;
 
     background: transparent;
+
     color: var(--color-text-primary);
 
     font-family: inherit;
@@ -251,11 +565,17 @@
     border-radius: 4px;
 
     background-color: var(--color-code-background);
+
     color: var(--color-text-primary);
 
     font-family: var(--font-mono);
     font-size: 0.875em;
 }
+
+
+/* =========================
+   Editor images
+   ========================= */
 
 .editorWrapper :global(.ProseMirror img) {
     display: block;
@@ -268,6 +588,10 @@
     border-radius: var(--radius-md);
 }
 
+
+/* =========================
+   Responsive
+   ========================= */
 
 @media (max-width: 640px) {
     .page {
@@ -287,5 +611,9 @@
         width: 100%;
 
         text-align: center;
+    }
+
+    .departmentOptions {
+        max-height: 200px;
     }
 }

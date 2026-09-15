@@ -1,21 +1,63 @@
-import { useState, type FormEvent } from "react";
-import { BookOpen, Eye, EyeOff } from "lucide-react";
+import {
+    useEffect,
+    useState,
+    type FormEvent,
+} from "react";
+
+import {
+    BookOpen,
+    Eye,
+    EyeOff,
+} from "lucide-react";
+
 import { useNavigate } from "react-router";
 
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 
 import styles from "./Login.module.css";
 
+
 export function Login() {
     const navigate = useNavigate();
-    const { login } = useAuth();
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const {
+        login,
+        isAuthenticated,
+        isLoading,
+    } = useAuth();
 
-    const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+
+    const [email, setEmail] =
+        useState("");
+
+    const [password, setPassword] =
+        useState("");
+
+    const [showPassword, setShowPassword] =
+        useState(false);
+
+    const [loading, setLoading] =
+        useState(false);
+
+    const [error, setError] =
+        useState("");
+
+
+    useEffect(() => {
+        if (
+            !isLoading &&
+            isAuthenticated
+        ) {
+            navigate("/", {
+                replace: true,
+            });
+        }
+    }, [
+        isAuthenticated,
+        isLoading,
+        navigate,
+    ]);
+
 
     async function handleSubmit(
         event: FormEvent<HTMLFormElement>
@@ -24,23 +66,40 @@ export function Login() {
 
         setError("");
 
-        if (!email.trim() || !password.trim()) {
-            setError("Preencha o e-mail e a senha.");
+        const normalizedEmail =
+            email.trim();
+
+        if (
+            !normalizedEmail ||
+            !password
+        ) {
+            setError(
+                "Preencha o e-mail e a senha."
+            );
+
             return;
         }
 
         setLoading(true);
 
         try {
-            await login(email, password);
+            await login(
+                normalizedEmail,
+                password
+            );
 
-            navigate("/");
+            navigate("/", {
+                replace: true,
+            });
         } catch {
-            setError("E-mail ou senha inválidos.");
+            setError(
+                "E-mail ou senha inválidos."
+            );
         } finally {
             setLoading(false);
         }
     }
+
 
     return (
         <main className={styles.page}>
@@ -49,14 +108,23 @@ export function Login() {
                     <div className={styles.brand}>
                         <BookOpen size={20} />
 
-                        <span>RapidWiki</span>
+                        <span>
+                            RapidWiki
+                        </span>
                     </div>
 
-                    <div className={styles.introduction}>
-                        <h1>Acesse sua conta</h1>
+                    <div
+                        className={
+                            styles.introduction
+                        }
+                    >
+                        <h1>
+                            Acesse sua conta
+                        </h1>
 
                         <p>
-                            Entre para acessar a base de conhecimento.
+                            Entre para acessar a base
+                            de conhecimento.
                         </p>
                     </div>
                 </header>
@@ -75,10 +143,14 @@ export function Login() {
                             type="email"
                             value={email}
                             onChange={(event) =>
-                                setEmail(event.target.value)
+                                setEmail(
+                                    event.target.value
+                                )
                             }
                             placeholder="nome@empresa.com"
                             autoComplete="email"
+                            autoFocus
+                            disabled={loading}
                         />
                     </div>
 
@@ -87,7 +159,11 @@ export function Login() {
                             Senha
                         </label>
 
-                        <div className={styles.passwordInput}>
+                        <div
+                            className={
+                                styles.passwordInput
+                            }
+                        >
                             <input
                                 id="password"
                                 type={
@@ -97,18 +173,24 @@ export function Login() {
                                 }
                                 value={password}
                                 onChange={(event) =>
-                                    setPassword(event.target.value)
+                                    setPassword(
+                                        event.target.value
+                                    )
                                 }
                                 placeholder="Sua senha"
                                 autoComplete="current-password"
+                                disabled={loading}
                             />
 
                             <button
                                 type="button"
-                                className={styles.passwordButton}
+                                className={
+                                    styles.passwordButton
+                                }
                                 onClick={() =>
                                     setShowPassword(
-                                        (current) => !current
+                                        (current) =>
+                                            !current
                                     )
                                 }
                                 aria-label={
@@ -116,6 +198,7 @@ export function Login() {
                                         ? "Ocultar senha"
                                         : "Mostrar senha"
                                 }
+                                disabled={loading}
                             >
                                 {showPassword ? (
                                     <EyeOff size={16} />
@@ -134,8 +217,13 @@ export function Login() {
 
                     <button
                         type="submit"
-                        className={styles.submitButton}
-                        disabled={loading}
+                        className={
+                            styles.submitButton
+                        }
+                        disabled={
+                            loading ||
+                            isLoading
+                        }
                     >
                         {loading
                             ? "Entrando..."

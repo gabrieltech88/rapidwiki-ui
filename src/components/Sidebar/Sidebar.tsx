@@ -1,6 +1,12 @@
 import {
+    useEffect,
+    useState,
+} from "react";
+
+import {
     BookOpen,
     ChevronRight,
+    FilePenLine,
     FileText,
     Files,
     Home,
@@ -17,21 +23,27 @@ import {
 
 import { ThemeToggle } from "@/components/ThemeToggle/ThemeToggle";
 
-import { useAuth } from "@/contexts/AuthContext";
-import { departmentsMock } from "@/mocks/departments";
+import { getDepartments } from "@/services/departmentService";
+
+import { useAuth } from "@/hooks/useAuth";
+
+import type { Department } from "@/types/Department";
 
 import styles from "./Sidebar.module.css";
+
 
 interface SidebarProps {
     isOpen: boolean;
     onClose: () => void;
 }
 
+
 export function Sidebar({
     isOpen,
     onClose,
 }: SidebarProps) {
     const navigate = useNavigate();
+
     const location = useLocation();
 
     const {
@@ -40,18 +52,63 @@ export function Sidebar({
         hasRole,
     } = useAuth();
 
-    const canCreateProcedure =
+
+    const [departments, setDepartments] =
+        useState<Department[]>([]);
+
+
+    const canManageProcedures =
         hasRole("Admin") ||
         hasRole("Editor");
 
     const canAccessAdmin =
         hasRole("Admin");
 
-    function handleLogout() {
-        logout();
+
+    useEffect(() => {
+        let isMounted = true;
+
+        async function loadDepartments() {
+            try {
+                const data =
+                    await getDepartments();
+
+                if (isMounted) {
+                    setDepartments(data);
+                }
+            } catch (error) {
+                console.error(
+                    "Erro ao carregar departamentos:",
+                    error
+                );
+
+                if (isMounted) {
+                    setDepartments([]);
+                }
+            }
+        }
+
+        loadDepartments();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+
+    async function handleLogout() {
+        await logout();
+
         onClose();
-        navigate("/login");
+
+        navigate(
+            "/login",
+            {
+                replace: true,
+            }
+        );
     }
+
 
     return (
         <aside
@@ -88,12 +145,17 @@ export function Sidebar({
                         </span>
                     </NavLink>
 
+
                     <div className={styles.section}>
-                        <span className={styles.sectionTitle}>
+                        <span
+                            className={
+                                styles.sectionTitle
+                            }
+                        >
                             Departamentos
                         </span>
 
-                        {departmentsMock.map(
+                        {departments.map(
                             (department) => {
                                 const departmentPath =
                                     `/departments/${department.id}`;
@@ -120,7 +182,9 @@ export function Sidebar({
                                             }`}
                                         >
                                             <span>
-                                                {department.name}
+                                                {
+                                                    department.name
+                                                }
                                             </span>
 
                                             <ChevronRight
@@ -192,20 +256,49 @@ export function Sidebar({
                 </nav>
             </div>
 
-            <div className={styles.bottom}>
-                {canCreateProcedure && (
-                    <NavLink
-                        to="/procedures/new"
-                        onClick={onClose}
-                        className={styles.navItem}
-                    >
-                        <Plus size={16} />
 
-                        <span>
-                            Novo procedimento
-                        </span>
-                    </NavLink>
+            <div className={styles.bottom}>
+                {canManageProcedures && (
+                    <>
+                        <NavLink
+                            to="/procedures/new"
+                            onClick={onClose}
+                            className={({ isActive }) =>
+                                `${styles.navItem} ${
+                                    isActive
+                                        ? styles.active
+                                        : ""
+                                }`
+                            }
+                        >
+                            <Plus size={16} />
+
+                            <span>
+                                Novo procedimento
+                            </span>
+                        </NavLink>
+
+
+                        <NavLink
+                            to="/procedures/drafts"
+                            onClick={onClose}
+                            className={({ isActive }) =>
+                                `${styles.navItem} ${
+                                    isActive
+                                        ? styles.active
+                                        : ""
+                                }`
+                            }
+                        >
+                            <FilePenLine size={16} />
+
+                            <span>
+                                Rascunhos
+                            </span>
+                        </NavLink>
+                    </>
                 )}
+
 
                 {canAccessAdmin && (
                     <NavLink
@@ -227,9 +320,12 @@ export function Sidebar({
                     </NavLink>
                 )}
 
+
                 <ThemeToggle />
 
+
                 <button
+                    type="button"
                     className={styles.navItem}
                     onClick={handleLogout}
                 >
@@ -240,26 +336,32 @@ export function Sidebar({
                     </span>
                 </button>
 
-                <div className={styles.user}>
-                    <div className={styles.avatar}>
-                        {user?.name
-                            .split(" ")
-                            .map((name) => name[0])
-                            .join("")
-                            .slice(0, 2)
-                            .toUpperCase()}
-                    </div>
 
-                    <div>
-                        <strong>
-                            {user?.name}
-                        </strong>
+                {user && (
+                    <div className={styles.user}>
+                        <div className={styles.avatar}>
+                            {user.name
+                                .split(" ")
+                                .map(
+                                    (name) =>
+                                        name[0]
+                                )
+                                .join("")
+                                .slice(0, 2)
+                                .toUpperCase()}
+                        </div>
 
-                        <span>
-                            {user?.roles.join(", ")}
-                        </span>
+                        <div>
+                            <strong>
+                                {user.name}
+                            </strong>
+
+                            <span>
+                                {user.role}
+                            </span>
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </aside>
     );
