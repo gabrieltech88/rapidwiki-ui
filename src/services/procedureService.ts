@@ -83,6 +83,21 @@ interface CreateProcedureRequest {
 }
 
 
+interface UpdateProcedureRequest {
+    id: string;
+
+    titulo: string;
+
+    descricao: string;
+
+    departamentosIds: string[];
+
+    conteudo: string;
+
+    status: ProcedureStatus;
+}
+
+
 export interface PaginatedProcedures {
     items: Procedure[];
 
@@ -422,40 +437,12 @@ export async function createProcedure(
 }
 
 
-/*
- * Continua mockado até começarmos
- * a implementação do PUT.
- */
 export async function updateProcedure(
     procedureId: string,
     input: ProcedureInput
-): Promise<Procedure> {
-    const procedure =
-        proceduresMock.find(
-            (procedure) =>
-                procedure.id ===
-                procedureId
-        );
-
-
-    if (!procedure) {
-        throw new Error(
-            "Procedimento não encontrado."
-        );
-    }
-
-
-    const selectedDepartments =
-        departmentsMock.filter(
-            (department) =>
-                input.departmentIds.includes(
-                    department.id
-                )
-        );
-
-
+): Promise<ProcedureDetails> {
     if (
-        selectedDepartments.length ===
+        input.departmentIds.length ===
         0
     ) {
         throw new Error(
@@ -464,28 +451,36 @@ export async function updateProcedure(
     }
 
 
-    const primaryDepartment =
-        selectedDepartments[0];
+    const request:
+        UpdateProcedureRequest = {
+        id:
+            procedureId,
+
+        titulo:
+            input.title,
+
+        descricao:
+            input.description,
+
+        departamentosIds:
+            input.departmentIds,
+
+        conteudo:
+            input.content,
+
+        status:
+            input.status,
+    };
 
 
-    procedure.title =
-        input.title;
-
-    procedure.description =
-        input.description;
-
-    procedure.content =
-        input.content;
-
-    procedure.departmentId =
-        primaryDepartment.id;
-
-    procedure.departmentName =
-        primaryDepartment.name;
-
-    procedure.lastUpdate =
-        "Agora";
+    const response =
+        await api.put<string>(
+            "/procedimento/update_procedimento",
+            request
+        );
 
 
-    return procedure;
+    return await getProcedureById(
+        response.data
+    );
 }

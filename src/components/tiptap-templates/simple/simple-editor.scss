@@ -7,22 +7,30 @@
 body {
   --tt-toolbar-height: 44px;
 
-  /*
-   * Usa as variáveis do próprio RapidWiki.
-   */
-  --tt-theme-text: var(--color-text-primary);
+  --tt-theme-text:
+    var(--color-text-primary);
 
-  font-family: "Inter", sans-serif;
+  font-family:
+    "Inter",
+    sans-serif;
 
-  color: var(--tt-theme-text);
+  color:
+    var(--tt-theme-text);
 
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
+  font-optical-sizing:
+    auto;
 
-  padding: 0;
+  font-weight:
+    400;
 
-  overscroll-behavior-y: none;
+  font-style:
+    normal;
+
+  padding:
+    0;
+
+  overscroll-behavior-y:
+    none;
 }
 
 /* =========================================================
@@ -31,16 +39,19 @@ body {
 
 html,
 body {
-  overscroll-behavior-x: none;
+  overscroll-behavior-x:
+    none;
 }
 
 html,
 body,
 #root,
 #app {
-  height: 100%;
+  height:
+    100%;
 
-  background-color: var(--color-background);
+  background-color:
+    var(--color-background);
 }
 
 /* =========================================================
@@ -48,12 +59,16 @@ body,
    ========================================================= */
 
 ::-webkit-scrollbar {
-  width: 0.25rem;
-  height: 0.25rem;
+  width:
+    0.25rem;
+
+  height:
+    0.25rem;
 }
 
 * {
-  scrollbar-width: thin;
+  scrollbar-width:
+    thin;
 
   scrollbar-color:
     var(--color-border-primary)
@@ -61,13 +76,16 @@ body,
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--color-border-primary);
+  background-color:
+    var(--color-border-primary);
 
-  border-radius: 9999px;
+  border-radius:
+    9999px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background:
+    transparent;
 }
 
 /* =========================================================
@@ -75,11 +93,15 @@ body,
    ========================================================= */
 
 .tiptap.ProseMirror {
-  font-family: "DM Sans", sans-serif;
+  font-family:
+    "DM Sans",
+    sans-serif;
 
-  color: var(--color-text-primary);
+  color:
+    var(--color-text-primary);
 
-  outline: none;
+  outline:
+    none;
 }
 
 /* =========================================================
@@ -87,12 +109,52 @@ body,
    ========================================================= */
 
 .simple-editor-wrapper {
-  width: 100%;
-  min-height: 500px;
+  position:
+    relative;
 
-  overflow: auto;
+  width:
+    100%;
 
-  background-color: var(--color-background);
+  min-height:
+    500px;
+
+  overflow:
+    auto;
+
+  background-color:
+    var(--color-background);
+}
+
+/* =========================================================
+   BOTÃO TAMANHO DA FONTE
+   ========================================================= */
+
+.simple-editor-wrapper
+  select[title="Tamanho da fonte"] {
+  width:
+    72px !important;
+
+  min-width:
+    72px !important;
+
+  height:
+    27px !important;
+
+  min-height:
+    27px !important;
+
+  padding:
+    0
+    4px !important;
+
+  border-radius:
+    5px !important;
+
+  font-size:
+    11px !important;
+
+  line-height:
+    27px !important;
 }
 
 /* =========================================================
@@ -100,26 +162,41 @@ body,
    ========================================================= */
 
 .simple-editor-content {
-  width: 100%;
-  max-width: 960px;
+  width:
+    100%;
 
-  margin: 0 auto;
+  max-width:
+    960px;
 
-  display: flex;
-  flex-direction: column;
-  flex: 1;
+  margin:
+    0 auto;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  flex:
+    1;
 }
 
 .simple-editor-content
   .tiptap.ProseMirror.simple-editor {
-  flex: 1;
+  flex:
+    1;
 
-  width: 100%;
-  min-height: 500px;
+  width:
+    100%;
 
-  padding: 2rem;
+  min-height:
+    500px;
 
-  color: var(--color-text-primary);
+  padding:
+    2rem;
+
+  color:
+    var(--color-text-primary);
 }
 
 /* =========================================================
@@ -128,7 +205,9 @@ body,
 
 .simple-editor {
   blockquote {
-    margin: 1.25rem 0;
+    margin:
+      1.25rem
+      0;
 
     padding:
       0.35rem
@@ -137,40 +216,382 @@ body,
       1rem;
 
     border-left:
-      3px solid
+      3px
+      solid
       var(--color-text-muted);
 
-    color: var(--color-text-secondary);
+    color:
+      var(--color-text-secondary);
 
     p {
-      margin: 0;
+      margin:
+        0;
     }
   }
 }
 
 /* =========================================================
-   SEARCH AND REPLACE
+   SEARCH AND REPLACE - CARD
    ========================================================= */
 
+/*
+ * FIXED:
+ *
+ * O card permanece preso na tela.
+ * Quando o editor rolar para a próxima ocorrência,
+ * somente o conteúdo do editor se move.
+ */
+
 .simple-editor-search-and-replace {
-  position: fixed;
+  position:
+    fixed !important;
 
   top:
     calc(
       var(--tt-toolbar-height) +
-      0.5rem
-    );
+      8px
+    ) !important;
 
-  right: 0.5rem;
+  right:
+    16px !important;
 
-  z-index: 51;
+  left:
+    auto !important;
+
+  z-index:
+    1000 !important;
+
+  width:
+    280px !important;
+
+  max-width:
+    calc(
+      100vw -
+      32px
+    ) !important;
 
   max-height:
     calc(
       100dvh -
       var(--tt-toolbar-height) -
-      1rem
+      24px
     );
+
+  overflow-y:
+    auto;
+
+  border:
+    1px
+    solid
+    var(--color-border-primary) !important;
+
+  border-radius:
+    8px !important;
+
+  background-color:
+    var(--color-background-secondary) !important;
+
+  box-shadow:
+    0
+    12px
+    30px
+    rgba(
+      0,
+      0,
+      0,
+      0.35
+    ) !important;
+}
+
+/* =========================================================
+   SEARCH AND REPLACE - HEADER
+   ========================================================= */
+
+.simple-editor-search-and-replace
+  .tiptap-search-replace-header {
+  min-height:
+    34px !important;
+
+  padding:
+    5px
+    8px !important;
+
+  border-bottom:
+    1px
+    solid
+    var(--color-border-primary);
+}
+
+/* =========================================================
+   SEARCH AND REPLACE - CONTADOR
+   ========================================================= */
+
+.simple-editor-search-and-replace
+  .tiptap-search-replace-count {
+  color:
+    var(--color-text-muted);
+
+  font-size:
+    11px !important;
+}
+
+/* =========================================================
+   SEARCH AND REPLACE - NAVEGAÇÃO
+   ========================================================= */
+
+.simple-editor-search-and-replace
+  .tiptap-search-replace-nav-group {
+  gap:
+    2px !important;
+}
+
+/* =========================================================
+   SEARCH AND REPLACE - INPUTS
+   ========================================================= */
+
+.simple-editor-search-and-replace
+  .tiptap-search-replace-inputs {
+  display:
+    flex !important;
+
+  flex-direction:
+    column !important;
+
+  gap:
+    5px !important;
+
+  padding:
+    7px
+    8px !important;
+}
+
+.simple-editor-search-and-replace
+  [data-field="search-query"],
+.simple-editor-search-and-replace
+  [data-field="replace-query"] {
+  width:
+    100% !important;
+
+  height:
+    30px !important;
+
+  min-height:
+    30px !important;
+
+  padding:
+    0
+    8px !important;
+
+  border:
+    1px
+    solid
+    var(--color-border-primary) !important;
+
+  border-radius:
+    5px !important;
+
+  background-color:
+    var(--color-background) !important;
+
+  color:
+    var(--color-text-primary) !important;
+
+  font-family:
+    inherit;
+
+  font-size:
+    12px !important;
+
+  outline:
+    none !important;
+}
+
+.simple-editor-search-and-replace
+  [data-field="search-query"]:focus,
+.simple-editor-search-and-replace
+  [data-field="replace-query"]:focus {
+  border-color:
+    var(--color-text-muted) !important;
+
+  box-shadow:
+    0
+    0
+    0
+    2px
+    rgba(
+      255,
+      255,
+      255,
+      0.04
+    );
+}
+
+/* =========================================================
+   SEARCH AND REPLACE - OPÇÕES
+   ========================================================= */
+
+.simple-editor-search-and-replace
+  .tiptap-search-replace-options {
+  display:
+    grid !important;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(
+        0,
+        1fr
+      )
+    ) !important;
+
+  gap:
+    3px
+    5px !important;
+
+  padding:
+    3px
+    8px
+    6px !important;
+}
+
+.simple-editor-search-and-replace
+  [data-option] {
+  min-height:
+    26px !important;
+
+  margin:
+    0 !important;
+
+  padding:
+    3px
+    4px !important;
+
+  font-size:
+    11px !important;
+
+  white-space:
+    nowrap;
+}
+
+.simple-editor-search-and-replace
+  [data-option="use-regex"] {
+  grid-column:
+    1 / -1;
+}
+
+/* =========================================================
+   SEARCH AND REPLACE - AÇÕES
+   ========================================================= */
+
+.simple-editor-search-and-replace
+  .tiptap-search-replace-actions {
+  display:
+    flex !important;
+
+  justify-content:
+    flex-end !important;
+
+  gap:
+    4px !important;
+
+  padding:
+    5px
+    8px
+    8px !important;
+
+  border-top:
+    1px
+    solid
+    var(--color-border-primary);
+}
+
+.simple-editor-search-and-replace
+  .tiptap-search-replace-actions
+  button {
+  min-height:
+    28px !important;
+
+  padding:
+    4px
+    8px !important;
+
+  font-size:
+    11px !important;
+}
+
+/* =========================================================
+   SEARCH AND REPLACE - RESULTADOS
+   ========================================================= */
+
+/*
+ * Todas as ocorrências encontradas.
+ */
+
+.simple-editor
+  .find-and-replace-result {
+  border-radius:
+    3px;
+
+  background-color:
+    rgba(
+      234,
+      179,
+      8,
+      0.32
+    ) !important;
+
+  box-shadow:
+    inset
+    0
+    -2px
+    0
+    rgba(
+      234,
+      179,
+      8,
+      0.85
+    );
+}
+
+/*
+ * Ocorrência atualmente selecionada.
+ */
+
+.simple-editor
+  .find-and-replace-result-current {
+  border-radius:
+    3px;
+
+  background-color:
+    rgba(
+      249,
+      115,
+      22,
+      0.5
+    ) !important;
+
+  box-shadow:
+    inset
+    0
+    0
+    0
+    1px
+    rgba(
+      249,
+      115,
+      22,
+      0.95
+    ),
+    inset
+    0
+    -2px
+    0
+    rgba(
+      249,
+      115,
+      22,
+      1
+    ) !important;
 }
 
 /* =========================================================
@@ -179,11 +600,15 @@ body,
 
 .simple-editor {
   .tableWrapper {
-    width: 100%;
+    width:
+      100%;
 
-    margin: 1.5rem 0;
+    margin:
+      1.5rem
+      0;
 
-    overflow-x: auto;
+    overflow-x:
+      auto;
   }
 }
 
@@ -193,39 +618,45 @@ body,
 
 .simple-editor {
   table {
-    width: 100%;
+    width:
+      100%;
 
-    min-width: 100%;
+    min-width:
+      100%;
 
-    margin: 0;
+    margin:
+      0;
 
-    border-collapse: collapse;
+    border-collapse:
+      collapse;
 
-    table-layout: fixed;
+    table-layout:
+      fixed;
   }
 
   th,
   td {
-    position: relative;
+    position:
+      relative;
 
-    min-width: 80px;
+    min-width:
+      80px;
 
     padding:
       10px
       12px;
 
     border:
-      1px solid
+      1px
+      solid
       var(--color-border-primary);
 
-    vertical-align: top;
+    vertical-align:
+      top;
 
-    box-sizing: border-box;
+    box-sizing:
+      border-box;
   }
-
-  /* =========================
-     HEADER
-     ========================= */
 
   th {
     background-color:
@@ -234,14 +665,12 @@ body,
     color:
       var(--color-text-primary);
 
-    font-weight: 600;
+    font-weight:
+      600;
 
-    text-align: left;
+    text-align:
+      left;
   }
-
-  /* =========================
-     NORMAL CELL
-     ========================= */
 
   td {
     background-color:
@@ -251,63 +680,69 @@ body,
       var(--color-text-primary);
   }
 
-  /* =========================
-     CELL CONTENT
-     ========================= */
-
   th p,
   td p {
-    margin: 0;
+    margin:
+      0;
 
-    min-height: 1.5em;
+    min-height:
+      1.5em;
   }
 
-  /* =========================
-     SELECTED CELL
-     ========================= */
-
   .selectedCell {
-    position: relative;
+    position:
+      relative;
   }
 
   .selectedCell::after {
-    content: "";
+    content:
+      "";
 
-    position: absolute;
+    position:
+      absolute;
 
-    inset: 0;
+    inset:
+      0;
 
-    z-index: 2;
+    z-index:
+      2;
 
-    pointer-events: none;
+    pointer-events:
+      none;
 
     background-color:
       var(--color-text-selection);
   }
 
-  /* =========================
-     RESIZE HANDLE
-     ========================= */
-
   .column-resize-handle {
-    position: absolute;
+    position:
+      absolute;
 
-    top: 0;
-    right: -2px;
-    bottom: 0;
+    top:
+      0;
 
-    z-index: 10;
+    right:
+      -2px;
 
-    width: 4px;
+    bottom:
+      0;
 
-    pointer-events: none;
+    z-index:
+      10;
+
+    width:
+      4px;
+
+    pointer-events:
+      none;
 
     background-color:
       var(--color-text-muted);
   }
 
   &.resize-cursor {
-    cursor: col-resize;
+    cursor:
+      col-resize;
   }
 }
 
@@ -334,13 +769,17 @@ body,
 
 .simple-editor {
   a {
-    color: inherit;
+    color:
+      inherit;
 
-    text-decoration: underline;
+    text-decoration:
+      underline;
 
-    text-underline-offset: 2px;
+    text-underline-offset:
+      2px;
 
-    cursor: pointer;
+    cursor:
+      pointer;
   }
 }
 
@@ -355,7 +794,8 @@ body,
       5px;
 
     border:
-      1px solid
+      1px
+      solid
       var(--color-border-primary);
 
     border-radius:
@@ -370,19 +810,25 @@ body,
     font-family:
       var(--font-mono);
 
-    font-size: 0.875em;
+    font-size:
+      0.875em;
   }
 
   pre code {
-    padding: 0;
+    padding:
+      0;
 
-    border: 0;
+    border:
+      0;
 
-    background: transparent;
+    background:
+      transparent;
 
-    color: inherit;
+    color:
+      inherit;
 
-    font-size: inherit;
+    font-size:
+      inherit;
   }
 }
 
@@ -392,16 +838,32 @@ body,
 
 @media screen and (max-width: 480px) {
   .simple-editor-search-and-replace {
-    top: 0.5rem;
-    left: 0.5rem;
-    right: 0.5rem;
+    position:
+      fixed !important;
 
-    width: auto;
+    top:
+      calc(
+        var(--tt-toolbar-height) +
+        6px
+      ) !important;
+
+    left:
+      6px !important;
+
+    right:
+      6px !important;
+
+    width:
+      auto !important;
+
+    max-width:
+      none !important;
 
     max-height:
       calc(
         100dvh -
-        1rem
+        var(--tt-toolbar-height) -
+        12px
       );
   }
 
@@ -415,18 +877,22 @@ body,
 
   .simple-editor {
     .tableWrapper {
-      width: 100%;
+      width:
+        100%;
 
-      overflow-x: auto;
+      overflow-x:
+        auto;
     }
 
     table {
-      min-width: 600px;
+      min-width:
+        600px;
     }
 
     th,
     td {
-      min-width: 120px;
+      min-width:
+        120px;
 
       padding:
         8px

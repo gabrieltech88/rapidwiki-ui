@@ -1,6 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import {
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
+
 import {
     Building2,
+    ChevronLeft,
+    ChevronRight,
     Pencil,
     Plus,
     Search,
@@ -10,66 +17,161 @@ import {
     X,
 } from "lucide-react";
 
-import { getDepartments } from "@/services/departmentService";
-import { getUsers } from "@/services/userService";
+import {
+    createDepartment,
+    getDepartments,
+} from "@/services/departmentService";
 
-import type { Department } from "@/types/Department";
-import type { User } from "@/types/User";
+import {
+    createUser,
+    getUsers,
+    updateUser,
+} from "@/services/userService";
+
+import type {
+    Department,
+} from "@/types/Department";
+
+import type {
+    AdminUser,
+    UserRole,
+} from "@/types/AdminUser";
 
 import styles from "./Admin.module.css";
 
-type AdminTab = "users" | "departments";
+
+type AdminTab =
+    | "users"
+    | "departments";
+
 
 interface UserForm {
     id?: string;
+
     name: string;
     email: string;
-    role: string;
+    password: string;
+
+    role: UserRole;
+
     departmentIds: string[];
 }
+
 
 interface DepartmentForm {
     id?: string;
     name: string;
 }
 
+
 const EMPTY_USER_FORM: UserForm = {
     name: "",
     email: "",
-    role: "",
+    password: "",
+    role: "User",
     departmentIds: [],
 };
+
 
 const EMPTY_DEPARTMENT_FORM: DepartmentForm = {
     name: "",
 };
 
+
 export function Admin() {
-    const [activeTab, setActiveTab] =
-        useState<AdminTab>("users");
+    const [
+        activeTab,
+        setActiveTab,
+    ] = useState<AdminTab>(
+        "users"
+    );
+
 
     const [users, setUsers] =
-        useState<User[]>([]);
+        useState<AdminUser[]>([]);
 
-    const [departments, setDepartments] =
-        useState<Department[]>([]);
 
-    const [loading, setLoading] =
-        useState(true);
+    const [
+        departments,
+        setDepartments,
+    ] = useState<Department[]>([]);
+
+
+    const [
+        loadingUsers,
+        setLoadingUsers,
+    ] = useState(true);
+
+
+    const [
+        loadingDepartments,
+        setLoadingDepartments,
+    ] = useState(true);
+
+
+    const [
+        savingUser,
+        setSavingUser,
+    ] = useState(false);
+
+
+    const [
+        savingDepartment,
+        setSavingDepartment,
+    ] = useState(false);
+
 
     const [search, setSearch] =
         useState("");
 
-    const [userModalOpen, setUserModalOpen] =
-        useState(false);
+
+    const [page, setPage] =
+        useState(1);
+
+
+    const [
+        totalPages,
+        setTotalPages,
+    ] = useState(1);
+
+
+    const [
+        totalItems,
+        setTotalItems,
+    ] = useState(0);
+
+
+    const [
+        userError,
+        setUserError,
+    ] = useState("");
+
+
+    const [
+        departmentError,
+        setDepartmentError,
+    ] = useState("");
+
+
+    const [
+        userModalOpen,
+        setUserModalOpen,
+    ] = useState(false);
+
 
     const [
         departmentModalOpen,
         setDepartmentModalOpen,
     ] = useState(false);
 
-    const [userForm, setUserForm] =
-        useState<UserForm>(EMPTY_USER_FORM);
+
+    const [
+        userForm,
+        setUserForm,
+    ] = useState<UserForm>(
+        EMPTY_USER_FORM
+    );
+
 
     const [
         departmentForm,
@@ -78,53 +180,102 @@ export function Admin() {
         EMPTY_DEPARTMENT_FORM
     );
 
+
     useEffect(() => {
-        loadData();
+        async function loadDepartments() {
+            setLoadingDepartments(true);
+
+            try {
+                const data =
+                    await getDepartments();
+
+                setDepartments(
+                    data ?? []
+                );
+            } finally {
+                setLoadingDepartments(
+                    false
+                );
+            }
+        }
+
+        loadDepartments();
     }, []);
 
-    async function loadData() {
-        setLoading(true);
+
+    useEffect(() => {
+        if (
+            activeTab !==
+            "users"
+        ) {
+            return;
+        }
+
+        const timeout =
+            window.setTimeout(
+                () => {
+                    loadUsers(
+                        page,
+                        search
+                    );
+                },
+                300
+            );
+
+        return () => {
+            window.clearTimeout(
+                timeout
+            );
+        };
+    }, [
+        activeTab,
+        page,
+        search,
+    ]);
+
+
+    async function loadUsers(
+        targetPage = page,
+        targetSearch = search
+    ) {
+        setLoadingUsers(true);
 
         try {
-            const [
-                usersData,
-                departmentsData,
-            ] = await Promise.all([
-                getUsers(),
-                getDepartments(),
-            ]);
+            const result =
+                await getUsers(
+                    targetPage,
+                    targetSearch
+                );
 
-            setUsers(usersData ?? []);
-            setDepartments(
-                departmentsData ?? []
+            setUsers(
+                result.items
+            );
+
+            setTotalPages(
+                result.totalPages
+            );
+
+            setTotalItems(
+                result.totalItems
+            );
+
+            setUserError("");
+        } catch (error) {
+            console.error(
+                "Erro ao carregar usuários:",
+                error
+            );
+
+            setUsers([]);
+
+            setUserError(
+                "Não foi possível carregar os usuários."
             );
         } finally {
-            setLoading(false);
+            setLoadingUsers(false);
         }
     }
 
-    const filteredUsers =
-        useMemo(() => {
-            const term =
-                search
-                    .trim()
-                    .toLowerCase();
-
-            if (!term) {
-                return users;
-            }
-
-            return users.filter((user) => {
-                return (
-                    user.name
-                        ?.toLowerCase()
-                        .includes(term) ||
-                    user.email
-                        ?.toLowerCase()
-                        .includes(term)
-                );
-            });
-        }, [users, search]);
 
     const filteredDepartments =
         useMemo(() => {
@@ -140,7 +291,7 @@ export function Admin() {
             return departments.filter(
                 (department) =>
                     department.name
-                        ?.toLowerCase()
+                        .toLowerCase()
                         .includes(term)
             );
         }, [
@@ -148,177 +299,316 @@ export function Admin() {
             search,
         ]);
 
-    function openCreateUser() {
-        setUserForm(
-            EMPTY_USER_FORM
-        );
 
-        setUserModalOpen(true);
+    function handleSearchChange(
+        value: string
+    ) {
+        setSearch(value);
+
+        if (
+            activeTab ===
+            "users"
+        ) {
+            setPage(1);
+        }
     }
 
-    function openEditUser(
-        user: User
-    ) {
+
+    function openCreateUser() {
         setUserForm({
-            id: user.id,
-            name: user.name ?? "",
-            email: user.email ?? "",
-
-            /*
-             * Ajuste estes campos caso
-             * seu type User tenha outros nomes.
-             */
-            role:
-                user.role ?? "",
-
-            departmentIds:
-                user.departmentIds ?? [],
+            ...EMPTY_USER_FORM,
+            departmentIds: [],
         });
 
+        setUserError("");
+
         setUserModalOpen(true);
     }
+
+
+    function openEditUser(
+        user: AdminUser
+    ) {
+        setUserForm({
+            id:
+                user.id,
+
+            name:
+                user.name,
+
+            email:
+                user.email,
+
+            password:
+                "",
+
+            role:
+                user.role,
+
+            departmentIds:
+                user.departments.map(
+                    (department) =>
+                        department.id
+                ),
+        });
+
+        setUserError("");
+
+        setUserModalOpen(true);
+    }
+
 
     function toggleDepartment(
         departmentId: string
     ) {
-        setUserForm((current) => {
-            const exists =
-                current.departmentIds.includes(
-                    departmentId
-                );
+        setUserForm(
+            (current) => {
+                const exists =
+                    current.departmentIds.includes(
+                        departmentId
+                    );
 
-            return {
-                ...current,
+                return {
+                    ...current,
 
-                departmentIds:
-                    exists
-                        ? current.departmentIds.filter(
-                              (id) =>
-                                  id !==
-                                  departmentId
-                          )
-                        : [
-                              ...current.departmentIds,
-                              departmentId,
-                          ],
-            };
-        });
+                    departmentIds:
+                        exists
+                            ? current.departmentIds.filter(
+                                  (id) =>
+                                      id !==
+                                      departmentId
+                              )
+                            : [
+                                  ...current.departmentIds,
+                                  departmentId,
+                              ],
+                };
+            }
+        );
     }
+
 
     async function handleSaveUser() {
-        /*
-         * Aqui entraremos com:
-         *
-         * createUser(...)
-         * updateUser(...)
-         *
-         * quando conectarmos
-         * com sua API.
-         */
-
-        if (userForm.id) {
-            setUsers((current) =>
-                current.map(
-                    (user) =>
-                        user.id ===
-                        userForm.id
-                            ? {
-                                  ...user,
-                                  name:
-                                      userForm.name,
-                                  email:
-                                      userForm.email,
-                                  role:
-                                      userForm.role,
-                                  departmentIds:
-                                      userForm.departmentIds,
-                              }
-                            : user
-                )
-            );
-        }
-
-        setUserModalOpen(false);
-    }
-
-    async function handleDeleteUser(
-        user: User
-    ) {
-        const confirmed =
-            window.confirm(
-                `Deseja excluir o usuário "${user.name}"?`
+        if (
+            !userForm.name.trim() ||
+            !userForm.email.trim()
+        ) {
+            setUserError(
+                "Preencha nome e e-mail."
             );
 
-        if (!confirmed) {
             return;
         }
 
-        /*
-         * Depois:
-         *
-         * await deleteUser(user.id)
-         */
 
-        setUsers((current) =>
-            current.filter(
-                (item) =>
-                    item.id !== user.id
-            )
+        if (
+            userForm.departmentIds
+                .length === 0
+        ) {
+            setUserError(
+                "Selecione pelo menos um departamento."
+            );
+
+            return;
+        }
+
+
+        if (
+            !userForm.id &&
+            !userForm.password
+        ) {
+            setUserError(
+                "Informe uma senha para o novo usuário."
+            );
+
+            return;
+        }
+
+
+        setSavingUser(true);
+        setUserError("");
+
+
+        try {
+            if (userForm.id) {
+                await updateUser({
+                    id:
+                        userForm.id,
+
+                    name:
+                        userForm.name.trim(),
+
+                    email:
+                        userForm.email.trim(),
+
+                    role:
+                        userForm.role,
+
+                    departmentIds:
+                        userForm.departmentIds,
+                });
+
+
+                await loadUsers(
+                    page,
+                    search
+                );
+            } else {
+                await createUser({
+                    name:
+                        userForm.name.trim(),
+
+                    email:
+                        userForm.email.trim(),
+
+                    password:
+                        userForm.password,
+
+                    role:
+                        userForm.role,
+
+                    departmentIds:
+                        userForm.departmentIds,
+                });
+
+
+                setPage(1);
+
+                await loadUsers(
+                    1,
+                    search
+                );
+            }
+
+
+            setUserModalOpen(
+                false
+            );
+        } catch (error) {
+            console.error(
+                "Erro ao salvar usuário:",
+                error
+            );
+
+            setUserError(
+                "Não foi possível salvar o usuário."
+            );
+        } finally {
+            setSavingUser(false);
+        }
+    }
+
+
+    function handleDeleteUser(
+        user: AdminUser
+    ) {
+        window.alert(
+            `A exclusão de "${user.name}" ainda não foi implementada no backend.`
         );
     }
+
 
     function openCreateDepartment() {
         setDepartmentForm(
             EMPTY_DEPARTMENT_FORM
         );
 
+        setDepartmentError("");
+
         setDepartmentModalOpen(
             true
         );
     }
+
 
     function openEditDepartment(
         department: Department
     ) {
         setDepartmentForm({
-            id: department.id,
+            id:
+                department.id,
+
             name:
                 department.name,
         });
+
+        setDepartmentError("");
 
         setDepartmentModalOpen(
             true
         );
     }
 
+
     async function handleSaveDepartment() {
-        if (
-            !departmentForm.name.trim()
-        ) {
+        const name =
+            departmentForm.name.trim();
+
+
+        if (!name) {
+            setDepartmentError(
+                "Informe o nome do departamento."
+            );
+
             return;
         }
 
-        if (departmentForm.id) {
-            setDepartments(
-                (current) =>
-                    current.map(
-                        (department) =>
-                            department.id ===
-                            departmentForm.id
-                                ? {
-                                      ...department,
-                                      name:
-                                          departmentForm.name,
-                                  }
-                                : department
-                    )
+
+        setSavingDepartment(true);
+
+        setDepartmentError("");
+
+
+        try {
+            if (departmentForm.id) {
+                setDepartments(
+                    (current) =>
+                        current.map(
+                            (department) =>
+                                department.id ===
+                                departmentForm.id
+                                    ? {
+                                          ...department,
+                                          name,
+                                      }
+                                    : department
+                        )
+                );
+            } else {
+                await createDepartment(
+                    name
+                );
+
+
+                const data =
+                    await getDepartments();
+
+
+                setDepartments(
+                    data ?? []
+                );
+            }
+
+
+            setDepartmentModalOpen(
+                false
+            );
+        } catch (error) {
+            console.error(
+                "Erro ao salvar departamento:",
+                error
+            );
+
+            setDepartmentError(
+                "Não foi possível criar o departamento."
+            );
+        } finally {
+            setSavingDepartment(
+                false
             );
         }
-
-        setDepartmentModalOpen(
-            false
-        );
     }
+
 
     async function handleDeleteDepartment(
         department: Department
@@ -328,17 +618,11 @@ export function Admin() {
                 `Deseja excluir o departamento "${department.name}"?`
             );
 
+
         if (!confirmed) {
             return;
         }
 
-        /*
-         * Depois:
-         *
-         * await deleteDepartment(
-         *     department.id
-         * )
-         */
 
         setDepartments(
             (current) =>
@@ -350,17 +634,14 @@ export function Admin() {
         );
     }
 
-    if (loading) {
-        return (
-            <div className={styles.page}>
-                Carregando administração...
-            </div>
-        );
-    }
 
     return (
         <div className={styles.page}>
-            <header className={styles.header}>
+            <header
+                className={
+                    styles.header
+                }
+            >
                 <div>
                     <h1>
                         Administração
@@ -368,27 +649,39 @@ export function Admin() {
 
                     <p>
                         Gerencie usuários,
-                        cargos e departamentos
+                        permissões e departamentos
                         do RapidWiki.
                     </p>
                 </div>
             </header>
 
-            <div className={styles.tabs}>
+
+            <div
+                className={
+                    styles.tabs
+                }
+            >
                 <button
                     type="button"
                     data-active={
-                        activeTab === "users"
+                        activeTab ===
+                        "users"
                     }
                     onClick={() => {
-                        setActiveTab("users");
+                        setActiveTab(
+                            "users"
+                        );
+
                         setSearch("");
+
+                        setPage(1);
                     }}
                 >
                     <Users size={16} />
 
                     Usuários
                 </button>
+
 
                 <button
                     type="button"
@@ -400,6 +693,7 @@ export function Admin() {
                         setActiveTab(
                             "departments"
                         );
+
                         setSearch("");
                     }}
                 >
@@ -411,7 +705,12 @@ export function Admin() {
                 </button>
             </div>
 
-            <div className={styles.toolbar}>
+
+            <div
+                className={
+                    styles.toolbar
+                }
+            >
                 <div
                     className={
                         styles.search
@@ -421,20 +720,22 @@ export function Admin() {
 
                     <input
                         value={search}
-                        onChange={(event) =>
-                            setSearch(
-                                event.target
-                                    .value
+                        onChange={(
+                            event
+                        ) =>
+                            handleSearchChange(
+                                event.target.value
                             )
                         }
                         placeholder={
                             activeTab ===
                             "users"
-                                ? "Buscar usuário..."
+                                ? "Buscar usuário por nome..."
                                 : "Buscar departamento..."
                         }
                     />
                 </div>
+
 
                 {activeTab ===
                 "users" ? (
@@ -470,275 +771,365 @@ export function Admin() {
                 )}
             </div>
 
-            {activeTab === "users" ? (
-                <section
-                    className={
-                        styles.panel
-                    }
-                >
-                    <div
+
+            {activeTab ===
+            "users" ? (
+                <>
+                    <section
                         className={
-                            styles.tableHeader
+                            styles.panel
                         }
                     >
-                        <span>
-                            Usuário
-                        </span>
+                        <div
+                            className={
+                                styles.tableHeader
+                            }
+                        >
+                            <span>
+                                Usuário
+                            </span>
 
-                        <span>
-                            Cargo
-                        </span>
+                            <span>
+                                Permissão
+                            </span>
 
-                        <span>
-                            Departamentos
-                        </span>
+                            <span>
+                                Departamentos
+                            </span>
 
-                        <span />
-                    </div>
+                            <span />
+                        </div>
 
-                    {filteredUsers.map(
-                        (user) => (
+
+                        {loadingUsers ? (
                             <div
-                                key={user.id}
                                 className={
-                                    styles.tableRow
+                                    styles.panelMessage
                                 }
                             >
-                                <div
-                                    className={
-                                        styles.userInfo
-                                    }
-                                >
+                                Carregando usuários...
+                            </div>
+                        ) : users.length >
+                          0 ? (
+                            users.map(
+                                (user) => (
                                     <div
+                                        key={
+                                            user.id
+                                        }
                                         className={
-                                            styles.avatar
+                                            styles.tableRow
                                         }
                                     >
-                                        {user.name
-                                            ?.charAt(
-                                                0
-                                            )
-                                            .toUpperCase()}
-                                    </div>
-
-                                    <div>
-                                        <strong>
-                                            {
-                                                user.name
-                                            }
-                                        </strong>
-
-                                        <span>
-                                            {
-                                                user.email
-                                            }
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <span
-                                    className={
-                                        styles.role
-                                    }
-                                >
-                                    {user.role ||
-                                        "Sem cargo"}
-                                </span>
-
-                                <div
-                                    className={
-                                        styles.departments
-                                    }
-                                >
-                                    {(
-                                        user.departmentIds ??
-                                        []
-                                    ).length >
-                                    0 ? (
-                                        (
-                                            user.departmentIds ??
-                                            []
-                                        ).map(
-                                            (
-                                                departmentId
-                                            ) => {
-                                                const department =
-                                                    departments.find(
-                                                        (
-                                                            item
-                                                        ) =>
-                                                            item.id ===
-                                                            departmentId
-                                                    );
-
-                                                if (
-                                                    !department
-                                                ) {
-                                                    return null;
-                                                }
-
-                                                return (
-                                                    <span
-                                                        key={
-                                                            department.id
-                                                        }
-                                                    >
-                                                        {
-                                                            department.name
-                                                        }
-                                                    </span>
-                                                );
-                                            }
-                                        )
-                                    ) : (
-                                        <span
+                                        <div
                                             className={
-                                                styles.empty
+                                                styles.userInfo
                                             }
                                         >
-                                            Nenhum
-                                        </span>
-                                    )}
-                                </div>
+                                            <div
+                                                className={
+                                                    styles.avatar
+                                                }
+                                            >
+                                                {user.name
+                                                    .charAt(
+                                                        0
+                                                    )
+                                                    .toUpperCase()}
+                                            </div>
 
-                                <div
-                                    className={
-                                        styles.actions
+                                            <div>
+                                                <strong>
+                                                    {
+                                                        user.name
+                                                    }
+                                                </strong>
+
+                                                <span>
+                                                    {
+                                                        user.email
+                                                    }
+                                                </span>
+                                            </div>
+                                        </div>
+
+
+                                        <span
+                                            className={
+                                                styles.role
+                                            }
+                                        >
+                                            {
+                                                user.role
+                                            }
+                                        </span>
+
+
+                                        <div
+                                            className={
+                                                styles.departments
+                                            }
+                                        >
+                                            {user
+                                                .departments
+                                                .length >
+                                            0 ? (
+                                                user.departments.map(
+                                                    (
+                                                        department
+                                                    ) => (
+                                                        <span
+                                                            key={
+                                                                department.id
+                                                            }
+                                                        >
+                                                            {
+                                                                department.name
+                                                            }
+                                                        </span>
+                                                    )
+                                                )
+                                            ) : (
+                                                <span
+                                                    className={
+                                                        styles.empty
+                                                    }
+                                                >
+                                                    Nenhum
+                                                </span>
+                                            )}
+                                        </div>
+
+
+                                        <div
+                                            className={
+                                                styles.actions
+                                            }
+                                        >
+                                            <button
+                                                type="button"
+                                                title="Editar usuário"
+                                                onClick={() =>
+                                                    openEditUser(
+                                                        user
+                                                    )
+                                                }
+                                            >
+                                                <Pencil
+                                                    size={
+                                                        14
+                                                    }
+                                                />
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                title="Excluir usuário"
+                                                onClick={() =>
+                                                    handleDeleteUser(
+                                                        user
+                                                    )
+                                                }
+                                            >
+                                                <Trash2
+                                                    size={
+                                                        14
+                                                    }
+                                                />
+                                            </button>
+                                        </div>
+                                    </div>
+                                )
+                            )
+                        ) : (
+                            <div
+                                className={
+                                    styles.panelMessage
+                                }
+                            >
+                                Nenhum usuário encontrado.
+                            </div>
+                        )}
+                    </section>
+
+
+                    {!loadingUsers &&
+                        totalItems >
+                            0 && (
+                            <div
+                                className={
+                                    styles.pagination
+                                }
+                            >
+                                <button
+                                    type="button"
+                                    disabled={
+                                        page <=
+                                        1
+                                    }
+                                    onClick={() =>
+                                        setPage(
+                                            (
+                                                current
+                                            ) =>
+                                                current -
+                                                1
+                                        )
                                     }
                                 >
-                                    <button
-                                        type="button"
-                                        title="Editar usuário"
-                                        onClick={() =>
-                                            openEditUser(
-                                                user
-                                            )
+                                    <ChevronLeft
+                                        size={
+                                            15
                                         }
-                                    >
-                                        <Pencil
-                                            size={
-                                                14
-                                            }
-                                        />
-                                    </button>
+                                    />
 
-                                    <button
-                                        type="button"
-                                        title="Excluir usuário"
-                                        onClick={() =>
-                                            handleDeleteUser(
-                                                user
-                                            )
+                                    Anterior
+                                </button>
+
+                                <span>
+                                    Página{" "}
+                                    {page} de{" "}
+                                    {Math.max(
+                                        totalPages,
+                                        1
+                                    )}
+                                </span>
+
+                                <button
+                                    type="button"
+                                    disabled={
+                                        page >=
+                                        totalPages
+                                    }
+                                    onClick={() =>
+                                        setPage(
+                                            (
+                                                current
+                                            ) =>
+                                                current +
+                                                1
+                                        )
+                                    }
+                                >
+                                    Próxima
+
+                                    <ChevronRight
+                                        size={
+                                            15
                                         }
-                                    >
-                                        <Trash2
-                                            size={
-                                                14
-                                            }
-                                        />
-                                    </button>
-                                </div>
+                                    />
+                                </button>
                             </div>
-                        )
-                    )}
-                </section>
+                        )}
+                </>
             ) : (
                 <section
                     className={
                         styles.departmentGrid
                     }
                 >
-                    {filteredDepartments.map(
-                        (
-                            department
-                        ) => (
-                            <article
-                                key={
-                                    department.id
-                                }
-                                className={
-                                    styles.departmentCard
-                                }
-                            >
-                                <div
+                    {loadingDepartments ? (
+                        <div>
+                            Carregando departamentos...
+                        </div>
+                    ) : (
+                        filteredDepartments.map(
+                            (
+                                department
+                            ) => (
+                                <article
+                                    key={
+                                        department.id
+                                    }
                                     className={
-                                        styles.departmentIcon
+                                        styles.departmentCard
                                     }
                                 >
-                                    <Building2
-                                        size={
-                                            18
-                                        }
-                                    />
-                                </div>
-
-                                <div
-                                    className={
-                                        styles.departmentContent
-                                    }
-                                >
-                                    <strong>
-                                        {
-                                            department.name
-                                        }
-                                    </strong>
-
-                                    <span>
-                                        Departamento
-                                    </span>
-                                </div>
-
-                                <div
-                                    className={
-                                        styles.actions
-                                    }
-                                >
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            openEditDepartment(
-                                                department
-                                            )
+                                    <div
+                                        className={
+                                            styles.departmentIcon
                                         }
                                     >
-                                        <Pencil
+                                        <Building2
                                             size={
-                                                14
+                                                18
                                             }
                                         />
-                                    </button>
+                                    </div>
 
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            handleDeleteDepartment(
-                                                department
-                                            )
+                                    <div
+                                        className={
+                                            styles.departmentContent
                                         }
                                     >
-                                        <Trash2
-                                            size={
-                                                14
+                                        <strong>
+                                            {
+                                                department.name
                                             }
-                                        />
-                                    </button>
-                                </div>
-                            </article>
+                                        </strong>
+
+                                        <span>
+                                            Departamento
+                                        </span>
+                                    </div>
+
+                                    <div
+                                        className={
+                                            styles.actions
+                                        }
+                                    >
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                openEditDepartment(
+                                                    department
+                                                )
+                                            }
+                                        >
+                                            <Pencil
+                                                size={
+                                                    14
+                                                }
+                                            />
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                handleDeleteDepartment(
+                                                    department
+                                                )
+                                            }
+                                        >
+                                            <Trash2
+                                                size={
+                                                    14
+                                                }
+                                            />
+                                        </button>
+                                    </div>
+                                </article>
+                            )
                         )
                     )}
                 </section>
             )}
+
 
             {userModalOpen && (
                 <div
                     className={
                         styles.modalBackdrop
                     }
-                    onMouseDown={() =>
-                        setUserModalOpen(
-                            false
-                        )
-                    }
+                    onMouseDown={() => {
+                        if (
+                            !savingUser
+                        ) {
+                            setUserModalOpen(
+                                false
+                            );
+                        }
+                    }}
                 >
                     <div
                         className={
@@ -764,13 +1155,17 @@ export function Admin() {
 
                                 <p>
                                     Configure os
-                                    dados e acessos
+                                    dados, permissão
+                                    e departamentos
                                     do usuário.
                                 </p>
                             </div>
 
                             <button
                                 type="button"
+                                disabled={
+                                    savingUser
+                                }
                                 onClick={() =>
                                     setUserModalOpen(
                                         false
@@ -784,6 +1179,7 @@ export function Admin() {
                                 />
                             </button>
                         </div>
+
 
                         <div
                             className={
@@ -805,6 +1201,7 @@ export function Admin() {
                                                 current
                                             ) => ({
                                                 ...current,
+
                                                 name:
                                                     event
                                                         .target
@@ -815,6 +1212,7 @@ export function Admin() {
                                     placeholder="Nome do usuário"
                                 />
                             </label>
+
 
                             <label>
                                 E-mail
@@ -832,6 +1230,7 @@ export function Admin() {
                                                 current
                                             ) => ({
                                                 ...current,
+
                                                 email:
                                                     event
                                                         .target
@@ -843,10 +1242,42 @@ export function Admin() {
                                 />
                             </label>
 
-                            <label>
-                                Cargo
 
-                                <input
+                            {!userForm.id && (
+                                <label>
+                                    Senha
+
+                                    <input
+                                        type="password"
+                                        value={
+                                            userForm.password
+                                        }
+                                        onChange={(
+                                            event
+                                        ) =>
+                                            setUserForm(
+                                                (
+                                                    current
+                                                ) => ({
+                                                    ...current,
+
+                                                    password:
+                                                        event
+                                                            .target
+                                                            .value,
+                                                })
+                                            )
+                                        }
+                                        placeholder="Senha inicial"
+                                    />
+                                </label>
+                            )}
+
+
+                            <label>
+                                Permissão
+
+                                <select
                                     value={
                                         userForm.role
                                     }
@@ -858,16 +1289,29 @@ export function Admin() {
                                                 current
                                             ) => ({
                                                 ...current,
+
                                                 role:
                                                     event
                                                         .target
-                                                        .value,
+                                                        .value as UserRole,
                                             })
                                         )
                                     }
-                                    placeholder="Ex: Suporte N2"
-                                />
+                                >
+                                    <option value="User">
+                                        User
+                                    </option>
+
+                                    <option value="Editor">
+                                        Editor
+                                    </option>
+
+                                    <option value="Admin">
+                                        Admin
+                                    </option>
+                                </select>
                             </label>
+
 
                             <div
                                 className={
@@ -921,7 +1365,21 @@ export function Admin() {
                                     )}
                                 </div>
                             </div>
+
+
+                            {userError && (
+                                <div
+                                    className={
+                                        styles.error
+                                    }
+                                >
+                                    {
+                                        userError
+                                    }
+                                </div>
+                            )}
                         </div>
+
 
                         <div
                             className={
@@ -932,6 +1390,9 @@ export function Admin() {
                                 type="button"
                                 className={
                                     styles.secondaryButton
+                                }
+                                disabled={
+                                    savingUser
                                 }
                                 onClick={() =>
                                     setUserModalOpen(
@@ -947,27 +1408,39 @@ export function Admin() {
                                 className={
                                     styles.primaryButton
                                 }
+                                disabled={
+                                    savingUser
+                                }
                                 onClick={
                                     handleSaveUser
                                 }
                             >
-                                Salvar usuário
+                                {savingUser
+                                    ? "Salvando..."
+                                    : userForm.id
+                                      ? "Salvar alterações"
+                                      : "Criar usuário"}
                             </button>
                         </div>
                     </div>
                 </div>
             )}
 
+
             {departmentModalOpen && (
                 <div
                     className={
                         styles.modalBackdrop
                     }
-                    onMouseDown={() =>
-                        setDepartmentModalOpen(
-                            false
-                        )
-                    }
+                    onMouseDown={() => {
+                        if (
+                            !savingDepartment
+                        ) {
+                            setDepartmentModalOpen(
+                                false
+                            );
+                        }
+                    }}
                 >
                     <div
                         className={
@@ -994,6 +1467,9 @@ export function Admin() {
 
                             <button
                                 type="button"
+                                disabled={
+                                    savingDepartment
+                                }
                                 onClick={() =>
                                     setDepartmentModalOpen(
                                         false
@@ -1008,6 +1484,7 @@ export function Admin() {
                             </button>
                         </div>
 
+
                         <div
                             className={
                                 styles.form
@@ -1020,6 +1497,9 @@ export function Admin() {
                                     value={
                                         departmentForm.name
                                     }
+                                    disabled={
+                                        savingDepartment
+                                    }
                                     onChange={(
                                         event
                                     ) =>
@@ -1028,6 +1508,7 @@ export function Admin() {
                                                 current
                                             ) => ({
                                                 ...current,
+
                                                 name:
                                                     event
                                                         .target
@@ -1038,7 +1519,21 @@ export function Admin() {
                                     placeholder="Ex: Suporte"
                                 />
                             </label>
+
+
+                            {departmentError && (
+                                <div
+                                    className={
+                                        styles.error
+                                    }
+                                >
+                                    {
+                                        departmentError
+                                    }
+                                </div>
+                            )}
                         </div>
+
 
                         <div
                             className={
@@ -1049,6 +1544,9 @@ export function Admin() {
                                 type="button"
                                 className={
                                     styles.secondaryButton
+                                }
+                                disabled={
+                                    savingDepartment
                                 }
                                 onClick={() =>
                                     setDepartmentModalOpen(
@@ -1064,11 +1562,18 @@ export function Admin() {
                                 className={
                                     styles.primaryButton
                                 }
+                                disabled={
+                                    savingDepartment
+                                }
                                 onClick={
                                     handleSaveDepartment
                                 }
                             >
-                                Salvar
+                                {savingDepartment
+                                    ? "Salvando..."
+                                    : departmentForm.id
+                                      ? "Salvar alterações"
+                                      : "Criar departamento"}
                             </button>
                         </div>
                     </div>

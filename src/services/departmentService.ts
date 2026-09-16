@@ -35,3 +35,15 @@ export async function getDepartmentById(
             department.id === departmentId
     );
 }
+
+
+export async function createDepartment(
+    name: string
+): Promise<void> {
+    await api.post(
+        "/departamento/create_departamento",
+        {
+            nome: name,
+        }
+    );
+}

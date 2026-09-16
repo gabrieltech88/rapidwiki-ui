@@ -49,6 +49,7 @@ import { Selection } from "@tiptap/extensions"
 // --- Lucide ---
 import {
   Columns3,
+  Pilcrow,
   Rows3,
   Table2,
   Trash2,
@@ -101,12 +102,6 @@ import {
   ColorHighlightPopoverButton,
 } from "@/components/tiptap-ui/color-highlight-popover"
 
-import {
-  LinkPopover,
-  LinkContent,
-  LinkButton,
-} from "@/components/tiptap-ui/link-popover"
-
 import { MarkButton } from "@/components/tiptap-ui/mark-button"
 
 import { TextAlignButton } from "@/components/tiptap-ui/text-align-button"
@@ -122,8 +117,6 @@ import {
 import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon"
 
 import { HighlighterIcon } from "@/components/tiptap-icons/highlighter-icon"
-
-import { LinkIcon } from "@/components/tiptap-icons/link-icon"
 
 // --- Hooks ---
 import { useIsBreakpoint } from "@/hooks/use-is-breakpoint"
@@ -349,7 +342,6 @@ const TextColorPicker = ({
                 key={item.name}
                 type="button"
                 title={item.name}
-
                 onPointerDown={(
                   event
                 ) => {
@@ -359,30 +351,21 @@ const TextColorPicker = ({
                     item.color
                   )
                 }}
-
                 style={{
                   width: "34px",
                   height: "34px",
-
                   display: "flex",
-
                   alignItems:
                     "center",
-
                   justifyContent:
                     "center",
-
                   padding: 0,
-
                   borderRadius:
                     "6px",
-
                   border:
                     "1px solid rgba(128, 128, 128, 0.3)",
-
                   background:
                     "transparent",
-
                   cursor:
                     "pointer",
                 }}
@@ -392,13 +375,10 @@ const TextColorPicker = ({
                     style={{
                       width:
                         "20px",
-
                       height:
                         "20px",
-
                       borderRadius:
                         "50%",
-
                       backgroundColor:
                         item.color,
                     }}
@@ -408,7 +388,6 @@ const TextColorPicker = ({
                     style={{
                       fontSize:
                         "16px",
-
                       fontWeight:
                         700,
                     }}
@@ -468,38 +447,28 @@ const FontSizePicker = ({
       defaultValue=""
       title="Tamanho da fonte"
       aria-label="Tamanho da fonte"
-
       onChange={
         handleChange
       }
-
       style={{
-        height: "32px",
-        minWidth: "90px",
-
+        height: "27px",
+        minWidth: "72px",
         padding:
-          "0 8px",
-
+          "0 4px",
         borderRadius:
-          "6px",
-
+          "5px",
         border:
           "1px solid rgba(255, 255, 255, 0.12)",
-
         backgroundColor:
           "#161616",
-
         color:
           "#f5f5f5",
-
         colorScheme:
           "dark",
-
         cursor:
           "pointer",
-
         fontSize:
-          "13px",
+          "11px",
       }}
     >
       <option
@@ -550,36 +519,23 @@ const FontSizePicker = ({
 
 const tableMenuItemStyle: CSSProperties = {
   width: "100%",
-
   minHeight: "34px",
-
   display: "flex",
-
   alignItems: "center",
-
   gap: "8px",
-
   padding: "7px 10px",
-
   border: "none",
-
   borderRadius: "5px",
-
   background:
     "transparent",
-
   color:
     "var(--color-text-primary)",
-
   textAlign:
     "left",
-
   cursor:
     "pointer",
-
   fontSize:
     "13px",
-
   fontFamily:
     "inherit",
 }
@@ -587,31 +543,23 @@ const tableMenuItemStyle: CSSProperties = {
 const tableMenuTitleStyle: CSSProperties = {
   padding:
     "5px 10px",
-
   color:
     "var(--color-text-muted)",
-
   fontSize:
     "10px",
-
   fontWeight:
     600,
-
   textTransform:
     "uppercase",
-
   letterSpacing:
     "0.06em",
 }
 
 const tableSeparatorStyle: CSSProperties = {
   width: "100%",
-
   height: "1px",
-
   margin:
     "4px 0",
-
   background:
     "var(--color-border-primary)",
 }
@@ -686,31 +634,21 @@ const TableMenu = ({
           style={{
             width:
               "230px",
-
             display:
               "flex",
-
             flexDirection:
               "column",
-
             gap:
               "2px",
-
             padding:
               "4px",
           }}
         >
-          {/* =====================
-              CRIAR TABELA
-              ===================== */}
-
           <button
             type="button"
-
             style={
               tableMenuItemStyle
             }
-
             onClick={() =>
               runCommand(
                 () => {
@@ -719,9 +657,7 @@ const TableMenu = ({
                     .focus()
                     .insertTable({
                       rows: 3,
-
                       cols: 3,
-
                       withHeaderRow:
                         true,
                     })
@@ -743,10 +679,6 @@ const TableMenu = ({
             }
           />
 
-          {/* =====================
-              COLUNAS
-              ===================== */}
-
           <div
             style={
               tableMenuTitleStyle
@@ -757,25 +689,20 @@ const TableMenu = ({
 
           <button
             type="button"
-
             disabled={
               !isInsideTable
             }
-
             style={{
               ...tableMenuItemStyle,
-
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
-
               cursor:
                 isInsideTable
                   ? "pointer"
                   : "not-allowed",
             }}
-
             onClick={() =>
               runCommand(
                 () => {
@@ -797,25 +724,20 @@ const TableMenu = ({
 
           <button
             type="button"
-
             disabled={
               !isInsideTable
             }
-
             style={{
               ...tableMenuItemStyle,
-
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
-
               cursor:
                 isInsideTable
                   ? "pointer"
                   : "not-allowed",
             }}
-
             onClick={() =>
               runCommand(
                 () => {
@@ -837,25 +759,20 @@ const TableMenu = ({
 
           <button
             type="button"
-
             disabled={
               !isInsideTable
             }
-
             style={{
               ...tableMenuItemStyle,
-
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
-
               cursor:
                 isInsideTable
                   ? "pointer"
                   : "not-allowed",
             }}
-
             onClick={() =>
               runCommand(
                 () => {
@@ -881,10 +798,6 @@ const TableMenu = ({
             }
           />
 
-          {/* =====================
-              LINHAS
-              ===================== */}
-
           <div
             style={
               tableMenuTitleStyle
@@ -895,25 +808,20 @@ const TableMenu = ({
 
           <button
             type="button"
-
             disabled={
               !isInsideTable
             }
-
             style={{
               ...tableMenuItemStyle,
-
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
-
               cursor:
                 isInsideTable
                   ? "pointer"
                   : "not-allowed",
             }}
-
             onClick={() =>
               runCommand(
                 () => {
@@ -935,25 +843,20 @@ const TableMenu = ({
 
           <button
             type="button"
-
             disabled={
               !isInsideTable
             }
-
             style={{
               ...tableMenuItemStyle,
-
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
-
               cursor:
                 isInsideTable
                   ? "pointer"
                   : "not-allowed",
             }}
-
             onClick={() =>
               runCommand(
                 () => {
@@ -975,25 +878,20 @@ const TableMenu = ({
 
           <button
             type="button"
-
             disabled={
               !isInsideTable
             }
-
             style={{
               ...tableMenuItemStyle,
-
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
-
               cursor:
                 isInsideTable
                   ? "pointer"
                   : "not-allowed",
             }}
-
             onClick={() =>
               runCommand(
                 () => {
@@ -1019,10 +917,6 @@ const TableMenu = ({
             }
           />
 
-          {/* =====================
-              CÉLULAS
-              ===================== */}
-
           <div
             style={
               tableMenuTitleStyle
@@ -1033,25 +927,20 @@ const TableMenu = ({
 
           <button
             type="button"
-
             disabled={
               !isInsideTable
             }
-
             style={{
               ...tableMenuItemStyle,
-
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
-
               cursor:
                 isInsideTable
                   ? "pointer"
                   : "not-allowed",
             }}
-
             onClick={() =>
               runCommand(
                 () => {
@@ -1069,25 +958,20 @@ const TableMenu = ({
 
           <button
             type="button"
-
             disabled={
               !isInsideTable
             }
-
             style={{
               ...tableMenuItemStyle,
-
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
-
               cursor:
                 isInsideTable
                   ? "pointer"
                   : "not-allowed",
             }}
-
             onClick={() =>
               runCommand(
                 () => {
@@ -1105,25 +989,20 @@ const TableMenu = ({
 
           <button
             type="button"
-
             disabled={
               !isInsideTable
             }
-
             style={{
               ...tableMenuItemStyle,
-
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
-
               cursor:
                 isInsideTable
                   ? "pointer"
                   : "not-allowed",
             }}
-
             onClick={() =>
               runCommand(
                 () => {
@@ -1145,34 +1024,24 @@ const TableMenu = ({
             }
           />
 
-          {/* =====================
-              EXCLUIR TABELA
-              ===================== */}
-
           <button
             type="button"
-
             disabled={
               !isInsideTable
             }
-
             style={{
               ...tableMenuItemStyle,
-
               color:
                 "#ef4444",
-
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
-
               cursor:
                 isInsideTable
                   ? "pointer"
                   : "not-allowed",
             }}
-
             onClick={() =>
               runCommand(
                 () => {
@@ -1204,7 +1073,6 @@ const TableMenu = ({
 const MainToolbarContent = ({
   editor,
   onHighlighterClick,
-  onLinkClick,
   onSearchAndReplaceClick,
   isSearchAndReplaceOpen,
   searchAndReplaceButtonRef,
@@ -1213,9 +1081,6 @@ const MainToolbarContent = ({
   editor: Editor | null
 
   onHighlighterClick:
-    () => void
-
-  onLinkClick:
     () => void
 
   onSearchAndReplaceClick:
@@ -1247,9 +1112,34 @@ const MainToolbarContent = ({
       <ToolbarSeparator />
 
       <ToolbarGroup>
+        <Button
+          type="button"
+          variant="ghost"
+          title="Texto normal"
+          aria-label="Texto normal"
+          data-active-state={
+            editor?.isActive(
+              "paragraph"
+            )
+              ? "on"
+              : "off"
+          }
+          disabled={!editor}
+          onClick={() =>
+            editor
+              ?.chain()
+              .focus()
+              .setParagraph()
+              .run()
+          }
+        >
+          <Pilcrow
+            size={16}
+          />
+        </Button>
+
         <HeadingDropdownMenu
           modal={false}
-
           levels={[
             1,
             2,
@@ -1260,7 +1150,6 @@ const MainToolbarContent = ({
 
         <ListDropdownMenu
           modal={false}
-
           types={[
             "bulletList",
             "orderedList",
@@ -1308,16 +1197,6 @@ const MainToolbarContent = ({
           <ColorHighlightPopoverButton
             onClick={
               onHighlighterClick
-            }
-          />
-        )}
-
-        {!isMobile ? (
-          <LinkPopover />
-        ) : (
-          <LinkButton
-            onClick={
-              onLinkClick
             }
           />
         )}
@@ -1386,17 +1265,14 @@ const MainToolbarContent = ({
           ref={
             searchAndReplaceButtonRef
           }
-
           aria-expanded={
             isSearchAndReplaceOpen
           }
-
           data-active-state={
             isSearchAndReplaceOpen
               ? "on"
               : "off"
           }
-
           onClick={
             onSearchAndReplaceClick
           }
@@ -1412,14 +1288,9 @@ const MainToolbarContent = ({
 
 const MobileToolbarContent = ({
   editor,
-  type,
   onBack,
 }: {
   editor: Editor | null
-
-  type:
-    | "highlighter"
-    | "link"
 
   onBack:
     () => void
@@ -1429,29 +1300,21 @@ const MobileToolbarContent = ({
       <ToolbarGroup>
         <Button
           variant="ghost"
-          onClick={onBack}
+          onClick={
+            onBack
+          }
         >
           <ArrowLeftIcon className="tiptap-button-icon" />
 
-          {type ===
-          "highlighter" ? (
-            <HighlighterIcon className="tiptap-button-icon" />
-          ) : (
-            <LinkIcon className="tiptap-button-icon" />
-          )}
+          <HighlighterIcon className="tiptap-button-icon" />
         </Button>
       </ToolbarGroup>
 
       <ToolbarSeparator />
 
-      {type ===
-      "highlighter" ? (
-        <ColorHighlightPopoverContent
-          editor={editor}
-        />
-      ) : (
-        <LinkContent />
-      )}
+      <ColorHighlightPopoverContent
+        editor={editor}
+      />
     </>
   )
 }
@@ -1470,7 +1333,6 @@ interface SimpleEditorProps {
 type MobileView =
   | "main"
   | "highlighter"
-  | "link"
 
 export function SimpleEditor({
   value,
@@ -1554,10 +1416,6 @@ export function SimpleEditor({
         }),
 
         TextStyleKit,
-
-        /* =========================
-           TABELA
-           ========================= */
 
         TableKit.configure({
           table: {
@@ -1712,9 +1570,6 @@ export function SimpleEditor({
         value
       )
 
-    /*
-     * JSON novo
-     */
     if (jsonContent) {
       const currentJson =
         JSON.stringify(
@@ -1742,9 +1597,6 @@ export function SimpleEditor({
       return
     }
 
-    /*
-     * Markdown legado
-     */
     const currentMarkdown =
       editor.getMarkdown()
 
@@ -1849,7 +1701,6 @@ export function SimpleEditor({
           ref={
             toolbarRef
           }
-
           style={{
             ...(isMobile
               ? {
@@ -1868,31 +1719,20 @@ export function SimpleEditor({
               editor={
                 editor
               }
-
               onHighlighterClick={() =>
                 setMobileView(
                   "highlighter"
                 )
               }
-
-              onLinkClick={() =>
-                setMobileView(
-                  "link"
-                )
-              }
-
               onSearchAndReplaceClick={
                 toggleSearchAndReplace
               }
-
               isSearchAndReplaceOpen={
                 isSearchAndReplaceOpen
               }
-
               searchAndReplaceButtonRef={
                 searchAndReplaceButtonRef
               }
-
               isMobile={
                 isMobile
               }
@@ -1902,14 +1742,6 @@ export function SimpleEditor({
               editor={
                 editor
               }
-
-              type={
-                toolbarView ===
-                  "highlighter"
-                  ? "highlighter"
-                  : "link"
-              }
-
               onBack={() =>
                 setMobileView(
                   "main"
@@ -1921,19 +1753,15 @@ export function SimpleEditor({
 
         <SearchAndReplace
           className="simple-editor-search-and-replace"
-
           open={
             isSearchAndReplaceOpen
           }
-
           onOpen={
             openSearchAndReplace
           }
-
           onClose={
             closeSearchAndReplace
           }
-
           scrollIntoViewOptions={
             SEARCH_AND_REPLACE_SCROLL_OPTIONS
           }
@@ -1943,9 +1771,7 @@ export function SimpleEditor({
           editor={
             editor
           }
-
           role="presentation"
-
           className="simple-editor-content"
         />
       </EditorContext.Provider>
