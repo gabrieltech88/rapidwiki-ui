@@ -71,3 +71,11 @@ kbd {
 [data-radix-popper-content-wrapper] {
     z-index: 1000 !important;
 }
+
+@media (max-width: 768px) {
+    input,
+    textarea,
+    select {
+        font-size: 16px;
+    }
+}

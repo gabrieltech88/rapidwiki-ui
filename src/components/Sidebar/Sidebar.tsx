@@ -17,18 +17,15 @@ import {
 import { ThemeToggle } from "@/components/ThemeToggle/ThemeToggle";
 import { getDepartments } from "@/services/departmentService";
 import { useAuth } from "@/hooks/useAuth";
-import { useTheme } from "@/contexts/ThemeContext";
 
 import type { Department } from "@/types/Department";
 
 import styles from "./Sidebar.module.css";
 
-
 interface SidebarProps {
     isOpen: boolean;
     onClose: () => void;
 }
-
 
 export function Sidebar({
     isOpen,
@@ -42,8 +39,6 @@ export function Sidebar({
         hasRole,
     } = useAuth();
 
-    const { theme } = useTheme();
-
     const [departments, setDepartments] = useState<Department[]>([]);
 
     const canCreateProcedure =
@@ -56,12 +51,6 @@ export function Sidebar({
 
     const canAccessAdmin =
         hasRole("Admin");
-
-    const logo =
-        theme === "dark"
-            ? "/favicon.png"
-            : "/favicon.png";
-
 
     useEffect(() => {
         let isMounted = true;
@@ -92,7 +81,6 @@ export function Sidebar({
         };
     }, []);
 
-
     async function handleLogout() {
         await logout();
 
@@ -106,7 +94,6 @@ export function Sidebar({
         );
     }
 
-
     return (
         <aside
             className={`${styles.sidebar} ${
@@ -119,7 +106,7 @@ export function Sidebar({
                 <div className={styles.header}>
                     <div className={styles.brand}>
                         <img
-                            src={logo}
+                            src="/favicon.png"
                             alt="RapidWiki"
                             className={styles.logo}
                         />
