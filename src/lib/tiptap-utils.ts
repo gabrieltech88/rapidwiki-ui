@@ -1,3 +1,4 @@
+import { api } from "@/api/api"
 import type { Node as PMNode } from "@tiptap/pm/model"
 import type { Transaction } from "@tiptap/pm/state"
 import { clsx, type ClassValue } from "clsx"
@@ -370,14 +371,21 @@ export function selectionWithinConvertibleTypes(
  * @param abortSignal Optional AbortSignal for cancelling the upload
  * @returns Promise resolving to the URL of the uploaded image
  */
+interface UploadImageResponse {
+  url: string
+}
+
 export const handleImageUpload = async (
   file: File,
   onProgress?: (event: { progress: number }) => void,
   abortSignal?: AbortSignal
 ): Promise<string> => {
-  // Validate file
   if (!file) {
     throw new Error("No file provided")
+  }
+
+  if (!file.type.startsWith("image/")) {
+    throw new Error("The selected file is not an image")
   }
 
   if (file.size > MAX_FILE_SIZE) {
@@ -386,17 +394,38 @@ export const handleImageUpload = async (
     )
   }
 
-  // For demo/testing: Simulate upload progress. In production, replace the following code
-  // with your own upload implementation.
-  for (let progress = 0; progress <= 100; progress += 10) {
-    if (abortSignal?.aborted) {
-      throw new Error("Upload cancelled")
-    }
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    onProgress?.({ progress })
+  if (abortSignal?.aborted) {
+    throw new Error("Upload cancelled")
   }
 
-  return "/images/tiptap-ui-placeholder-image.jpg"
+  const formData = new FormData()
+  formData.append("file", file)
+
+  onProgress?.({ progress: 0 })
+
+  const response = await api.post<UploadImageResponse>(
+    "/arquivo/upload_image",
+    formData,
+    {
+      signal: abortSignal,
+
+      onUploadProgress: (progressEvent) => {
+        if (!progressEvent.total) {
+          return
+        }
+
+        const progress = Math.round(
+          (progressEvent.loaded / progressEvent.total) * 100
+        )
+
+        onProgress?.({ progress })
+      },
+    }
+  )
+
+  onProgress?.({ progress: 100 })
+
+  return response.data.url
 }
 
 type ProtocolOptions = {

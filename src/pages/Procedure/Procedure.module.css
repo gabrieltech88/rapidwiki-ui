@@ -275,6 +275,58 @@
 
 
 /* =========================
+   Header actions
+   ========================= */
+
+.actions {
+    display: flex;
+    align-items: center;
+
+    flex-shrink: 0;
+
+    gap: 8px;
+}
+
+.deleteButton {
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 7px 10px;
+
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-sm);
+
+    background-color: transparent;
+
+    color: #ef4444;
+
+    cursor: pointer;
+
+    font: inherit;
+    font-size: 0.8rem;
+
+    transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        color 150ms ease;
+}
+
+.deleteButton:hover:not(:disabled) {
+    border-color: rgba(239, 68, 68, 0.5);
+
+    background-color: rgba(239, 68, 68, 0.08);
+}
+
+.deleteButton:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.55;
+}
+
+
+/* =========================
    Divider
    ========================= */
 
@@ -671,8 +723,13 @@
         font-size: 1.8rem;
     }
 
-    .editButton {
-        align-self: flex-start;
+    .actions {
+        width: 100%;
+    }
+
+    .editButton,
+    .deleteButton {
+        justify-content: center;
     }
 
     .metadata {

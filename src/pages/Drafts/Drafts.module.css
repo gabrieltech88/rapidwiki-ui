@@ -25,18 +25,13 @@
 
     font-size: 2rem;
     font-weight: 600;
-
     letter-spacing: -0.04em;
 }
 
 .header p {
-    margin:
-        var(--spacing-sm)
-        0
-        0;
+    margin: var(--spacing-sm) 0 0;
 
-    color:
-        var(--color-text-secondary);
+    color: var(--color-text-secondary);
 
     font-size: 0.9rem;
 }
@@ -46,21 +41,199 @@
     align-items: center;
     justify-content: flex-end;
 
-    margin-bottom:
-        var(--spacing-md);
+    margin-bottom: var(--spacing-md);
 
-    color:
-        var(--color-text-muted);
+    color: var(--color-text-muted);
 
     font-size: 0.8rem;
 }
 
-.procedureList {
+.draftList {
     display: flex;
     flex-direction: column;
 
     gap: var(--spacing-sm);
 }
+
+.draftItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: var(--spacing-lg);
+
+    padding: var(--spacing-lg);
+
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+
+    background-color: var(--color-background-secondary);
+
+    transition:
+        border-color 150ms ease,
+        background-color 150ms ease;
+}
+
+.draftItem:hover {
+    border-color: var(--color-border-strong);
+
+    background-color: var(--color-hover);
+}
+
+.draftContent {
+    min-width: 0;
+
+    flex: 1;
+}
+
+.draftTop {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: var(--spacing-sm);
+}
+
+.draftTop h2 {
+    margin: 0;
+
+    color: var(--color-text-primary);
+
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.revisionBadge,
+.newBadge {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 3px 7px;
+
+    border: 1px solid var(--color-border-primary);
+    border-radius: 999px;
+
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.revisionBadge {
+    background-color: var(--color-background-tertiary);
+    color: var(--color-text-secondary);
+}
+
+.newBadge {
+    background-color: var(--color-background-tertiary);
+    color: var(--color-text-muted);
+}
+
+.description {
+    margin: var(--spacing-xs) 0 0;
+
+    color: var(--color-text-secondary);
+
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.metadata {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-top: var(--spacing-sm);
+
+    color: var(--color-text-muted);
+
+    font-size: 0.75rem;
+}
+
+.editButton {
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 8px 12px;
+
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-sm);
+
+    background-color: var(--color-background);
+
+    color: var(--color-text-secondary);
+
+    text-decoration: none;
+
+    font-size: 0.8rem;
+    font-weight: 500;
+
+    transition:
+        background-color 150ms ease,
+        color 150ms ease,
+        border-color 150ms ease;
+}
+
+.editButton:hover {
+    border-color: var(--color-border-strong);
+
+    background-color: var(--color-hover);
+
+    color: var(--color-text-primary);
+}
+
+.draftActions {
+    display: flex;
+    align-items: center;
+
+    flex-shrink: 0;
+
+    gap: 8px;
+}
+
+.deleteButton {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 8px 12px;
+
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-sm);
+
+    background-color: transparent;
+
+    color: #ef4444;
+
+    cursor: pointer;
+
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 500;
+
+    transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        color 150ms ease;
+}
+
+.deleteButton:hover:not(:disabled) {
+    border-color: rgba(239, 68, 68, 0.5);
+
+    background-color: rgba(239, 68, 68, 0.08);
+}
+
+.deleteButton:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.55;
+}
+
 
 .loading {
     min-height: 240px;
@@ -69,27 +242,20 @@
     align-items: center;
     justify-content: center;
 
-    color:
-        var(--color-text-muted);
+    color: var(--color-text-muted);
 }
 
 .loadingIcon {
-    animation:
-        spin
-        800ms
-        linear
-        infinite;
+    animation: spin 800ms linear infinite;
 }
 
 @keyframes spin {
     from {
-        transform:
-            rotate(0deg);
+        transform: rotate(0deg);
     }
 
     to {
-        transform:
-            rotate(360deg);
+        transform: rotate(360deg);
     }
 }
 
@@ -103,15 +269,10 @@
 
     gap: var(--spacing-sm);
 
-    border:
-        1px solid
-        var(--color-border-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
 
-    border-radius:
-        var(--radius-md);
-
-    color:
-        var(--color-text-muted);
+    color: var(--color-text-muted);
 
     font-size: 0.85rem;
 }
@@ -127,34 +288,24 @@
 
     gap: var(--spacing-md);
 
-    margin-top:
-        var(--spacing-xl);
+    margin-top: var(--spacing-xl);
 }
 
 .pagination span {
-    color:
-        var(--color-text-muted);
+    color: var(--color-text-muted);
 
     font-size: 0.8rem;
 }
 
 .pagination button {
-    padding:
-        8px
-        12px;
+    padding: 8px 12px;
 
-    border:
-        1px solid
-        var(--color-border-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-sm);
 
-    border-radius:
-        var(--radius-sm);
+    background-color: var(--color-background-secondary);
 
-    background-color:
-        var(--color-background-secondary);
-
-    color:
-        var(--color-text-secondary);
+    color: var(--color-text-secondary);
 
     cursor: pointer;
 
@@ -166,37 +317,45 @@
 }
 
 .pagination button:hover:not(:disabled) {
-    background-color:
-        var(--color-hover);
+    background-color: var(--color-hover);
 
-    color:
-        var(--color-text-primary);
+    color: var(--color-text-primary);
 }
 
 .pagination button:disabled {
-    cursor:
-        not-allowed;
+    cursor: not-allowed;
 
     opacity: 0.4;
 }
 
-
 @media (max-width: 640px) {
     .page {
-        padding-bottom:
-            40px;
+        padding-bottom: 40px;
     }
 
     .title h1 {
-        font-size:
-            1.65rem;
+        font-size: 1.65rem;
+    }
+
+    .draftItem {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .draftActions {
+        width: 100%;
+    }
+
+    .editButton,
+    .deleteButton {
+        justify-content: center;
+
+        flex: 1;
     }
 
     .pagination {
-        justify-content:
-            space-between;
+        justify-content: space-between;
 
-        gap:
-            var(--spacing-sm);
+        gap: var(--spacing-sm);
     }
 }

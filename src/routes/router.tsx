@@ -37,6 +37,17 @@ export const router = createBrowserRouter([
                         element: <Admin />,
                     },
 
+                    {
+                        path: "drafts",
+                        element: <Drafts />,
+                    },
+
+                    // Compatibilidade com a rota antiga.
+                    {
+                        path: "procedures/drafts",
+                        element: <Drafts />,
+                    },
+
                     // Mantém compatibilidade com a rota antiga.
                     {
                         path: "departments/:departmentId",
@@ -62,11 +73,6 @@ export const router = createBrowserRouter([
                     {
                         path: "procedures/new",
                         element: <ProcedureForm />,
-                    },
-
-                    {
-                        path: "procedures/drafts",
-                        element: <Drafts />,
                     },
 
                     {

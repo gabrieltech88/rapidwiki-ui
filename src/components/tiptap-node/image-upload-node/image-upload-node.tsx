@@ -453,34 +453,54 @@ export const ImageUploadNode: React.FC<NodeViewProps> = (props) => {
   const handleUpload = async (files: File[]) => {
     const urls = await uploadFiles(files)
 
-    if (urls.length > 0) {
-      const pos = props.getPos()
-
-      if (isValidPosition(pos)) {
-        const imageNodes = urls.map((url, index) => {
-          const filename =
-            files[index]?.name.replace(/\.[^/.]+$/, "") || "unknown"
-          return {
-            type: extension.options.type,
-            attrs: {
-              ...extension.options,
-              src: url,
-              alt: filename,
-              title: filename,
-            },
-          }
-        })
-
-        props.editor
-          .chain()
-          .focus()
-          .deleteRange({ from: pos, to: pos + props.node.nodeSize })
-          .insertContentAt(pos, imageNodes)
-          .run()
-
-        focusNextNode(props.editor)
-      }
+    if (urls.length === 0) {
+      return
     }
+
+    const pos = props.getPos()
+
+    if (!isValidPosition(pos)) {
+      extension.options.onError?.(
+        new Error("Unable to determine image upload node position")
+      )
+      return
+    }
+
+    const imageTypeName =
+      typeof extension.options.type === "string"
+        ? extension.options.type
+        : extension.options.type?.name || "image"
+
+    const imageType = props.editor.schema.nodes[imageTypeName]
+
+    if (!imageType) {
+      extension.options.onError?.(
+        new Error(`Image node type "${imageTypeName}" was not found in the editor schema`)
+      )
+      return
+    }
+
+    const imageNodes = urls.map((url, index) => {
+      const filename =
+        files[index]?.name.replace(/\.[^/.]+$/, "") || "unknown"
+
+      return imageType.create({
+        src: url,
+        alt: filename,
+        title: filename,
+      })
+    })
+
+    const transaction = props.editor.state.tr.replaceWith(
+      pos,
+      pos + props.node.nodeSize,
+      imageNodes
+    )
+
+    props.editor.view.dispatch(transaction)
+    props.editor.commands.focus()
+
+    focusNextNode(props.editor)
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

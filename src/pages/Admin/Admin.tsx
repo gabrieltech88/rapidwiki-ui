@@ -19,7 +19,9 @@ import {
 
 import {
     createDepartment,
+    deleteDepartment,
     getDepartments,
+    updateDepartment,
 } from "@/services/departmentService";
 
 import {
@@ -561,33 +563,24 @@ export function Admin() {
 
         try {
             if (departmentForm.id) {
-                setDepartments(
-                    (current) =>
-                        current.map(
-                            (department) =>
-                                department.id ===
-                                departmentForm.id
-                                    ? {
-                                          ...department,
-                                          name,
-                                      }
-                                    : department
-                        )
+                await updateDepartment(
+                    departmentForm.id,
+                    name
                 );
             } else {
                 await createDepartment(
                     name
                 );
-
-
-                const data =
-                    await getDepartments();
-
-
-                setDepartments(
-                    data ?? []
-                );
             }
+
+
+            const data =
+                await getDepartments();
+
+
+            setDepartments(
+                data ?? []
+            );
 
 
             setDepartmentModalOpen(
@@ -600,7 +593,9 @@ export function Admin() {
             );
 
             setDepartmentError(
-                "Não foi possível criar o departamento."
+                departmentForm.id
+                    ? "Não foi possível atualizar o departamento."
+                    : "Não foi possível criar o departamento."
             );
         } finally {
             setSavingDepartment(
@@ -624,14 +619,29 @@ export function Admin() {
         }
 
 
-        setDepartments(
-            (current) =>
-                current.filter(
-                    (item) =>
-                        item.id !==
-                        department.id
-                )
-        );
+        try {
+            await deleteDepartment(
+                department.id
+            );
+
+
+            const data =
+                await getDepartments();
+
+
+            setDepartments(
+                data ?? []
+            );
+        } catch (error) {
+            console.error(
+                "Erro ao excluir departamento:",
+                error
+            );
+
+            window.alert(
+                "Não foi possível excluir o departamento."
+            );
+        }
     }
 
 

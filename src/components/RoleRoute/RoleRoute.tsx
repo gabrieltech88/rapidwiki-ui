@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from "react-router";
 
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 
 interface RoleRouteProps {
     role: string;

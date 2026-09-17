@@ -26,12 +26,27 @@ export interface ProcedureDetails extends Procedure {
 
 export interface ProcedureInput {
     title: string;
-
     description: string;
-
     content: string;
 
     departmentIds: string[];
 
     status: ProcedureStatus;
+}
+
+export interface DraftProcedure {
+    id: string;
+
+    title: string;
+    description: string;
+
+    authorId: string;
+    authorName: string;
+
+    editorId: string;
+    editorName: string;
+
+    lastUpdate: string;
+
+    hasPublishedVersion: boolean;
 }

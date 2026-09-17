@@ -1,7 +1,4 @@
-import {
-    useEffect,
-    useState,
-} from "react";
+import { useEffect, useState } from "react";
 
 import {
     ArrowLeft,
@@ -22,11 +19,11 @@ import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor
 
 import {
     createProcedure,
-    getProcedureById,
+    getProcedureForEdit,
     updateProcedure,
 } from "@/services/procedureService";
 
-import { getDepartments } from "@/services/departmentService";
+import { getDepartmentsForProcedure } from "@/services/departmentService";
 
 import { useAuth } from "@/hooks/useAuth";
 
@@ -45,121 +42,59 @@ const EMPTY_FORM: ProcedureInput = {
     description: "",
     content: "",
     departmentIds: [],
-
-    /*
-     * Rascunho por padrão.
-     */
     status: 0,
 };
 
 
 export function ProcedureForm() {
-    const { procedureId } =
-        useParams();
+    const { procedureId } = useParams();
+    const navigate = useNavigate();
+    const { hasRole } = useAuth();
 
-    const navigate =
-        useNavigate();
-
-    const { hasRole } =
-        useAuth();
-
-
-    const isEditing =
-        Boolean(procedureId);
+    const isEditing = Boolean(procedureId);
 
     const canManageProcedure =
         hasRole("Admin") ||
         hasRole("Editor");
 
+    const [departments, setDepartments] = useState<Department[]>([]);
+    const [form, setForm] = useState<ProcedureInput>(EMPTY_FORM);
+    const [departmentSelectorOpen, setDepartmentSelectorOpen] = useState(false);
+    const [loadedFor, setLoadedFor] = useState<string | null>(null);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState("");
 
-    const [departments, setDepartments] =
-        useState<Department[]>([]);
-
-
-    const [form, setForm] =
-        useState<ProcedureInput>(
-            EMPTY_FORM
-        );
-
-
-    const [
-        departmentSelectorOpen,
-        setDepartmentSelectorOpen,
-    ] = useState(false);
-
-
-    const [loadedFor, setLoadedFor] =
-        useState<string | null>(
-            null
-        );
-
-
-    const [saving, setSaving] =
-        useState(false);
-
-
-    const [error, setError] =
-        useState("");
-
-
-    const loadKey =
-        procedureId ?? "new";
-
-
-    const loading =
-        loadedFor !== loadKey;
+    const loadKey = procedureId ?? "new";
+    const loading = loadedFor !== loadKey;
 
 
     useEffect(() => {
         let ignore = false;
 
-
         async function loadData() {
             try {
-                const departmentsData =
-                    await getDepartments();
-
+                const departmentsData = await getDepartmentsForProcedure();
 
                 if (ignore) {
                     return;
                 }
 
-
-                setDepartments(
-                    departmentsData
-                );
-
+                setDepartments(departmentsData);
 
                 if (procedureId) {
-                    const procedure =
-                        await getProcedureById(
-                            procedureId
-                        );
-
+                    const procedure = await getProcedureForEdit(procedureId);
 
                     if (ignore) {
                         return;
                     }
 
-
                     setForm({
-                        title:
-                            procedure.title,
-
-                        description:
-                            procedure.description,
-
-                        content:
-                            procedure.content,
-
-                        departmentIds:
-                            procedure.departments.map(
-                                (department) =>
-                                    department.id
-                            ),
-
-                        status:
-                            procedure.status,
+                        title: procedure.title,
+                        description: procedure.description,
+                        content: procedure.content,
+                        departmentIds: procedure.departments
+                            .map((department) => department.id),
+                        status: procedure.status,
                     });
                 } else {
                     setForm({
@@ -168,188 +103,109 @@ export function ProcedureForm() {
                     });
                 }
 
-
                 setError("");
             } catch (error) {
-                console.error(
-                    "Erro ao carregar formulário:",
-                    error
-                );
-
+                console.error("Erro ao carregar formulário:", error);
 
                 if (ignore) {
                     return;
                 }
 
-
-                setError(
-                    "Não foi possível carregar os dados do formulário."
-                );
+                setError("Não foi possível carregar os dados do formulário.");
             } finally {
                 if (!ignore) {
-                    setLoadedFor(
-                        loadKey
-                    );
+                    setLoadedFor(loadKey);
                 }
             }
         }
 
-
         loadData();
-
 
         return () => {
             ignore = true;
         };
-    }, [
-        procedureId,
-        loadKey,
-    ]);
+    }, [procedureId, loadKey]);
 
 
     function handleChange(
-        field:
-            | "title"
-            | "description"
-            | "content",
+        field: "title" | "description" | "content",
         value: string
     ) {
-        setForm(
-            (current) => ({
-                ...current,
-
-                [field]:
-                    value,
-            })
-        );
+        setForm((current) => ({
+            ...current,
+            [field]: value,
+        }));
     }
 
 
-    function handleStatusChange(
-        value: string
-    ) {
-        const status =
-            Number(value) as ProcedureStatus;
+    function handleStatusChange(value: string) {
+        const status = Number(value) as ProcedureStatus;
 
-
-        setForm(
-            (current) => ({
-                ...current,
-
-                status,
-            })
-        );
+        setForm((current) => ({
+            ...current,
+            status,
+        }));
     }
 
 
-    function handleDepartmentToggle(
-        departmentId: string
-    ) {
-        setForm(
-            (current) => {
-                const alreadySelected =
-                    current.departmentIds.includes(
-                        departmentId
-                    );
+    function handleDepartmentToggle(departmentId: string) {
+        setForm((current) => {
+            const alreadySelected = current.departmentIds.includes(departmentId);
 
-
-                return {
-                    ...current,
-
-                    departmentIds:
-                        alreadySelected
-                            ? current.departmentIds.filter(
-                                  (id) =>
-                                      id !== departmentId
-                              )
-                            : [
-                                  ...current.departmentIds,
-                                  departmentId,
-                              ],
-                };
-            }
-        );
-
+            return {
+                ...current,
+                departmentIds: alreadySelected
+                    ? current.departmentIds
+                        .filter((id) => id !== departmentId)
+                    : [
+                        ...current.departmentIds,
+                        departmentId,
+                    ],
+            };
+        });
 
         setError("");
     }
 
 
-    function handleRemoveDepartment(
-        departmentId: string
-    ) {
-        setForm(
-            (current) => ({
-                ...current,
-
-                departmentIds:
-                    current.departmentIds.filter(
-                        (id) =>
-                            id !== departmentId
-                    ),
-            })
-        );
+    function handleRemoveDepartment(departmentId: string) {
+        setForm((current) => ({
+            ...current,
+            departmentIds: current.departmentIds
+                .filter((id) => id !== departmentId),
+        }));
     }
 
 
-    async function handleSubmit(
-        event: React.FormEvent<HTMLFormElement>
-    ) {
+    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
-
-        if (
-            form.departmentIds.length ===
-            0
-        ) {
-            setError(
-                "Selecione pelo menos um departamento."
-            );
-
+        if (form.departmentIds.length === 0) {
+            setError("Selecione pelo menos um departamento.");
             return;
         }
-
 
         setSaving(true);
         setError("");
 
-
         try {
+            let procedure;
+
             if (procedureId) {
-                const procedure =
-                    await updateProcedure(
-                        procedureId,
-                        form
-                    );
+                procedure = await updateProcedure(procedureId, form);
+            } else {
+                procedure = await createProcedure(form);
+            }
 
-
-                navigate(
-                    `/procedures/${procedure.id}`
-                );
-
+            if (form.status === 0) {
+                navigate("/procedures/drafts");
                 return;
             }
 
-
-            const procedure =
-                await createProcedure(
-                    form
-                );
-
-
-            navigate(
-                `/procedures/${procedure.id}`
-            );
+            navigate(`/procedures/${procedure.id}`);
         } catch (error) {
-            console.error(
-                "Erro ao salvar procedimento:",
-                error
-            );
-
-
-            setError(
-                "Não foi possível salvar o procedimento."
-            );
+            console.error("Erro ao salvar procedimento:", error);
+            setError("Não foi possível salvar o procedimento.");
         } finally {
             setSaving(false);
         }
@@ -359,11 +215,7 @@ export function ProcedureForm() {
     if (!canManageProcedure) {
         return (
             <Navigate
-                to={
-                    procedureId
-                        ? `/procedures/${procedureId}`
-                        : "/"
-                }
+                to={procedureId ? `/procedures/${procedureId}` : "/"}
                 replace
             />
         );
@@ -372,60 +224,34 @@ export function ProcedureForm() {
 
     if (loading) {
         return (
-            <div
-                className={
-                    styles.loading
-                }
-            >
+            <div className={styles.loading}>
                 <LoaderCircle
                     size={24}
-                    className={
-                        styles.loadingIcon
-                    }
+                    className={styles.loadingIcon}
                 />
             </div>
         );
     }
 
 
-    const selectedDepartments =
-        departments.filter(
-            (department) =>
-                form.departmentIds.includes(
-                    department.id
-                )
+    const selectedDepartments = departments
+        .filter((department) =>
+            form.departmentIds.includes(department.id)
         );
 
 
     return (
-        <div
-            className={
-                styles.page
-            }
-        >
+        <div className={styles.page}>
             <Link
-                to={
-                    procedureId
-                        ? `/procedures/${procedureId}`
-                        : "/"
-                }
-                className={
-                    styles.back
-                }
+                to={procedureId ? `/procedures/${procedureId}` : "/"}
+                className={styles.back}
             >
-                <ArrowLeft
-                    size={15}
-                />
-
+                <ArrowLeft size={15} />
                 Voltar
             </Link>
 
 
-            <header
-                className={
-                    styles.header
-                }
-            >
+            <header className={styles.header}>
                 <h1>
                     {isEditing
                         ? "Editar procedimento"
@@ -441,37 +267,20 @@ export function ProcedureForm() {
 
 
             <form
-                className={
-                    styles.form
-                }
-                onSubmit={
-                    handleSubmit
-                }
+                className={styles.form}
+                onSubmit={handleSubmit}
             >
-                <div
-                    className={
-                        styles.field
-                    }
-                >
-                    <label
-                        htmlFor="title"
-                    >
+                <div className={styles.field}>
+                    <label htmlFor="title">
                         Título
                     </label>
 
                     <input
                         id="title"
                         type="text"
-                        value={
-                            form.title
-                        }
-                        onChange={(
-                            event
-                        ) =>
-                            handleChange(
-                                "title",
-                                event.target.value
-                            )
+                        value={form.title}
+                        onChange={(event) =>
+                            handleChange("title", event.target.value)
                         }
                         placeholder="Ex: Configuração de ONU"
                         required
@@ -479,29 +288,16 @@ export function ProcedureForm() {
                 </div>
 
 
-                <div
-                    className={
-                        styles.field
-                    }
-                >
-                    <label
-                        htmlFor="description"
-                    >
+                <div className={styles.field}>
+                    <label htmlFor="description">
                         Descrição
                     </label>
 
                     <textarea
                         id="description"
-                        value={
-                            form.description
-                        }
-                        onChange={(
-                            event
-                        ) =>
-                            handleChange(
-                                "description",
-                                event.target.value
-                            )
+                        value={form.description}
+                        onChange={(event) =>
+                            handleChange("description", event.target.value)
                         }
                         placeholder="Breve descrição do procedimento"
                         rows={3}
@@ -510,67 +306,35 @@ export function ProcedureForm() {
                 </div>
 
 
-                <div
-                    className={
-                        styles.field
-                    }
-                >
+                <div className={styles.field}>
                     <label>
                         Departamentos
                     </label>
 
+                    <div className={styles.departmentSelector}>
+                        {selectedDepartments.length > 0 && (
+                            <div className={styles.selectedDepartments}>
+                                {selectedDepartments.map((department) => (
+                                    <div
+                                        key={department.id}
+                                        className={styles.departmentChip}
+                                    >
+                                        <span>
+                                            {department.name}
+                                        </span>
 
-                    <div
-                        className={
-                            styles.departmentSelector
-                        }
-                    >
-                        {selectedDepartments.length >
-                            0 && (
-                            <div
-                                className={
-                                    styles.selectedDepartments
-                                }
-                            >
-                                {selectedDepartments.map(
-                                    (
-                                        department
-                                    ) => (
-                                        <div
-                                            key={
-                                                department.id
+                                        <button
+                                            type="button"
+                                            className={styles.removeDepartment}
+                                            onClick={() =>
+                                                handleRemoveDepartment(department.id)
                                             }
-                                            className={
-                                                styles.departmentChip
-                                            }
+                                            aria-label={`Remover ${department.name}`}
                                         >
-                                            <span>
-                                                {
-                                                    department.name
-                                                }
-                                            </span>
-
-                                            <button
-                                                type="button"
-                                                className={
-                                                    styles.removeDepartment
-                                                }
-                                                onClick={() =>
-                                                    handleRemoveDepartment(
-                                                        department.id
-                                                    )
-                                                }
-                                                aria-label={`Remover ${department.name}`}
-                                            >
-                                                <X
-                                                    size={
-                                                        12
-                                                    }
-                                                />
-                                            </button>
-                                        </div>
-                                    )
-                                )}
+                                            <X size={12} />
+                                        </button>
+                                    </div>
+                                ))}
                             </div>
                         )}
 
@@ -583,22 +347,12 @@ export function ProcedureForm() {
                                     : ""
                             }`}
                             onClick={() =>
-                                setDepartmentSelectorOpen(
-                                    (
-                                        current
-                                    ) =>
-                                        !current
-                                )
+                                setDepartmentSelectorOpen((current) => !current)
                             }
-                            aria-expanded={
-                                departmentSelectorOpen
-                            }
+                            aria-expanded={departmentSelectorOpen}
                         >
                             <span>
-                                {form
-                                    .departmentIds
-                                    .length ===
-                                0
+                                {form.departmentIds.length === 0
                                     ? "Selecione um ou mais departamentos"
                                     : `${form.departmentIds.length} departamento${form.departmentIds.length !== 1 ? "s" : ""} selecionado${form.departmentIds.length !== 1 ? "s" : ""}`}
                             </span>
@@ -615,71 +369,44 @@ export function ProcedureForm() {
 
 
                         {departmentSelectorOpen && (
-                            <div
-                                className={
-                                    styles.departmentOptions
-                                }
-                            >
-                                {departments.length >
-                                0 ? (
-                                    departments.map(
-                                        (
-                                            department
-                                        ) => {
-                                            const selected =
-                                                form.departmentIds.includes(
-                                                    department.id
-                                                );
+                            <div className={styles.departmentOptions}>
+                                {departments.length > 0 ? (
+                                    departments.map((department) => {
+                                        const selected = form.departmentIds.includes(department.id);
 
-
-                                            return (
-                                                <button
-                                                    key={
-                                                        department.id
-                                                    }
-                                                    type="button"
-                                                    className={`${styles.departmentOption} ${
+                                        return (
+                                            <button
+                                                key={department.id}
+                                                type="button"
+                                                className={`${styles.departmentOption} ${
+                                                    selected
+                                                        ? styles.departmentOptionSelected
+                                                        : ""
+                                                }`}
+                                                onClick={() =>
+                                                    handleDepartmentToggle(department.id)
+                                                }
+                                            >
+                                                <span
+                                                    className={`${styles.checkbox} ${
                                                         selected
-                                                            ? styles.departmentOptionSelected
+                                                            ? styles.checkboxSelected
                                                             : ""
                                                     }`}
-                                                    onClick={() =>
-                                                        handleDepartmentToggle(
-                                                            department.id
-                                                        )
-                                                    }
                                                 >
-                                                    <span
-                                                        className={`${styles.checkbox} ${
-                                                            selected
-                                                                ? styles.checkboxSelected
-                                                                : ""
-                                                        }`}
-                                                    >
-                                                        {selected && (
-                                                            <Check
-                                                                size={
-                                                                    13
-                                                                }
-                                                            />
-                                                        )}
-                                                    </span>
+                                                    {selected && (
+                                                        <Check size={13} />
+                                                    )}
+                                                </span>
 
-                                                    <span>
-                                                        {
-                                                            department.name
-                                                        }
-                                                    </span>
-                                                </button>
-                                            );
-                                        }
-                                    )
+                                                <span>
+                                                    {department.name}
+                                                </span>
+                                            </button>
+                                        );
+                                    })
                                 ) : (
-                                    <div
-                                        className={
-                                            styles.noDepartments
-                                        }
-                                    >
+                                    <div className={styles.noDepartments}>
                                         Nenhum departamento disponível.
                                     </div>
                                 )}
@@ -689,28 +416,16 @@ export function ProcedureForm() {
                 </div>
 
 
-                <div
-                    className={
-                        styles.field
-                    }
-                >
-                    <label
-                        htmlFor="status"
-                    >
+                <div className={styles.field}>
+                    <label htmlFor="status">
                         Status
                     </label>
 
                     <select
                         id="status"
-                        value={
-                            form.status
-                        }
-                        onChange={(
-                            event
-                        ) =>
-                            handleStatusChange(
-                                event.target.value
-                            )
+                        value={form.status}
+                        onChange={(event) =>
+                            handleStatusChange(event.target.value)
                         }
                     >
                         <option value={0}>
@@ -724,31 +439,16 @@ export function ProcedureForm() {
                 </div>
 
 
-                <div
-                    className={
-                        styles.field
-                    }
-                >
+                <div className={styles.field}>
                     <label>
                         Conteúdo
                     </label>
 
-                    <div
-                        className={
-                            styles.editorWrapper
-                        }
-                    >
+                    <div className={styles.editorWrapper}>
                         <SimpleEditor
-                            value={
-                                form.content
-                            }
-                            onChange={(
-                                markdown
-                            ) =>
-                                handleChange(
-                                    "content",
-                                    markdown
-                                )
+                            value={form.content}
+                            onChange={(content) =>
+                                handleChange("content", content)
                             }
                         />
                     </div>
@@ -757,9 +457,7 @@ export function ProcedureForm() {
 
                 {error && (
                     <div
-                        className={
-                            styles.error
-                        }
+                        className={styles.error}
                         role="alert"
                     >
                         {error}
@@ -767,39 +465,26 @@ export function ProcedureForm() {
                 )}
 
 
-                <div
-                    className={
-                        styles.actions
-                    }
-                >
+                <div className={styles.actions}>
                     <Link
-                        to={
-                            procedureId
-                                ? `/procedures/${procedureId}`
-                                : "/"
-                        }
-                        className={
-                            styles.cancelButton
-                        }
+                        to={procedureId ? `/procedures/${procedureId}` : "/"}
+                        className={styles.cancelButton}
                     >
                         Cancelar
                     </Link>
 
-
                     <button
                         type="submit"
-                        className={
-                            styles.saveButton
-                        }
-                        disabled={
-                            saving
-                        }
+                        className={styles.saveButton}
+                        disabled={saving}
                     >
                         {saving
                             ? "Salvando..."
-                            : isEditing
-                              ? "Salvar alterações"
-                              : "Criar procedimento"}
+                            : form.status === 0
+                                ? "Salvar rascunho"
+                                : isEditing
+                                    ? "Publicar alterações"
+                                    : "Publicar procedimento"}
                     </button>
                 </div>
             </form>
