@@ -603,7 +603,13 @@
 }
 
 .modal {
+    display: flex;
+    flex-direction: column;
+
     max-width: 560px;
+    max-height: calc(100dvh - 48px);
+
+    overflow: hidden;
 }
 
 .modalSmall {
@@ -619,6 +625,8 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
+
+    flex-shrink: 0;
 
     gap: 20px;
 
@@ -653,11 +661,17 @@
 
 .form {
     display: flex;
+    flex: 1;
     flex-direction: column;
+
+    min-height: 0;
 
     gap: 16px;
 
     padding: 20px;
+
+    overflow-y: auto;
+    overscroll-behavior: contain;
 
     background-color: var(--color-background);
 }
@@ -793,6 +807,8 @@
     align-items: center;
     justify-content: flex-end;
 
+    flex-shrink: 0;
+
     gap: 8px;
 
     padding: 14px 20px;
@@ -849,5 +865,13 @@
 
     .pagination {
         justify-content: center;
+    }
+
+    .modalBackdrop {
+        padding: 12px;
+    }
+
+    .modal {
+        max-height: calc(100dvh - 24px);
     }
 }

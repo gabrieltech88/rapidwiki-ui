@@ -6,21 +6,19 @@ import type {
     UserRole,
 } from "@/types/AdminUser";
 
-
 interface ApiDepartment {
     id: string;
     nome: string;
 }
-
 
 interface ApiUser {
     id: string;
     nome: string;
     email: string;
     role: UserRole;
+    ativo: boolean;
     departamentos: ApiDepartment[];
 }
-
 
 interface GetUsersResponse {
     items: ApiUser[];
@@ -28,7 +26,6 @@ interface GetUsersResponse {
     pageSize: number;
     totalItems: number;
 }
-
 
 export interface CreateUserInput {
     name: string;
@@ -38,7 +35,6 @@ export interface CreateUserInput {
     departmentIds: string[];
 }
 
-
 export interface UpdateUserInput {
     id: string;
     name: string;
@@ -47,118 +43,75 @@ export interface UpdateUserInput {
     departmentIds: string[];
 }
 
-
-function mapUser(
-    user: ApiUser
-): AdminUser {
+function mapUser(user: ApiUser): AdminUser {
     return {
         id: user.id,
-
         name: user.nome,
-
         email: user.email,
-
         role: user.role,
-
-        departments:
-            user.departamentos.map(
-                (department) => ({
-                    id: department.id,
-                    name: department.nome,
-                })
-            ),
+        active: user.ativo,
+        departments: user.departamentos.map((department) => ({
+            id: department.id,
+            name: department.nome,
+        })),
     };
 }
 
-
-export async function getUsers(
-    page = 1,
-    search?: string
-): Promise<PaginatedUsers> {
-    const response =
-        await api.get<GetUsersResponse>(
-            "/auth/get_users",
-            {
-                params: {
-                    page,
-
-                    search:
-                        search?.trim() ||
-                        undefined,
-                },
-            }
-        );
-
+export async function getUsers(page = 1, search?: string): Promise<PaginatedUsers> {
+    const response = await api.get<GetUsersResponse>(
+        "/auth/get_users",
+        {
+            params: {
+                page,
+                search: search?.trim() || undefined,
+            },
+        }
+    );
 
     return {
-        items:
-            response.data.items.map(
-                mapUser
-            ),
-
-        page:
-            response.data.page,
-
-        pageSize:
-            response.data.pageSize,
-
-        totalItems:
-            response.data.totalItems,
-
-        totalPages:
-            Math.ceil(
-                response.data.totalItems /
-                    response.data.pageSize
-            ),
+        items: response.data.items.map(mapUser),
+        page: response.data.page,
+        pageSize: response.data.pageSize,
+        totalItems: response.data.totalItems,
+        totalPages: Math.ceil(
+            response.data.totalItems /
+                response.data.pageSize
+        ),
     };
 }
 
-
-export async function createUser(
-    input: CreateUserInput
-): Promise<void> {
+export async function createUser(input: CreateUserInput): Promise<void> {
     await api.post(
         "/auth/create_user",
         {
-            nome:
-                input.name,
-
-            password:
-                input.password,
-
-            email:
-                input.email,
-
-            departamentoIds:
-                input.departmentIds,
-
-            role:
-                input.role,
+            nome: input.name,
+            password: input.password,
+            email: input.email,
+            departamentoIds: input.departmentIds,
+            role: input.role,
         }
     );
 }
 
-
-export async function updateUser(
-    input: UpdateUserInput
-): Promise<void> {
+export async function updateUser(input: UpdateUserInput): Promise<void> {
     await api.put(
         "/auth/update_user",
         {
-            id:
-                input.id,
+            id: input.id,
+            nome: input.name,
+            email: input.email,
+            role: input.role,
+            departamentosIds: input.departmentIds,
+        }
+    );
+}
 
-            nome:
-                input.name,
-
-            email:
-                input.email,
-
-            role:
-                input.role,
-
-            departamentosIds:
-                input.departmentIds,
+export async function updateUserStatus(id: string, active: boolean): Promise<void> {
+    await api.put(
+        "/auth/update_user_status",
+        {
+            id,
+            ativo: active,
         }
     );
 }

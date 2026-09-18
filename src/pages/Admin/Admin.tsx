@@ -12,8 +12,10 @@ import {
     Plus,
     Search,
     Trash2,
+    UserCheck,
     UserPlus,
     Users,
+    UserX,
     X,
 } from "lucide-react";
 
@@ -28,6 +30,7 @@ import {
     createUser,
     getUsers,
     updateUser,
+    updateUserStatus,
 } from "@/services/userService";
 
 import type {
@@ -501,12 +504,42 @@ export function Admin() {
     }
 
 
-    function handleDeleteUser(
+    async function handleUpdateUserStatus(
         user: AdminUser
     ) {
-        window.alert(
-            `A exclusão de "${user.name}" ainda não foi implementada no backend.`
-        );
+        const action = user.active
+            ? "desativar"
+            : "ativar";
+
+        const confirmed =
+            window.confirm(
+                `Deseja ${action} o usuário "${user.name}"?`
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            await updateUserStatus(
+                user.id,
+                !user.active
+            );
+
+            await loadUsers(
+                page,
+                search
+            );
+        } catch (error) {
+            console.error(
+                `Erro ao ${action} usuário:`,
+                error
+            );
+
+            window.alert(
+                `Não foi possível ${action} o usuário.`
+            );
+        }
     }
 
 
@@ -934,18 +967,30 @@ export function Admin() {
 
                                             <button
                                                 type="button"
-                                                title="Excluir usuário"
+                                                title={
+                                                    user.active
+                                                        ? "Desativar usuário"
+                                                        : "Ativar usuário"
+                                                }
                                                 onClick={() =>
-                                                    handleDeleteUser(
+                                                    handleUpdateUserStatus(
                                                         user
                                                     )
                                                 }
                                             >
-                                                <Trash2
-                                                    size={
-                                                        14
-                                                    }
-                                                />
+                                                {user.active ? (
+                                                    <UserX
+                                                        size={
+                                                            14
+                                                        }
+                                                    />
+                                                ) : (
+                                                    <UserCheck
+                                                        size={
+                                                            14
+                                                        }
+                                                    />
+                                                )}
                                             </button>
                                         </div>
                                     </div>
