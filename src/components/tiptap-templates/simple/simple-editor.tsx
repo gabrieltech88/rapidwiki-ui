@@ -1702,6 +1702,8 @@ export function SimpleEditor({
             toolbarRef
           }
           style={{
+            flexShrink: 0,
+
             ...(isMobile
               ? {
                   bottom:
@@ -1767,13 +1769,15 @@ export function SimpleEditor({
           }
         />
 
-        <EditorContent
-          editor={
-            editor
-          }
-          role="presentation"
-          className="simple-editor-content"
-        />
+        <div className="simple-editor-scroll">
+          <EditorContent
+            editor={
+              editor
+            }
+            role="presentation"
+            className="simple-editor-content"
+          />
+        </div>
       </EditorContext.Provider>
     </div>
   )
