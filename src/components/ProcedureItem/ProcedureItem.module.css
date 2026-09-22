@@ -44,3 +44,52 @@
 .link {
     display: block;
 }
+
+.titleRow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 10px;
+}
+
+.titleRow h3 {
+    margin: 0;
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    color: var(--color-text-muted);
+
+    font-size: 0.68rem;
+    font-weight: 500;
+
+    line-height: 1;
+}
+
+.statusDot {
+    width: 5px;
+    height: 5px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background-color: currentColor;
+}
+
+.statusPublished {
+    color: #4ade80;
+}
+
+.statusDraft {
+    color: #d4a72c;
+}
+
+.statusDefault {
+    color: var(--color-text-muted);
+}

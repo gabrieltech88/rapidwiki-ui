@@ -36,6 +36,7 @@ export function AuthProvider({
                 const currentUser =
                     await getCurrentUser();
 
+
                 setUser(currentUser);
             } catch {
                 setUser(null);

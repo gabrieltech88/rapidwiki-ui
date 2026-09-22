@@ -1,28 +1,73 @@
-import type { Procedure } from "@/types/Procedure";
+import type {
+    Procedure,
+    ProcedureStatusLabel,
+} from "@/types/Procedure";
+
 import { Link } from "react-router";
+
 import styles from "./ProcedureItem.module.css";
+
 
 interface ProcedureItemProps {
     procedure: Procedure;
 }
 
-export function ProcedureItem({ procedure }: ProcedureItemProps) {
+
+function getStatusClass(
+    status: ProcedureStatusLabel
+) {
+    switch (status) {
+        case "Publicado":
+            return styles.statusPublished;
+
+        case "Rascunho":
+            return styles.statusDraft;
+
+        default:
+            return styles.statusDefault;
+    }
+}
+
+
+export function ProcedureItem({
+    procedure,
+}: ProcedureItemProps) {
     return (
         <Link
             to={`/procedures/${procedure.id}`}
             className={styles.link}
         >
             <article className={styles.procedure}>
-                <h3>{procedure.title}</h3>
+                <div className={styles.titleRow}>
+                    <h3>
+                        {procedure.title}
+                    </h3>
+
+                    <span
+                        className={`${styles.status} ${getStatusClass(
+                            procedure.status
+                        )}`}
+                    >
+                        <span className={styles.statusDot} />
+
+                        {procedure.status}
+                    </span>
+                </div>
 
                 <p className={styles.description}>
                     {procedure.description}
                 </p>
 
                 <div className={styles.metadata}>
-                    <span>Última atualização</span>
+                    <span>
+                        Última atualização
+                    </span>
+
                     <span>·</span>
-                    <span>{procedure.lastUpdate}</span>
+
+                    <span>
+                        {procedure.lastUpdate}
+                    </span>
                 </div>
             </article>
         </Link>

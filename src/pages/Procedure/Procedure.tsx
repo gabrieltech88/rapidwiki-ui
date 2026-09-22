@@ -20,10 +20,12 @@ import {
 
 import { StarterKit } from "@tiptap/starter-kit";
 import { Image } from "@tiptap/extension-image";
+
 import {
     TaskItem,
     TaskList,
 } from "@tiptap/extension-list";
+
 import { TextAlign } from "@tiptap/extension-text-align";
 import { Typography } from "@tiptap/extension-typography";
 import { TextStyleKit } from "@tiptap/extension-text-style";
@@ -52,7 +54,10 @@ import {
 
 import { useAuth } from "@/hooks/useAuth";
 
-import type { ProcedureDetails } from "@/types/Procedure";
+import type {
+    ProcedureDetails,
+    ProcedureStatusLabel,
+} from "@/types/Procedure";
 
 import styles from "./Procedure.module.css";
 
@@ -76,6 +81,22 @@ function parseTiptapContent(content: string) {
 }
 
 
+function getStatusClass(
+    status: ProcedureStatusLabel
+) {
+    switch (status) {
+        case "Publicado":
+            return styles.statusPublished;
+
+        case "Rascunho":
+            return styles.statusDraft;
+
+        default:
+            return styles.statusDefault;
+    }
+}
+
+
 interface ProcedureLoadState {
     procedureId?: string;
     procedure: ProcedureDetails | null;
@@ -85,88 +106,144 @@ interface ProcedureLoadState {
 
 export function Procedure() {
     const { procedureId } = useParams();
+
     const navigate = useNavigate();
+
     const { hasRole } = useAuth();
 
-    const [loadState, setLoadState] = useState<ProcedureLoadState>({
+
+    const [
+        loadState,
+        setLoadState,
+    ] = useState<ProcedureLoadState>({
         procedureId: undefined,
         procedure: null,
         error: "",
     });
 
-    const [deleting, setDeleting] = useState(false);
 
-    const isCurrentProcedure = loadState.procedureId === procedureId;
-    const loading = Boolean(procedureId) && !isCurrentProcedure;
-    const procedure = isCurrentProcedure ? loadState.procedure : null;
-    const error = isCurrentProcedure ? loadState.error : "";
+    const [
+        deleting,
+        setDeleting,
+    ] = useState(false);
+
+
+    const isCurrentProcedure =
+        loadState.procedureId === procedureId;
+
+
+    const loading =
+        Boolean(procedureId) &&
+        !isCurrentProcedure;
+
+
+    const procedure =
+        isCurrentProcedure
+            ? loadState.procedure
+            : null;
+
+
+    const error =
+        isCurrentProcedure
+            ? loadState.error
+            : "";
+
 
     const canEdit =
         hasRole("Admin") ||
         hasRole("Editor");
 
-    const tiptapContent = procedure
-        ? parseTiptapContent(procedure.content)
-        : null;
+
+    const tiptapContent =
+        procedure
+            ? parseTiptapContent(
+                procedure.content
+            )
+            : null;
+
 
     const editor = useEditor({
         editable: false,
+
         immediatelyRender: false,
+
         editorProps: {
             attributes: {
                 class: "simple-editor",
-                "aria-label": "Conteúdo do procedimento",
+                "aria-label":
+                    "Conteúdo do procedimento",
             },
         },
+
         extensions: [
             StarterKit.configure({
                 horizontalRule: false,
+
                 link: {
                     openOnClick: true,
                     enableClickSelection: true,
                 },
             }),
+
             TextStyleKit,
+
             HorizontalRule,
+
             TextAlign.configure({
                 types: [
                     "heading",
                     "paragraph",
                 ],
             }),
+
             TaskList,
+
             TaskItem.configure({
                 nested: true,
             }),
+
             Highlight.configure({
                 multicolor: true,
             }),
+
             Image,
+
             Typography,
+
             Superscript,
+
             Subscript,
         ],
-        content: tiptapContent ?? {
-            type: "doc",
-            content: [],
-        },
+
+        content:
+            tiptapContent ?? {
+                type: "doc",
+                content: [],
+            },
     });
 
 
     useEffect(() => {
         let ignore = false;
 
+
         async function loadProcedure() {
             if (!procedureId) {
                 return;
             }
 
+
             try {
-                const data = await getProcedureById(procedureId);
+                const data =
+                    await getProcedureById(
+                        procedureId
+                    );
+
 
                 if (ignore) {
                     return;
                 }
+
 
                 setLoadState({
                     procedureId,
@@ -174,21 +251,29 @@ export function Procedure() {
                     error: "",
                 });
             } catch (error) {
-                console.error("Erro ao carregar procedimento:", error);
+                console.error(
+                    "Erro ao carregar procedimento:",
+                    error
+                );
+
 
                 if (ignore) {
                     return;
                 }
 
+
                 setLoadState({
                     procedureId,
                     procedure: null,
-                    error: "Não foi possível carregar este procedimento.",
+                    error:
+                        "Não foi possível carregar este procedimento.",
                 });
             }
         }
 
+
         loadProcedure();
+
 
         return () => {
             ignore = true;
@@ -197,15 +282,24 @@ export function Procedure() {
 
 
     useEffect(() => {
-        if (!editor || !procedure) {
+        if (
+            !editor ||
+            !procedure
+        ) {
             return;
         }
 
-        const content = parseTiptapContent(procedure.content);
+
+        const content =
+            parseTiptapContent(
+                procedure.content
+            );
+
 
         if (!content) {
             return;
         }
+
 
         editor.commands.setContent(
             content,
@@ -224,22 +318,36 @@ export function Procedure() {
             return;
         }
 
-        const confirmed = window.confirm(
-            `Deseja excluir o procedimento "${procedure.title}"? Essa ação também excluirá qualquer rascunho vinculado e não poderá ser desfeita.`
-        );
+
+        const confirmed =
+            window.confirm(
+                `Deseja excluir o procedimento "${procedure.title}"? Essa ação também excluirá qualquer rascunho vinculado e não poderá ser desfeita.`
+            );
+
 
         if (!confirmed) {
             return;
         }
 
+
         setDeleting(true);
 
+
         try {
-            await deleteProcedure(procedure.id);
+            await deleteProcedure(
+                procedure.id
+            );
+
             navigate("/");
         } catch (error) {
-            console.error("Erro ao excluir procedimento:", error);
-            window.alert("Não foi possível excluir o procedimento.");
+            console.error(
+                "Erro ao excluir procedimento:",
+                error
+            );
+
+            window.alert(
+                "Não foi possível excluir o procedimento."
+            );
         } finally {
             setDeleting(false);
         }
@@ -251,7 +359,9 @@ export function Procedure() {
             <div className={styles.loading}>
                 <LoaderCircle
                     size={24}
-                    className={styles.loadingIcon}
+                    className={
+                        styles.loadingIcon
+                    }
                 />
             </div>
         );
@@ -283,7 +393,10 @@ export function Procedure() {
 
 
     const isTiptapContent =
-        parseTiptapContent(procedure.content) !== null;
+        parseTiptapContent(
+            procedure.content
+        ) !== null;
+
 
     const primaryDepartment =
         procedure.departments[0];
@@ -304,22 +417,34 @@ export function Procedure() {
                 `}
             </style>
 
+
             <div className={styles.breadcrumb}>
                 <Link to="/">
                     Início
                 </Link>
 
+
                 {primaryDepartment && (
                     <>
-                        <ChevronRight size={14} />
+                        <ChevronRight
+                            size={14}
+                        />
 
-                        <Link to={`/departments/${primaryDepartment.id}/procedures`}>
-                            {primaryDepartment.name}
+                        <Link
+                            to={`/departments/${primaryDepartment.id}/procedures`}
+                        >
+                            {
+                                primaryDepartment.name
+                            }
                         </Link>
                     </>
                 )}
 
-                <ChevronRight size={14} />
+
+                <ChevronRight
+                    size={14}
+                />
+
 
                 <span>
                     {procedure.title}
@@ -328,10 +453,24 @@ export function Procedure() {
 
 
             <header className={styles.header}>
-                <div className={styles.headerContent}>
-                    <h1>
-                        {procedure.title}
-                    </h1>
+                <div
+                    className={
+                        styles.headerContent
+                    }
+                >
+                    <div className={styles.titleRow}>
+                        <h1>
+                            {procedure.title}
+                        </h1>
+
+                        <span
+                            className={`${styles.statusBadge} ${getStatusClass(
+                                procedure.status
+                            )}`}
+                        >
+                            {procedure.status}
+                        </span>
+                    </div>
 
                     {procedure.description && (
                         <p className={styles.description}>
@@ -339,9 +478,16 @@ export function Procedure() {
                         </p>
                     )}
 
-                    <div className={styles.metadata}>
+
+                    <div
+                        className={
+                            styles.metadata
+                        }
+                    >
                         <span>
-                            {procedure.writerName}
+                            {
+                                procedure.writerName
+                            }
                         </span>
 
                         <span>
@@ -349,7 +495,10 @@ export function Procedure() {
                         </span>
 
                         <span>
-                            Criado em {procedure.createdAt}
+                            Criado em{" "}
+                            {
+                                procedure.createdAt
+                            }
                         </span>
 
                         <span>
@@ -357,64 +506,121 @@ export function Procedure() {
                         </span>
 
                         <span>
-                            Atualizado em {procedure.lastUpdate}
+                            Atualizado em{" "}
+                            {
+                                procedure.lastUpdate
+                            }
                         </span>
                     </div>
 
-                    {procedure.departments.length > 0 && (
-                        <div className={styles.departments}>
-                            {procedure.departments.map((department) => (
-                                <Link
-                                    key={department.id}
-                                    to={`/departments/${department.id}/procedures`}
-                                    className={styles.departmentTag}
-                                >
-                                    {department.name}
-                                </Link>
-                            ))}
-                        </div>
-                    )}
+
+                    {procedure.departments.length >
+                        0 && (
+                            <div
+                                className={
+                                    styles.departments
+                                }
+                            >
+                                {procedure.departments.map(
+                                    (
+                                        department
+                                    ) => (
+                                        <Link
+                                            key={
+                                                department.id
+                                            }
+                                            to={`/departments/${department.id}/procedures`}
+                                            className={
+                                                styles.departmentTag
+                                            }
+                                        >
+                                            {
+                                                department.name
+                                            }
+                                        </Link>
+                                    )
+                                )}
+                            </div>
+                        )}
                 </div>
 
+
                 {canEdit && (
-                    <div className={styles.actions}>
+                    <div
+                        className={
+                            styles.actions
+                        }
+                    >
                         <Link
                             to={`/procedures/${procedure.id}/edit`}
-                            className={styles.editButton}
+                            className={
+                                styles.editButton
+                            }
                         >
-                            <Pencil size={14} />
+                            <Pencil
+                                size={14}
+                            />
+
                             Editar
                         </Link>
 
+
                         <button
                             type="button"
-                            className={styles.deleteButton}
-                            onClick={handleDelete}
-                            disabled={deleting}
+                            className={
+                                styles.deleteButton
+                            }
+                            onClick={
+                                handleDelete
+                            }
+                            disabled={
+                                deleting
+                            }
                         >
-                            <Trash2 size={14} />
-                            {deleting ? "Excluindo..." : "Excluir"}
+                            <Trash2
+                                size={14}
+                            />
+
+                            {deleting
+                                ? "Excluindo..."
+                                : "Excluir"}
                         </button>
                     </div>
                 )}
             </header>
 
 
-            <div className={styles.divider} />
+            <div
+                className={
+                    styles.divider
+                }
+            />
 
 
-            <div className={styles.markdown}>
+            <div
+                className={
+                    styles.markdown
+                }
+            >
                 {isTiptapContent ? (
                     <div className="procedure-tiptap-viewer">
                         <EditorContent
-                            editor={editor}
+                            editor={
+                                editor
+                            }
                             role="presentation"
                             className="simple-editor-content"
                         />
                     </div>
                 ) : (
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {procedure.content}
+                    <ReactMarkdown
+                        remarkPlugins={[
+                            remarkGfm,
+                        ]}
+                    >
+                        {
+                            procedure.content
+                        }
                     </ReactMarkdown>
                 )}
             </div>
