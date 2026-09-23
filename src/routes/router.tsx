@@ -11,6 +11,7 @@ import { Home } from "@/pages/Home/Home";
 import { Login } from "@/pages/Login/Login";
 import { Procedure } from "@/pages/Procedure/Procedure";
 import { ProcedureForm } from "@/pages/ProcedureForm/ProcedureForm";
+import { DocumentationStandard } from "@/pages/DocumentationStandard/DocumentationStandard";
 
 export const router = createBrowserRouter([
     {
@@ -78,6 +79,11 @@ export const router = createBrowserRouter([
                     {
                         path: "procedures/new",
                         element: <ProcedureForm />,
+                    },
+
+                    {
+                        path: "documentation-standard",
+                        element: <DocumentationStandard />,
                     },
 
                     {

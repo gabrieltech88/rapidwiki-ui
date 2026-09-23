@@ -65,7 +65,7 @@
    ========================= */
 
 .header {
-    margin-bottom: var(--spacing-xl);
+    margin-bottom: var(--spacing-lg);
 }
 
 .header h1 {
@@ -88,18 +88,224 @@
 
 
 /* =========================
+   Documentation callout
+   ========================= */
+
+.documentationCallout {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: var(--spacing-lg);
+
+    margin-bottom: var(--spacing-xl);
+    padding: 16px 18px;
+
+    border: 1px solid var(--color-button-primary);
+    border-radius: var(--radius-md);
+
+    background-color: var(--color-background-tertiary);
+
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.02),
+        0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.documentationCalloutContent {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+}
+
+.documentationIcon {
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--color-button-primary);
+    border-radius: var(--radius-md);
+
+    background-color: var(--color-background-secondary);
+    color: var(--color-button-primary);
+}
+
+.documentationText {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+.documentationText strong {
+    color: var(--color-text-primary);
+
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.documentationText span {
+    color: var(--color-text-secondary);
+
+    font-size: 0.8rem;
+    line-height: 1.45;
+}
+
+
+/* =========================
+   Documentation button
+   ========================= */
+
+.documentationLink {
+    min-height: 40px;
+
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 16px;
+
+    border: 1px solid var(--color-button-primary);
+    border-radius: var(--radius-sm);
+
+    background-color: var(--color-button-primary);
+    color: var(--color-button-primary-text);
+
+    font-size: 0.825rem;
+    font-weight: 600;
+    line-height: 1;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition:
+        opacity 150ms ease,
+        transform 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.documentationLink:hover {
+    opacity: 0.92;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 6px 16px
+        rgba(0, 0, 0, 0.18);
+}
+
+
+/* =========================
+   Floating documentation
+   ========================= */
+
+.floatingDocumentation {
+    position: fixed;
+
+    right: 28px;
+    bottom: 28px;
+
+    z-index: 100;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    min-height: 44px;
+
+    padding: 0 17px;
+
+    border: 1px solid var(--color-button-primary);
+    border-radius: var(--radius-md);
+
+    background-color: var(--color-button-primary);
+    color: var(--color-button-primary-text);
+
+    box-shadow:
+        0 8px 24px
+        rgba(0, 0, 0, 0.28),
+        0 0 0 1px
+        rgba(255, 255, 255, 0.04);
+
+    font-size: 0.825rem;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    animation:
+        documentationFloatingIn
+        180ms
+        ease;
+
+    transition:
+        transform 150ms ease,
+        opacity 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.floatingDocumentation:hover {
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 12px 30px
+        rgba(0, 0, 0, 0.34),
+        0 0 0 1px
+        rgba(255, 255, 255, 0.05);
+}
+
+.floatingDocumentation svg {
+    flex-shrink: 0;
+}
+
+@keyframes documentationFloatingIn {
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+
+/* =========================
    Form
    ========================= */
 
 .form {
     display: flex;
     flex-direction: column;
+
     gap: var(--spacing-lg);
 }
 
 .field {
     display: flex;
     flex-direction: column;
+
     gap: var(--spacing-sm);
 }
 
@@ -190,26 +396,35 @@
         5px 5px,
         5px 5px;
 
-    background-repeat: no-repeat;
+    background-repeat:
+        no-repeat;
 }
 
 .field select:hover {
-    border-color: var(--color-border-strong);
+    border-color:
+        var(--color-border-strong);
 
-    background-color: var(--color-background);
+    background-color:
+        var(--color-background);
 
-    color: var(--color-text-primary);
+    color:
+        var(--color-text-primary);
 }
 
 .field select:focus {
-    color: var(--color-text-primary);
+    color:
+        var(--color-text-primary);
 }
 
 .field select option {
-    background-color: var(--color-background-secondary);
-    color: var(--color-text-primary);
+    background-color:
+        var(--color-background-secondary);
 
-    font-family: inherit;
+    color:
+        var(--color-text-primary);
+
+    font-family:
+        inherit;
 }
 
 
@@ -239,15 +454,27 @@
 
     min-height: 28px;
 
-    padding: 4px 6px 4px 9px;
+    padding:
+        4px
+        6px
+        4px
+        9px;
 
-    border: 1px solid var(--color-border-primary);
-    border-radius: var(--radius-sm);
+    border:
+        1px solid
+        var(--color-border-primary);
 
-    background-color: var(--color-background-secondary);
-    color: var(--color-text-secondary);
+    border-radius:
+        var(--radius-sm);
 
-    font-size: 0.75rem;
+    background-color:
+        var(--color-background-secondary);
+
+    color:
+        var(--color-text-secondary);
+
+    font-size:
+        0.75rem;
 }
 
 .removeDepartment {
@@ -263,11 +490,14 @@
     border: 0;
     border-radius: 4px;
 
-    background: transparent;
+    background:
+        transparent;
 
-    color: var(--color-text-muted);
+    color:
+        var(--color-text-muted);
 
-    cursor: pointer;
+    cursor:
+        pointer;
 
     transition:
         background-color 150ms ease,
@@ -275,9 +505,11 @@
 }
 
 .removeDepartment:hover {
-    background-color: var(--color-hover);
+    background-color:
+        var(--color-hover);
 
-    color: var(--color-text-primary);
+    color:
+        var(--color-text-primary);
 }
 
 
@@ -297,17 +529,27 @@
 
     padding: 10px 12px;
 
-    border: 1px solid var(--color-border-primary);
-    border-radius: var(--radius-md);
+    border:
+        1px solid
+        var(--color-border-primary);
 
-    background-color: var(--color-background-secondary);
+    border-radius:
+        var(--radius-md);
 
-    color: var(--color-text-secondary);
+    background-color:
+        var(--color-background-secondary);
 
-    font-size: 0.875rem;
-    text-align: left;
+    color:
+        var(--color-text-secondary);
 
-    cursor: pointer;
+    font-size:
+        0.875rem;
+
+    text-align:
+        left;
+
+    cursor:
+        pointer;
 
     transition:
         border-color 150ms ease,
@@ -316,27 +558,34 @@
 }
 
 .selectControl:hover {
-    background-color: var(--color-background);
+    background-color:
+        var(--color-background);
 
-    color: var(--color-text-primary);
+    color:
+        var(--color-text-primary);
 }
 
 .selectControlOpen {
-    border-color: var(--color-border-strong);
+    border-color:
+        var(--color-border-strong);
 
-    background-color: var(--color-background);
+    background-color:
+        var(--color-background);
 
-    color: var(--color-text-primary);
+    color:
+        var(--color-text-primary);
 }
 
 .selectChevron {
     flex-shrink: 0;
 
-    transition: transform 150ms ease;
+    transition:
+        transform 150ms ease;
 }
 
 .selectChevronOpen {
-    transform: rotate(180deg);
+    transform:
+        rotate(180deg);
 }
 
 
@@ -359,10 +608,15 @@
 
     overflow-y: auto;
 
-    border: 1px solid var(--color-border-primary);
-    border-radius: var(--radius-md);
+    border:
+        1px solid
+        var(--color-border-primary);
 
-    background-color: var(--color-background-secondary);
+    border-radius:
+        var(--radius-md);
+
+    background-color:
+        var(--color-background-secondary);
 }
 
 .departmentOption {
@@ -376,16 +630,24 @@
     padding: 9px 10px;
 
     border: 0;
-    border-radius: var(--radius-sm);
 
-    background: transparent;
+    border-radius:
+        var(--radius-sm);
 
-    color: var(--color-text-secondary);
+    background:
+        transparent;
 
-    font-size: 0.825rem;
-    text-align: left;
+    color:
+        var(--color-text-secondary);
 
-    cursor: pointer;
+    font-size:
+        0.825rem;
+
+    text-align:
+        left;
+
+    cursor:
+        pointer;
 
     transition:
         background-color 150ms ease,
@@ -393,15 +655,19 @@
 }
 
 .departmentOption:hover {
-    background-color: var(--color-hover);
+    background-color:
+        var(--color-hover);
 
-    color: var(--color-text-primary);
+    color:
+        var(--color-text-primary);
 }
 
 .departmentOptionSelected {
-    background-color: var(--color-hover);
+    background-color:
+        var(--color-hover);
 
-    color: var(--color-text-primary);
+    color:
+        var(--color-text-primary);
 }
 
 
@@ -419,25 +685,38 @@
     align-items: center;
     justify-content: center;
 
-    border: 1px solid var(--color-border-strong);
-    border-radius: 4px;
+    border:
+        1px solid
+        var(--color-border-strong);
 
-    color: var(--color-button-primary-text);
+    border-radius:
+        4px;
+
+    color:
+        var(--color-button-primary-text);
 }
 
 .checkboxSelected {
-    border-color: var(--color-button-primary);
+    border-color:
+        var(--color-button-primary);
 
-    background-color: var(--color-button-primary);
+    background-color:
+        var(--color-button-primary);
 }
 
 .noDepartments {
-    padding: 12px 10px;
+    padding:
+        12px
+        10px;
 
-    color: var(--color-text-muted);
+    color:
+        var(--color-text-muted);
 
-    font-size: 0.8rem;
-    text-align: center;
+    font-size:
+        0.8rem;
+
+    text-align:
+        center;
 }
 
 
@@ -446,14 +725,22 @@
    ========================= */
 
 .error {
-    padding: 10px 12px;
+    padding:
+        10px
+        12px;
 
-    border: 1px solid var(--color-border-primary);
-    border-radius: var(--radius-md);
+    border:
+        1px solid
+        var(--color-border-primary);
 
-    color: var(--color-text-secondary);
+    border-radius:
+        var(--radius-md);
 
-    font-size: 0.825rem;
+    color:
+        var(--color-text-secondary);
+
+    font-size:
+        0.825rem;
 }
 
 
@@ -468,47 +755,68 @@
 
     gap: var(--spacing-sm);
 
-    padding-top: var(--spacing-md);
+    padding-top:
+        var(--spacing-md);
 
-    border-top: 1px solid var(--color-border-primary);
+    border-top:
+        1px solid
+        var(--color-border-primary);
 }
 
 .cancelButton,
 .saveButton {
-    padding: 9px 14px;
+    padding:
+        9px
+        14px;
 
-    border-radius: var(--radius-sm);
+    border-radius:
+        var(--radius-sm);
 
-    font-size: 0.825rem;
-    font-weight: 500;
+    font-size:
+        0.825rem;
+
+    font-weight:
+        500;
 }
 
 .cancelButton {
-    border: 1px solid var(--color-border-primary);
+    border:
+        1px solid
+        var(--color-border-primary);
 
-    background-color: transparent;
+    background-color:
+        transparent;
 
-    color: var(--color-text-secondary);
+    color:
+        var(--color-text-secondary);
 }
 
 .cancelButton:hover {
-    background-color: var(--color-hover);
+    background-color:
+        var(--color-hover);
 
-    color: var(--color-text-primary);
+    color:
+        var(--color-text-primary);
 }
 
 .saveButton {
-    border: 1px solid var(--color-button-primary);
+    border:
+        1px solid
+        var(--color-button-primary);
 
-    background-color: var(--color-button-primary);
+    background-color:
+        var(--color-button-primary);
 
-    color: var(--color-button-primary-text);
+    color:
+        var(--color-button-primary-text);
 }
 
 .saveButton:disabled {
-    cursor: not-allowed;
+    cursor:
+        not-allowed;
 
-    opacity: 0.5;
+    opacity:
+        0.5;
 }
 
 
@@ -519,12 +827,18 @@
 .editorWrapper {
     width: 100%;
 
-    border: 1px solid var(--color-border-primary);
-    border-radius: var(--radius-md);
+    border:
+        1px solid
+        var(--color-border-primary);
 
-    background-color: var(--color-background-secondary);
+    border-radius:
+        var(--radius-md);
 
-    overflow: visible;
+    background-color:
+        var(--color-background-secondary);
+
+    overflow:
+        visible;
 }
 
 .editorWrapper :global([role="toolbar"]) {
@@ -537,54 +851,91 @@
 
     overflow-y: hidden;
 
-    padding: 0 var(--spacing-sm);
+    padding:
+        0
+        var(--spacing-sm);
 
-    border-bottom: 1px solid var(--color-border-primary);
+    border-bottom:
+        1px solid
+        var(--color-border-primary);
+
     border-radius:
         var(--radius-md)
         var(--radius-md)
         0
         0;
 
-    background-color: var(--color-background-tertiary);
+    background-color:
+        var(--color-background-tertiary);
 
-    scrollbar-width: none;
+    scrollbar-width:
+        none;
 }
 
-.editorWrapper :global([role="toolbar"] > :first-child) {
-    margin-left: auto;
+.editorWrapper
+    :global(
+        [role="toolbar"] > :first-child
+    ) {
+    margin-left:
+        auto;
 }
 
-.editorWrapper :global([role="toolbar"] > :last-child) {
-    margin-right: auto;
+.editorWrapper
+    :global(
+        [role="toolbar"] > :last-child
+    ) {
+    margin-right:
+        auto;
 }
 
-.editorWrapper :global([role="toolbar"])::-webkit-scrollbar {
-    display: none;
+.editorWrapper
+    :global(
+        [role="toolbar"]
+    )::-webkit-scrollbar {
+    display:
+        none;
 }
 
-.editorWrapper :global([role="toolbar"] button) {
-    color: var(--color-text-secondary);
+.editorWrapper
+    :global(
+        [role="toolbar"] button
+    ) {
+    color:
+        var(--color-text-secondary);
 }
 
-.editorWrapper :global([role="toolbar"] button:hover) {
-    background-color: var(--color-hover);
+.editorWrapper
+    :global(
+        [role="toolbar"] button:hover
+    ) {
+    background-color:
+        var(--color-hover);
 
-    color: var(--color-text-primary);
+    color:
+        var(--color-text-primary);
 }
 
-.editorWrapper :global(.ProseMirror) {
-    width: 100%;
-    max-width: 720px;
+.editorWrapper
+    :global(.ProseMirror) {
+    width:
+        100%;
 
-    margin: 0 auto;
+    max-width:
+        720px;
 
-    outline: none;
+    margin:
+        0 auto;
+
+    outline:
+        none;
 }
 
-.editorWrapper :global(.ProseMirror)::selection,
-.editorWrapper :global(.ProseMirror *)::selection {
-    background-color: var(--color-text-selection);
+.editorWrapper
+    :global(.ProseMirror)::selection,
+.editorWrapper
+    :global(.ProseMirror *)::selection {
+    background-color:
+        var(--color-text-selection);
 }
 
 
@@ -592,47 +943,82 @@
    Editor code blocks
    ========================= */
 
-.editorWrapper :global(.ProseMirror pre) {
-    margin: var(--spacing-lg) 0;
+.editorWrapper
+    :global(.ProseMirror pre) {
+    margin:
+        var(--spacing-lg)
+        0;
 
-    padding: var(--spacing-md);
+    padding:
+        var(--spacing-md);
 
-    overflow-x: auto;
+    overflow-x:
+        auto;
 
-    border: 1px solid var(--color-border-primary);
-    border-radius: var(--radius-md);
+    border:
+        1px solid
+        var(--color-border-primary);
 
-    background-color: var(--color-background-tertiary);
+    border-radius:
+        var(--radius-md);
 
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
-    line-height: 1.6;
+    background-color:
+        var(--color-background-tertiary);
+
+    font-family:
+        var(--font-mono);
+
+    font-size:
+        0.875rem;
+
+    line-height:
+        1.6;
 }
 
-.editorWrapper :global(.ProseMirror pre code) {
-    padding: 0;
+.editorWrapper
+    :global(.ProseMirror pre code) {
+    padding:
+        0;
 
-    border: none;
+    border:
+        none;
 
-    background: transparent;
+    background:
+        transparent;
 
-    color: var(--color-text-primary);
+    color:
+        var(--color-text-primary);
 
-    font-family: inherit;
+    font-family:
+        inherit;
 }
 
-.editorWrapper :global(.ProseMirror :not(pre) > code) {
-    padding: 2px 5px;
+.editorWrapper
+    :global(
+        .ProseMirror :not(pre) > code
+    ) {
+    padding:
+        2px
+        5px;
 
-    border: 1px solid var(--color-border-primary);
-    border-radius: 4px;
+    border:
+        1px solid
+        var(--color-border-primary);
 
-    background-color: var(--color-code-background);
+    border-radius:
+        4px;
 
-    color: var(--color-text-primary);
+    background-color:
+        var(--color-code-background);
 
-    font-family: var(--font-mono);
-    font-size: 0.875em;
+    color:
+        var(--color-text-primary);
+
+    font-family:
+        var(--font-mono);
+
+    font-size:
+        0.875em;
 }
 
 
@@ -640,15 +1026,23 @@
    Editor images
    ========================= */
 
-.editorWrapper :global(.ProseMirror img) {
-    display: block;
+.editorWrapper
+    :global(.ProseMirror img) {
+    display:
+        block;
 
-    max-width: 100%;
-    height: auto;
+    max-width:
+        100%;
 
-    margin: var(--spacing-lg) auto;
+    height:
+        auto;
 
-    border-radius: var(--radius-md);
+    margin:
+        var(--spacing-lg)
+        auto;
+
+    border-radius:
+        var(--radius-md);
 }
 
 
@@ -658,25 +1052,67 @@
 
 @media (max-width: 640px) {
     .page {
-        padding-bottom: 40px;
+        padding-bottom:
+            80px;
     }
 
     .header h1 {
-        font-size: 1.65rem;
+        font-size:
+            1.65rem;
+    }
+
+    .documentationCallout {
+        flex-direction:
+            column;
+
+        align-items:
+            stretch;
+
+        gap:
+            var(--spacing-md);
+    }
+
+    .documentationCalloutContent {
+        align-items:
+            flex-start;
+    }
+
+    .documentationLink {
+        width:
+            100%;
+    }
+
+    .floatingDocumentation {
+        right:
+            16px;
+
+        bottom:
+            16px;
+
+        min-height:
+            42px;
+
+        padding:
+            0
+            14px;
     }
 
     .actions {
-        flex-direction: column-reverse;
+        flex-direction:
+            column-reverse;
     }
 
     .cancelButton,
     .saveButton {
-        width: 100%;
+        width:
+            100%;
 
-        text-align: center;
+        text-align:
+            center;
     }
 
     .departmentOptions {
-        max-height: 200px;
+        max-height:
+            200px;
     }
 }

@@ -1,7 +1,12 @@
-import { useEffect, useState } from "react";
+import {
+    useEffect,
+    useRef,
+    useState,
+} from "react";
 
 import {
     ArrowLeft,
+    BookOpen,
     Check,
     ChevronDown,
     LoaderCircle,
@@ -62,34 +67,61 @@ function statusLabelToValue(
 
 export function ProcedureForm() {
     const { procedureId } = useParams();
+
     const navigate = useNavigate();
+
     const { hasRole } = useAuth();
 
-    const isEditing = Boolean(procedureId);
+    const documentationCalloutRef =
+        useRef<HTMLDivElement | null>(null);
+
+    const isEditing =
+        Boolean(procedureId);
 
     const canManageProcedure =
         hasRole("Admin") ||
         hasRole("Editor");
 
-    const [departments, setDepartments] =
-        useState<Department[]>([]);
 
-    const [form, setForm] =
-        useState<ProcedureInput>(EMPTY_FORM);
+    const [
+        departments,
+        setDepartments,
+    ] = useState<Department[]>([]);
+
+    const [
+        form,
+        setForm,
+    ] = useState<ProcedureInput>(
+        EMPTY_FORM
+    );
 
     const [
         departmentSelectorOpen,
         setDepartmentSelectorOpen,
     ] = useState(false);
 
-    const [loadedFor, setLoadedFor] =
-        useState<string | null>(null);
+    const [
+        loadedFor,
+        setLoadedFor,
+    ] = useState<string | null>(
+        null
+    );
 
-    const [saving, setSaving] =
-        useState(false);
+    const [
+        saving,
+        setSaving,
+    ] = useState(false);
 
-    const [error, setError] =
-        useState("");
+    const [
+        error,
+        setError,
+    ] = useState("");
+
+    const [
+        showFloatingDocumentation,
+        setShowFloatingDocumentation,
+    ] = useState(false);
+
 
     const loadKey =
         procedureId ?? "new";
@@ -186,6 +218,36 @@ export function ProcedureForm() {
     ]);
 
 
+    useEffect(() => {
+        const element =
+            documentationCalloutRef.current;
+
+        if (!element) {
+            return;
+        }
+
+        const observer =
+            new IntersectionObserver(
+                ([entry]) => {
+                    setShowFloatingDocumentation(
+                        !entry.isIntersecting
+                    );
+                },
+                {
+                    threshold: 0,
+                }
+            );
+
+        observer.observe(
+            element
+        );
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [loading]);
+
+
     function handleChange(
         field:
             | "title"
@@ -230,13 +292,13 @@ export function ProcedureForm() {
                 departmentIds:
                     alreadySelected
                         ? current.departmentIds.filter(
-                              (id) =>
-                                  id !== departmentId
-                          )
+                            (id) =>
+                                id !== departmentId
+                        )
                         : [
-                              ...current.departmentIds,
-                              departmentId,
-                          ],
+                            ...current.departmentIds,
+                            departmentId,
+                        ],
             };
         });
 
@@ -260,7 +322,8 @@ export function ProcedureForm() {
 
 
     async function handleSubmit(
-        event: React.FormEvent<HTMLFormElement>
+        event:
+            React.FormEvent<HTMLFormElement>
     ) {
         event.preventDefault();
 
@@ -371,7 +434,9 @@ export function ProcedureForm() {
                         ? `/procedures/${procedureId}`
                         : "/"
                 }
-                className={styles.back}
+                className={
+                    styles.back
+                }
             >
                 <ArrowLeft
                     size={15}
@@ -400,6 +465,58 @@ export function ProcedureForm() {
             </header>
 
 
+            <div
+                ref={
+                    documentationCalloutRef
+                }
+                className={
+                    styles.documentationCallout
+                }
+            >
+                <div
+                    className={
+                        styles.documentationCalloutContent
+                    }
+                >
+                    <div
+                        className={
+                            styles.documentationIcon
+                        }
+                    >
+                        <BookOpen
+                            size={20}
+                        />
+                    </div>
+
+                    <div
+                        className={
+                            styles.documentationText
+                        }
+                    >
+                        <strong>
+                            Padrão de documentação
+                        </strong>
+
+                        <span>
+                            Consulte o modelo recomendado para estruturar
+                            títulos, resumos e conteúdos da Wiki.
+                        </span>
+                    </div>
+                </div>
+
+                <Link
+                    to="/documentation-standard"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={
+                        styles.documentationLink
+                    }
+                >
+                    Consultar padrão
+                </Link>
+            </div>
+
+
             <form
                 className={
                     styles.form
@@ -413,7 +530,9 @@ export function ProcedureForm() {
                         styles.field
                     }
                 >
-                    <label htmlFor="title">
+                    <label
+                        htmlFor="title"
+                    >
                         Título
                     </label>
 
@@ -443,7 +562,9 @@ export function ProcedureForm() {
                         styles.field
                     }
                 >
-                    <label htmlFor="description">
+                    <label
+                        htmlFor="description"
+                    >
                         Descrição
                     </label>
 
@@ -484,52 +605,52 @@ export function ProcedureForm() {
                     >
                         {selectedDepartments.length >
                             0 && (
-                            <div
-                                className={
-                                    styles.selectedDepartments
-                                }
-                            >
-                                {selectedDepartments.map(
-                                    (
-                                        department
-                                    ) => (
-                                        <div
-                                            key={
-                                                department.id
-                                            }
-                                            className={
-                                                styles.departmentChip
-                                            }
-                                        >
-                                            <span>
-                                                {
-                                                    department.name
+                                <div
+                                    className={
+                                        styles.selectedDepartments
+                                    }
+                                >
+                                    {selectedDepartments.map(
+                                        (
+                                            department
+                                        ) => (
+                                            <div
+                                                key={
+                                                    department.id
                                                 }
-                                            </span>
-
-                                            <button
-                                                type="button"
                                                 className={
-                                                    styles.removeDepartment
+                                                    styles.departmentChip
                                                 }
-                                                onClick={() =>
-                                                    handleRemoveDepartment(
-                                                        department.id
-                                                    )
-                                                }
-                                                aria-label={`Remover ${department.name}`}
                                             >
-                                                <X
-                                                    size={
-                                                        12
+                                                <span>
+                                                    {
+                                                        department.name
                                                     }
-                                                />
-                                            </button>
-                                        </div>
-                                    )
-                                )}
-                            </div>
-                        )}
+                                                </span>
+
+                                                <button
+                                                    type="button"
+                                                    className={
+                                                        styles.removeDepartment
+                                                    }
+                                                    onClick={() =>
+                                                        handleRemoveDepartment(
+                                                            department.id
+                                                        )
+                                                    }
+                                                    aria-label={`Remover ${department.name}`}
+                                                >
+                                                    <X
+                                                        size={
+                                                            12
+                                                        }
+                                                    />
+                                                </button>
+                                            </div>
+                                        )
+                                    )}
+                                </div>
+                            )}
 
 
                         <button
@@ -555,23 +676,23 @@ export function ProcedureForm() {
                                 {form
                                     .departmentIds
                                     .length ===
-                                0
+                                    0
                                     ? "Selecione um ou mais departamentos"
                                     : `${form.departmentIds.length} departamento${
-                                          form
-                                              .departmentIds
-                                              .length !==
-                                          1
-                                              ? "s"
-                                              : ""
-                                      } selecionado${
-                                          form
-                                              .departmentIds
-                                              .length !==
-                                          1
-                                              ? "s"
-                                              : ""
-                                      }`}
+                                        form
+                                            .departmentIds
+                                            .length !==
+                                        1
+                                            ? "s"
+                                            : ""
+                                    } selecionado${
+                                        form
+                                            .departmentIds
+                                            .length !==
+                                        1
+                                            ? "s"
+                                            : ""
+                                    }`}
                             </span>
 
                             <ChevronDown
@@ -664,7 +785,9 @@ export function ProcedureForm() {
                         styles.field
                     }
                 >
-                    <label htmlFor="status">
+                    <label
+                        htmlFor="status"
+                    >
                         Status
                     </label>
 
@@ -771,13 +894,34 @@ export function ProcedureForm() {
                             ? "Salvando..."
                             : form.status ===
                                 0
-                              ? "Salvar rascunho"
-                              : isEditing
-                                ? "Publicar alterações"
-                                : "Publicar procedimento"}
+                                ? "Salvar rascunho"
+                                : isEditing
+                                    ? "Publicar alterações"
+                                    : "Publicar procedimento"}
                     </button>
                 </div>
             </form>
+
+
+            {showFloatingDocumentation && (
+                <Link
+                    to="/documentation-standard"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={
+                        styles.floatingDocumentation
+                    }
+                    title="Consultar padrão de documentação"
+                >
+                    <BookOpen
+                        size={18}
+                    />
+
+                    <span>
+                        Consultar padrão
+                    </span>
+                </Link>
+            )}
         </div>
     );
 }
