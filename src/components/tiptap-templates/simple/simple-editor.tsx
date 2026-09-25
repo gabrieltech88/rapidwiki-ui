@@ -134,9 +134,111 @@ import {
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss"
 
+
 const SEARCH_AND_REPLACE_SCROLL_OPTIONS: ScrollIntoViewOptions = {
   block: "center",
 }
+
+
+/* =========================================================
+   CLICK OUTSIDE
+   ========================================================= */
+
+function useCloseOnOutsideClick(
+  open: boolean,
+  triggerRef: RefObject<HTMLElement | null>,
+  contentRef: RefObject<HTMLElement | null>,
+  onClose: () => void
+) {
+  useEffect(() => {
+    if (!open) {
+      return
+    }
+
+    const handlePointerDown = (
+      event: PointerEvent
+    ) => {
+      const target =
+        event.target
+
+      if (
+        !(target instanceof Node)
+      ) {
+        return
+      }
+
+      const clickedTrigger =
+        triggerRef.current?.contains(
+          target
+        )
+
+      const clickedContent =
+        contentRef.current?.contains(
+          target
+        )
+
+      if (
+        clickedTrigger ||
+        clickedContent
+      ) {
+        return
+      }
+
+      onClose()
+    }
+
+
+    const handleKeyDown = (
+      event: KeyboardEvent
+    ) => {
+      if (
+        event.key === "Escape"
+      ) {
+        onClose()
+      }
+    }
+
+
+    /*
+     * Capture phase é intencional.
+     *
+     * O TipTap / ProseMirror pode manipular eventos
+     * posteriormente. Aqui capturamos o clique antes.
+     */
+    document.addEventListener(
+      "pointerdown",
+      handlePointerDown,
+      true
+    )
+
+    document.addEventListener(
+      "keydown",
+      handleKeyDown,
+      true
+    )
+
+
+    return () => {
+      document.removeEventListener(
+        "pointerdown",
+        handlePointerDown,
+        true
+      )
+
+      document.removeEventListener(
+        "keydown",
+        handleKeyDown,
+        true
+      )
+    }
+  }, [
+    open,
+    triggerRef,
+    contentRef,
+    onClose,
+  ])
+}
+
 
 /* =========================================================
    CONTEÚDO
@@ -150,7 +252,8 @@ function parseTiptapJson(
   }
 
   try {
-    const parsed = JSON.parse(value)
+    const parsed =
+      JSON.parse(value)
 
     if (
       parsed &&
@@ -165,6 +268,7 @@ function parseTiptapJson(
     return null
   }
 }
+
 
 function getInitialContent(
   value: string
@@ -184,6 +288,7 @@ function getInitialContent(
     isMarkdown: true,
   }
 }
+
 
 /* =========================================================
    CORES DO TEXTO
@@ -224,6 +329,7 @@ const TEXT_COLORS = [
   },
 ]
 
+
 /* =========================================================
    SELETOR DE COR DO TEXTO
    ========================================================= */
@@ -238,11 +344,36 @@ const TextColorPicker = ({
     setOpen,
   ] = useState(false)
 
+  const triggerRef =
+    useRef<HTMLButtonElement>(
+      null
+    )
+
+  const contentRef =
+    useRef<HTMLDivElement>(
+      null
+    )
+
   const savedSelection =
     useRef<{
       from: number
       to: number
     } | null>(null)
+
+
+  const closePopover =
+    useCallback(() => {
+      setOpen(false)
+    }, [])
+
+
+  useCloseOnOutsideClick(
+    open,
+    triggerRef,
+    contentRef,
+    closePopover
+  )
+
 
   const saveSelection = () => {
     if (!editor) {
@@ -252,13 +383,15 @@ const TextColorPicker = ({
     const {
       from,
       to,
-    } = editor.state.selection
+    } =
+      editor.state.selection
 
     savedSelection.current = {
       from,
       to,
     }
   }
+
 
   const applyColor = (
     color: string | null
@@ -271,13 +404,17 @@ const TextColorPicker = ({
       savedSelection.current ??
       editor.state.selection
 
-    const chain = editor
-      .chain()
-      .focus()
-      .setTextSelection({
-        from: selection.from,
-        to: selection.to,
-      })
+    const chain =
+      editor
+        .chain()
+        .focus()
+        .setTextSelection({
+          from:
+            selection.from,
+
+          to:
+            selection.to,
+        })
 
     if (color) {
       chain
@@ -289,18 +426,27 @@ const TextColorPicker = ({
         .run()
     }
 
-    savedSelection.current = null
+    savedSelection.current =
+      null
 
     setOpen(false)
   }
 
+
   return (
     <Popover
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={
+        setOpen
+      }
     >
-      <PopoverTrigger asChild>
+      <PopoverTrigger
+        asChild
+      >
         <Button
+          ref={
+            triggerRef
+          }
           type="button"
           variant="ghost"
           title="Cor do texto"
@@ -310,10 +456,18 @@ const TextColorPicker = ({
         >
           <span
             style={{
-              fontWeight: 700,
-              fontSize: "16px",
-              lineHeight: 1,
-              paddingBottom: "2px",
+              fontWeight:
+                700,
+
+              fontSize:
+                "16px",
+
+              lineHeight:
+                1,
+
+              paddingBottom:
+                "2px",
+
               borderBottom:
                 "3px solid currentColor",
             }}
@@ -326,22 +480,43 @@ const TextColorPicker = ({
       <PopoverContent
         side="bottom"
         align="start"
+        onInteractOutside={
+          closePopover
+        }
+        onEscapeKeyDown={
+          closePopover
+        }
       >
         <div
+          ref={
+            contentRef
+          }
           style={{
-            display: "grid",
+            display:
+              "grid",
+
             gridTemplateColumns:
               "repeat(4, 34px)",
-            gap: "8px",
-            padding: "4px",
+
+            gap:
+              "8px",
+
+            padding:
+              "4px",
           }}
         >
           {TEXT_COLORS.map(
-            (item) => (
+            (
+              item
+            ) => (
               <button
-                key={item.name}
+                key={
+                  item.name
+                }
                 type="button"
-                title={item.name}
+                title={
+                  item.name
+                }
                 onPointerDown={(
                   event
                 ) => {
@@ -352,20 +527,33 @@ const TextColorPicker = ({
                   )
                 }}
                 style={{
-                  width: "34px",
-                  height: "34px",
-                  display: "flex",
+                  width:
+                    "34px",
+
+                  height:
+                    "34px",
+
+                  display:
+                    "flex",
+
                   alignItems:
                     "center",
+
                   justifyContent:
                     "center",
-                  padding: 0,
+
+                  padding:
+                    0,
+
                   borderRadius:
                     "6px",
+
                   border:
                     "1px solid rgba(128, 128, 128, 0.3)",
+
                   background:
                     "transparent",
+
                   cursor:
                     "pointer",
                 }}
@@ -375,10 +563,13 @@ const TextColorPicker = ({
                     style={{
                       width:
                         "20px",
+
                       height:
                         "20px",
+
                       borderRadius:
                         "50%",
+
                       backgroundColor:
                         item.color,
                     }}
@@ -388,6 +579,7 @@ const TextColorPicker = ({
                     style={{
                       fontSize:
                         "16px",
+
                       fontWeight:
                         700,
                     }}
@@ -404,6 +596,7 @@ const TextColorPicker = ({
   )
 }
 
+
 /* =========================================================
    TAMANHO DA FONTE
    ========================================================= */
@@ -414,7 +607,8 @@ const FontSizePicker = ({
   editor: Editor | null
 }) => {
   const handleChange = (
-    event: ChangeEvent<HTMLSelectElement>
+    event:
+      ChangeEvent<HTMLSelectElement>
   ) => {
     if (!editor) {
       return
@@ -439,8 +633,10 @@ const FontSizePicker = ({
         .run()
     }
 
-    event.target.value = ""
+    event.target.value =
+      ""
   }
+
 
   return (
     <select
@@ -451,22 +647,33 @@ const FontSizePicker = ({
         handleChange
       }
       style={{
-        height: "27px",
-        minWidth: "72px",
+        height:
+          "27px",
+
+        minWidth:
+          "72px",
+
         padding:
           "0 4px",
+
         borderRadius:
           "5px",
+
         border:
           "1px solid rgba(255, 255, 255, 0.12)",
+
         backgroundColor:
           "#161616",
+
         color:
           "#f5f5f5",
+
         colorScheme:
           "dark",
+
         cursor:
           "pointer",
+
         fontSize:
           "11px",
       }}
@@ -513,56 +720,94 @@ const FontSizePicker = ({
   )
 }
 
+
 /* =========================================================
    ESTILOS DO MENU DE TABELA
    ========================================================= */
 
-const tableMenuItemStyle: CSSProperties = {
-  width: "100%",
-  minHeight: "34px",
-  display: "flex",
-  alignItems: "center",
-  gap: "8px",
-  padding: "7px 10px",
-  border: "none",
-  borderRadius: "5px",
-  background:
-    "transparent",
-  color:
-    "var(--color-text-primary)",
-  textAlign:
-    "left",
-  cursor:
-    "pointer",
-  fontSize:
-    "13px",
-  fontFamily:
-    "inherit",
-}
+const tableMenuItemStyle:
+  CSSProperties = {
+    width:
+      "100%",
 
-const tableMenuTitleStyle: CSSProperties = {
-  padding:
-    "5px 10px",
-  color:
-    "var(--color-text-muted)",
-  fontSize:
-    "10px",
-  fontWeight:
-    600,
-  textTransform:
-    "uppercase",
-  letterSpacing:
-    "0.06em",
-}
+    minHeight:
+      "34px",
 
-const tableSeparatorStyle: CSSProperties = {
-  width: "100%",
-  height: "1px",
-  margin:
-    "4px 0",
-  background:
-    "var(--color-border-primary)",
-}
+    display:
+      "flex",
+
+    alignItems:
+      "center",
+
+    gap:
+      "8px",
+
+    padding:
+      "7px 10px",
+
+    border:
+      "none",
+
+    borderRadius:
+      "5px",
+
+    background:
+      "transparent",
+
+    color:
+      "var(--color-text-primary)",
+
+    textAlign:
+      "left",
+
+    cursor:
+      "pointer",
+
+    fontSize:
+      "13px",
+
+    fontFamily:
+      "inherit",
+  }
+
+
+const tableMenuTitleStyle:
+  CSSProperties = {
+    padding:
+      "5px 10px",
+
+    color:
+      "var(--color-text-muted)",
+
+    fontSize:
+      "10px",
+
+    fontWeight:
+      600,
+
+    textTransform:
+      "uppercase",
+
+    letterSpacing:
+      "0.06em",
+  }
+
+
+const tableSeparatorStyle:
+  CSSProperties = {
+    width:
+      "100%",
+
+    height:
+      "1px",
+
+    margin:
+      "4px 0",
+
+    background:
+      "var(--color-border-primary)",
+  }
+
 
 /* =========================================================
    MENU DE TABELA
@@ -576,7 +821,33 @@ const TableMenu = ({
   const [
     open,
     setOpen,
-  ] = useState(false)
+  ] =
+    useState(false)
+
+  const triggerRef =
+    useRef<HTMLButtonElement>(
+      null
+    )
+
+  const contentRef =
+    useRef<HTMLDivElement>(
+      null
+    )
+
+
+  const closePopover =
+    useCallback(() => {
+      setOpen(false)
+    }, [])
+
+
+  useCloseOnOutsideClick(
+    open,
+    triggerRef,
+    contentRef,
+    closePopover
+  )
+
 
   if (!editor) {
     return (
@@ -593,28 +864,37 @@ const TableMenu = ({
     )
   }
 
+
   const runCommand = (
-    command: () => void
+    command:
+      () => void
   ) => {
     command()
 
     setOpen(false)
   }
 
+
   const isInsideTable =
     editor.isActive(
       "table"
     )
 
+
   return (
     <Popover
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={
+        setOpen
+      }
     >
       <PopoverTrigger
         asChild
       >
         <Button
+          ref={
+            triggerRef
+          }
           type="button"
           variant="ghost"
           title="Tabela"
@@ -629,17 +909,30 @@ const TableMenu = ({
       <PopoverContent
         side="bottom"
         align="start"
+        onInteractOutside={
+          closePopover
+        }
+        onEscapeKeyDown={
+          closePopover
+        }
       >
         <div
+          ref={
+            contentRef
+          }
           style={{
             width:
               "230px",
+
             display:
               "flex",
+
             flexDirection:
               "column",
+
             gap:
               "2px",
+
             padding:
               "4px",
           }}
@@ -656,8 +949,12 @@ const TableMenu = ({
                     .chain()
                     .focus()
                     .insertTable({
-                      rows: 3,
-                      cols: 3,
+                      rows:
+                        3,
+
+                      cols:
+                        3,
+
                       withHeaderRow:
                         true,
                     })
@@ -694,10 +991,12 @@ const TableMenu = ({
             }
             style={{
               ...tableMenuItemStyle,
+
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
+
               cursor:
                 isInsideTable
                   ? "pointer"
@@ -729,10 +1028,12 @@ const TableMenu = ({
             }
             style={{
               ...tableMenuItemStyle,
+
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
+
               cursor:
                 isInsideTable
                   ? "pointer"
@@ -764,10 +1065,12 @@ const TableMenu = ({
             }
             style={{
               ...tableMenuItemStyle,
+
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
+
               cursor:
                 isInsideTable
                   ? "pointer"
@@ -813,10 +1116,12 @@ const TableMenu = ({
             }
             style={{
               ...tableMenuItemStyle,
+
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
+
               cursor:
                 isInsideTable
                   ? "pointer"
@@ -848,10 +1153,12 @@ const TableMenu = ({
             }
             style={{
               ...tableMenuItemStyle,
+
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
+
               cursor:
                 isInsideTable
                   ? "pointer"
@@ -883,10 +1190,12 @@ const TableMenu = ({
             }
             style={{
               ...tableMenuItemStyle,
+
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
+
               cursor:
                 isInsideTable
                   ? "pointer"
@@ -932,10 +1241,12 @@ const TableMenu = ({
             }
             style={{
               ...tableMenuItemStyle,
+
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
+
               cursor:
                 isInsideTable
                   ? "pointer"
@@ -963,10 +1274,12 @@ const TableMenu = ({
             }
             style={{
               ...tableMenuItemStyle,
+
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
+
               cursor:
                 isInsideTable
                   ? "pointer"
@@ -994,10 +1307,12 @@ const TableMenu = ({
             }
             style={{
               ...tableMenuItemStyle,
+
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
+
               cursor:
                 isInsideTable
                   ? "pointer"
@@ -1031,12 +1346,15 @@ const TableMenu = ({
             }
             style={{
               ...tableMenuItemStyle,
+
               color:
                 "#ef4444",
+
               opacity:
                 isInsideTable
                   ? 1
                   : 0.4,
+
               cursor:
                 isInsideTable
                   ? "pointer"
@@ -1066,6 +1384,7 @@ const TableMenu = ({
   )
 }
 
+
 /* =========================================================
    TOOLBAR PRINCIPAL
    ========================================================= */
@@ -1078,7 +1397,8 @@ const MainToolbarContent = ({
   searchAndReplaceButtonRef,
   isMobile,
 }: {
-  editor: Editor | null
+  editor:
+    Editor | null
 
   onHighlighterClick:
     () => void
@@ -1124,7 +1444,9 @@ const MainToolbarContent = ({
               ? "on"
               : "off"
           }
-          disabled={!editor}
+          disabled={
+            !editor
+          }
           onClick={() =>
             editor
               ?.chain()
@@ -1186,12 +1508,16 @@ const MainToolbarContent = ({
         />
 
         <TextColorPicker
-          editor={editor}
+          editor={
+            editor
+          }
         />
 
         {!isMobile ? (
           <ColorHighlightPopover
-            editor={editor}
+            editor={
+              editor
+            }
           />
         ) : (
           <ColorHighlightPopoverButton
@@ -1206,7 +1532,9 @@ const MainToolbarContent = ({
 
       <ToolbarGroup>
         <FontSizePicker
-          editor={editor}
+          editor={
+            editor
+          }
         />
       </ToolbarGroup>
 
@@ -1246,7 +1574,9 @@ const MainToolbarContent = ({
 
       <ToolbarGroup>
         <TableMenu
-          editor={editor}
+          editor={
+            editor
+          }
         />
 
         <ImageUploadButton
@@ -1282,6 +1612,7 @@ const MainToolbarContent = ({
   )
 }
 
+
 /* =========================================================
    TOOLBAR MOBILE
    ========================================================= */
@@ -1290,7 +1621,8 @@ const MobileToolbarContent = ({
   editor,
   onBack,
 }: {
-  editor: Editor | null
+  editor:
+    Editor | null
 
   onBack:
     () => void
@@ -1313,26 +1645,32 @@ const MobileToolbarContent = ({
       <ToolbarSeparator />
 
       <ColorHighlightPopoverContent
-        editor={editor}
+        editor={
+          editor
+        }
       />
     </>
   )
 }
+
 
 /* =========================================================
    EDITOR
    ========================================================= */
 
 interface SimpleEditorProps {
-  value: string
+  value:
+    string
 
   onChange:
     (content: string) => void
 }
 
+
 type MobileView =
   | "main"
   | "highlighter"
+
 
 export function SimpleEditor({
   value,
@@ -1343,24 +1681,28 @@ export function SimpleEditor({
 
   const {
     height,
-  } = useWindowSize()
+  } =
+    useWindowSize()
 
   const [
     mobileView,
     setMobileView,
-  ] = useState<MobileView>(
-    "main"
-  )
+  ] =
+    useState<MobileView>(
+      "main"
+    )
 
   const [
     isSearchAndReplaceOpen,
     setIsSearchAndReplaceOpen,
-  ] = useState(false)
+  ] =
+    useState(false)
 
   const [
     toolbarHeight,
     setToolbarHeight,
-  ] = useState(0)
+  ] =
+    useState(0)
 
   const toolbarRef =
     useRef<HTMLDivElement>(
@@ -1372,10 +1714,12 @@ export function SimpleEditor({
       null
     )
 
+
   const initialContent =
     getInitialContent(
       value
     )
+
 
   const editor =
     useEditor({
@@ -1517,6 +1861,7 @@ export function SimpleEditor({
       },
     })
 
+
   /* =======================================================
      ALTURA DA TOOLBAR
      ======================================================= */
@@ -1531,7 +1876,9 @@ export function SimpleEditor({
 
     const resizeObserver =
       new ResizeObserver(
-        (entries) => {
+        (
+          entries
+        ) => {
           const entry =
             entries[0]
 
@@ -1540,9 +1887,7 @@ export function SimpleEditor({
           }
 
           setToolbarHeight(
-            entry
-              .contentRect
-              .height
+            entry.contentRect.height
           )
         }
       )
@@ -1555,6 +1900,7 @@ export function SimpleEditor({
       resizeObserver.disconnect()
     }
   }, [])
+
 
   /* =======================================================
      SINCRONIZAÇÃO DO CONTEÚDO
@@ -1570,7 +1916,9 @@ export function SimpleEditor({
         value
       )
 
-    if (jsonContent) {
+    if (
+      jsonContent
+    ) {
       const currentJson =
         JSON.stringify(
           editor.getJSON()
@@ -1620,6 +1968,7 @@ export function SimpleEditor({
     value,
   ])
 
+
   const rect =
     useCursorVisibility({
       editor,
@@ -1628,11 +1977,13 @@ export function SimpleEditor({
         toolbarHeight,
     })
 
+
   const toolbarView:
     MobileView =
       isMobile
         ? mobileView
         : "main"
+
 
   /* =======================================================
      SEARCH & REPLACE
@@ -1649,6 +2000,7 @@ export function SimpleEditor({
       )
     }, [])
 
+
   const closeSearchAndReplace =
     useCallback(() => {
       setIsSearchAndReplaceOpen(
@@ -1659,6 +2011,7 @@ export function SimpleEditor({
         .current
         ?.focus()
     }, [])
+
 
   const toggleSearchAndReplace =
     useCallback(() => {
@@ -1676,6 +2029,92 @@ export function SimpleEditor({
       isSearchAndReplaceOpen,
       openSearchAndReplace,
     ])
+
+
+  useEffect(() => {
+    if (
+      !isSearchAndReplaceOpen
+    ) {
+      return
+    }
+
+    const handlePointerDown = (
+      event: PointerEvent
+    ) => {
+      const target =
+        event.target
+
+      if (
+        !(target instanceof Node)
+      ) {
+        return
+      }
+
+      const searchPanel =
+        document.querySelector(
+          ".simple-editor-search-and-replace"
+        )
+
+      const searchButton =
+        searchAndReplaceButtonRef.current
+
+      if (
+        searchPanel?.contains(
+          target
+        ) ||
+        searchButton?.contains(
+          target
+        )
+      ) {
+        return
+      }
+
+      closeSearchAndReplace()
+    }
+
+
+    const handleKeyDown = (
+      event: KeyboardEvent
+    ) => {
+      if (
+        event.key === "Escape"
+      ) {
+        closeSearchAndReplace()
+      }
+    }
+
+
+    document.addEventListener(
+      "pointerdown",
+      handlePointerDown,
+      true
+    )
+
+    document.addEventListener(
+      "keydown",
+      handleKeyDown,
+      true
+    )
+
+
+    return () => {
+      document.removeEventListener(
+        "pointerdown",
+        handlePointerDown,
+        true
+      )
+
+      document.removeEventListener(
+        "keydown",
+        handleKeyDown,
+        true
+      )
+    }
+  }, [
+    closeSearchAndReplace,
+    isSearchAndReplaceOpen,
+  ])
+
 
   return (
     <div className="simple-editor-wrapper">
@@ -1702,7 +2141,8 @@ export function SimpleEditor({
             toolbarRef
           }
           style={{
-            flexShrink: 0,
+            flexShrink:
+              0,
 
             ...(isMobile
               ? {

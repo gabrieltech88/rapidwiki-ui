@@ -1,31 +1,24 @@
 import { ChevronRight } from "lucide-react";
-
 import { Link } from "react-router";
-
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import styles from "../Procedure/Procedure.module.css";
 
-
 const DOCUMENTATION_STANDARD = `
-# 1. Título
+## 1. Título
 
-O título deve permitir que uma pessoa identifique rapidamente **sobre o que é o documento** ou **qual atividade ele ensina a realizar**.
+O título deve deixar claro, de forma rápida, o que o documento apresenta.
 
-A forma de escrever o título depende do tipo de conteúdo.
+### 1.1. Procedimentos
 
-## Procedimentos
+Para procedimentos, prefira títulos que indiquem diretamente a ação executada.
 
-Quando o documento ensina a executar uma atividade, prefira títulos que representem claramente a ação que será realizada.
-
-Uma estrutura recomendada é:
+Estrutura recomendada:
 
 **Ação + objeto + contexto**
 
-### Exemplos
-
-**Recomendado**
+Exemplos:
 
 - Configurar uma VLAN em uma OLT Huawei
 - Autorizar uma ONU em uma OLT Huawei
@@ -33,30 +26,22 @@ Uma estrutura recomendada é:
 - Restaurar o banco de dados da Wiki
 - Publicar uma nova versão da API
 
-**Evite**
+Evite títulos genéricos, como:
 
 - VLAN
 - Configuração da OLT
 - Usuários
 - Banco de dados
 
-O título de um procedimento deve responder:
+Ao definir o título de um procedimento, pergunte:
 
 > **O que este documento ensina a fazer?**
 
----
+### 1.2. Documentações internas
 
-## Documentações internas
+Para documentações internas, o título deve representar claramente o assunto documentado.
 
-Nem todo conteúdo da Wiki representa uma ação.
-
-Documentações internas podem existir para registrar arquiteturas, estruturas, conceitos, ambientes, equipamentos, sistemas ou outras informações importantes para a empresa.
-
-Nesse caso, o título deve representar claramente **o assunto documentado**.
-
-### Exemplos
-
-**Recomendado**
+Exemplos:
 
 - Infraestrutura da Wiki
 - Arquitetura da API
@@ -65,7 +50,7 @@ Nesse caso, o título deve representar claramente **o assunto documentado**.
 - Topologia da rede óptica
 - Repositórios e organização do código-fonte
 
-**Evite**
+Evite títulos muito genéricos, como:
 
 - Wiki
 - API
@@ -73,454 +58,350 @@ Nesse caso, o título deve representar claramente **o assunto documentado**.
 - Rede
 - Repositórios
 
-O título de uma documentação interna deve responder:
+Ao definir o título de uma documentação interna, pergunte:
 
 > **Sobre o que é este documento?**
 
 ---
 
-# 2. Resumo
+## 2. Resumo
 
-O resumo deve apresentar rapidamente o conteúdo do documento.
+Todo documento deve possuir um resumo curto e objetivo.
 
-Seu objetivo é permitir que uma pessoa descubra se encontrou a informação que procura **sem precisar ler todo o documento**.
+Esse resumo deve ser preenchido no campo **Descrição** do formulário de criação ou edição do procedimento/documentação. Ele serve para apresentar rapidamente o conteúdo antes de o usuário abrir o documento completo.
 
-Um bom resumo normalmente deve responder:
+O resumo deve indicar:
 
 - o que o documento contém;
-- qual assunto ou processo é abordado;
-- para que ele pode ser utilizado, quando isso for relevante.
+- qual processo, sistema ou assunto é abordado;
+- em quais situações o conteúdo é útil, quando isso for relevante.
 
-O resumo deve ser curto e direto.
+Evite apenas repetir o título com outras palavras.
 
----
+**Exemplo — Procedimento**
 
-## Exemplo de resumo de um procedimento
+**Título:** Configurar uma VLAN em uma OLT Huawei
 
-### Título
-
-**Configurar uma VLAN em uma OLT Huawei**
-
-### Resumo
+**Resumo:**
 
 > Este procedimento apresenta o processo para criação e configuração de uma VLAN em uma OLT Huawei, incluindo a definição da VLAN, associação ao serviço e validação da configuração.
 
----
+**Exemplo — Documentação interna**
 
-## Exemplo de resumo de uma documentação interna
+**Título:** Infraestrutura da Wiki
 
-### Título
-
-**Infraestrutura da Wiki**
-
-### Resumo
+**Resumo:**
 
 > Este documento descreve a infraestrutura utilizada pela Wiki, incluindo aplicações, repositórios, tecnologias, banco de dados, ambientes e os principais relacionamentos entre seus componentes.
 
 ---
 
-## Evite
+## 3. Corpo do documento
 
-Resumos que apenas repetem o título:
+O conteúdo deve ser dividido em seções e subseções claras.
 
-> Documento sobre a infraestrutura da Wiki.
+Não existe uma única estrutura obrigatória para todos os documentos. A organização deve acompanhar o objetivo do conteúdo.
 
-Ou:
+Os documentos da Wiki podem ser divididos principalmente em dois tipos:
 
-> Aqui veremos como configurar uma VLAN.
+- **Procedimentos:** ensinam como executar uma atividade.
+- **Documentações internas:** descrevem sistemas, arquiteturas, ambientes, estruturas ou conceitos internos.
 
-O resumo deve acrescentar contexto suficiente para que o leitor compreenda **o que encontrará no documento**.
-
----
-
-# 3. Corpo do documento
-
-O corpo contém as informações principais do procedimento ou da documentação.
-
-Ele deve ser dividido em **seções e subseções claras**, evitando grandes blocos de texto com assuntos diferentes misturados.
-
-Não existe uma única estrutura obrigatória para todos os conteúdos da Wiki.
-
-A organização deve acompanhar o objetivo do documento.
-
-Existem, porém, duas estruturas principais:
-
-- procedimentos;
-- documentações internas.
+A estrutura deve facilitar a leitura e permitir que uma pessoa encontre rapidamente a informação que procura.
 
 ---
 
-# 4. Estrutura de um procedimento
+## 4. Estrutura de um procedimento
 
-Um procedimento deve ser organizado principalmente seguindo **a ordem em que a atividade é executada**.
+Um procedimento deve acompanhar, sempre que possível, a ordem real de execução da atividade.
 
 Uma estrutura recomendada é:
 
-1. contexto ou objetivo;
-2. pré-requisitos;
-3. execução;
-4. validação;
-5. problemas conhecidos, quando aplicável.
+1. Execução
+2. Validação
+3. Problemas comuns, quando aplicável
 
-Nem todas essas seções precisam existir em todos os procedimentos. Utilize apenas aquelas que agregarem informação ao documento.
+Nem todo procedimento precisa obrigatoriamente possuir todas essas seções.
 
----
 
-## Objetivo ou contexto
+### 4.1. Execução
 
-Quando necessário, explique o resultado esperado ou o motivo da execução do procedimento.
+A execução deve ser organizada em etapas claras.
 
-### Exemplo
+Quando a ordem das ações for importante, utilize uma lista numerada.
 
-> Este procedimento tem como objetivo configurar uma nova VLAN na OLT e disponibilizá-la para utilização pelos serviços correspondentes.
+Exemplo:
 
-Se o resumo já fornecer contexto suficiente, não é necessário repetir a mesma informação apenas para criar uma seção de objetivo.
+1. Acesse a OLT.
+2. Entre no modo de configuração.
+3. Crie a VLAN.
+4. Associe a VLAN ao serviço.
+5. Salve a configuração.
 
----
-
-## Pré-requisitos
-
-Informe o que a pessoa precisa possuir, saber ou verificar antes de iniciar o procedimento.
-
-### Exemplo
-
-Antes de iniciar, certifique-se de possuir:
-
-- acesso administrativo à OLT;
-- endereço IP da OLT;
-- identificação da VLAN que será criada;
-- informação sobre qual serviço utilizará a VLAN.
-
-Não assuma que informações essenciais já são conhecidas pelo leitor.
-
----
-
-## Execução
-
-Divida o procedimento em etapas seguindo a ordem real da atividade.
-
-### 1. Acessar a OLT
-
-Explique a ação que deve ser realizada e forneça as informações necessárias para executá-la.
-
-Quando houver comandos, apresente-os em um bloco próprio:
+Comandos devem aparecer em blocos de código:
 
 \`\`\`bash
 ssh USUARIO@IP_DA_OLT
 \`\`\`
 
-### 2. Criar a VLAN
-
-Explique a próxima ação.
-
 \`\`\`text
 vlan ID_DA_VLAN smart
 \`\`\`
 
-### 3. Configurar o serviço
+### 4.2. Validação
 
-Continue seguindo a sequência real da atividade.
+Sempre que possível, informe como confirmar que o procedimento foi executado corretamente.
 
-Evite colocar várias ações diferentes dentro da mesma etapa quando elas puderem ser separadas.
-
----
-
-## Validação
-
-Sempre que for relevante, explique como confirmar que o procedimento foi concluído corretamente.
-
-### Exemplo
-
-Após criar a VLAN, consulte as VLANs configuradas:
+Exemplo:
 
 \`\`\`text
 display vlan
 \`\`\`
 
-Confirme que a VLAN criada aparece na listagem com os parâmetros esperados.
+Explique também qual resultado deve ser esperado.
 
-Um procedimento não deve explicar apenas **como executar** uma ação quando também for importante saber **como confirmar que ela funcionou**.
+### 4.3. Problemas comuns
 
----
+Quando o procedimento possuir falhas recorrentes ou situações conhecidas, documente:
 
-## Problemas comuns
-
-Quando um procedimento possuir erros ou situações recorrentes, documente-os próximo das etapas relacionadas ou em uma seção própria.
-
-### Exemplo
-
-#### A VLAN já existe
-
-Explique:
-
-- como identificar a situação;
-- por que ela ocorre;
-- o que deve ser verificado;
-- qual ação deve ser tomada.
-
-Evite apenas informar que um erro pode acontecer sem explicar como lidar com ele.
+- o problema;
+- a possível causa;
+- o que verificar;
+- a ação recomendada.
 
 ---
 
-# 5. Estrutura de uma documentação interna
 
-Uma documentação interna normalmente não representa uma sequência de ações.
+## 5. Títulos e subtítulos
 
-Nesse caso, organize o conteúdo **do geral para o específico** e divida o assunto em partes que façam sentido para quem estiver consultando a informação.
+Títulos e subtítulos devem ser utilizados para criar uma hierarquia clara, sem fragmentar excessivamente o documento. Este próprio documento segue essa organização: seções principais usam \`1.\`, \`2.\`, \`3.\` e subseções usam \`1.1.\`, \`1.2.\`, \`2.1.\` quando realmente necessárias.
 
-Considere, por exemplo, uma documentação chamada:
+A cor dos títulos e subtítulos deve permanecer na **cor padrão do texto**.
 
-**Infraestrutura da Wiki**
+### 5.1. Numeração em procedimentos
 
-Ela poderia ser organizada da seguinte maneira.
-
----
-
-## Visão geral
-
-Apresente primeiro uma visão geral do que está sendo documentado.
-
-Explique os principais componentes e como eles se relacionam antes de entrar nos detalhes de cada um.
-
----
-
-## Aplicações
-
-Separe os diferentes componentes da solução.
-
-### Front-end
-
-Descreva informações relevantes como:
-
-- responsabilidade;
-- tecnologia utilizada;
-- localização;
-- comunicação com outros componentes.
-
-### API
-
-Explique o papel da API, as principais tecnologias utilizadas e sua relação com outros componentes.
-
----
-
-## Repositórios
-
-Liste os repositórios relacionados ao projeto e explique a responsabilidade de cada um.
-
-Evite apenas fornecer links ou nomes sem indicar o que existe em cada repositório.
-
----
-
-## Stack tecnológica
-
-Apresente as principais tecnologias utilizadas.
-
-Por exemplo:
-
-- React;
-- TypeScript;
-- ASP.NET Core;
-- Entity Framework Core;
-- MySQL.
-
-Quando for relevante para a compreensão da arquitetura, explique também **qual papel cada tecnologia desempenha**.
-
----
-
-## Banco de dados
-
-Documente as informações necessárias para compreender o banco utilizado pela aplicação.
-
-Dependendo do contexto, podem ser relevantes:
-
-- tecnologia utilizada;
-- ambiente onde está hospedado;
-- principais entidades;
-- relacionamentos;
-- forma como a aplicação acessa os dados.
-
-Quando um diagrama explicar melhor uma relação, prefira utilizá-lo em conjunto com a explicação.
-
----
-
-## Ambientes
-
-Quando existirem diferentes ambientes, documente-os separadamente.
-
-### Desenvolvimento
-
-Explique como funciona o ambiente utilizado durante o desenvolvimento.
-
-### Produção
-
-Explique como a aplicação está disponibilizada em produção e quais componentes fazem parte desse ambiente.
-
----
-
-## Relacionamento entre componentes
-
-Quando vários componentes fizerem parte da solução, mostre como eles se relacionam.
-
-Um exemplo simples:
+Em procedimentos, as seções principais devem ser numeradas em sequência:
 
 \`\`\`text
-Usuário
-   ↓
-Front-end
-   ↓
-API
-   ↓
-Banco de dados
+1. Execução
+2. Validação
+3. Problemas comuns
 \`\`\`
 
-O objetivo é permitir que uma pessoa que não participou da implementação consiga compreender a estrutura existente.
-
----
-
-# 6. Títulos e subtítulos
-
-Utilize títulos e subtítulos para dividir assuntos.
-
-Uma estrutura bem organizada facilita tanto a leitura completa quanto a consulta rápida.
-
-### Exemplo
+Quando uma seção precisar ser dividida em partes menores, utilize subtítulos numerados de acordo com a seção principal:
 
 \`\`\`text
-Banco de dados
+1. Execução
+1.1. Acessar o equipamento
+1.2. Criar a VLAN
+1.3. Associar o serviço
 
-    Entidades
-
-        Procedure
-
-        Department
-
-    Relacionamentos
-
-    Migrations
+2. Validação
+2.1. Consultar a VLAN
+2.2. Confirmar o estado esperado
 \`\`\`
 
-Cada seção deve representar um assunto específico.
+A numeração deve representar a hierarquia do conteúdo:
 
-Evite criar seções excessivamente grandes contendo vários temas diferentes.
+\`\`\`text
+1.
+├── 1.1.
+├── 1.2.
+└── 1.3.
 
----
+2.
+├── 2.1.
+└── 2.2.
+\`\`\`
 
-# 7. Parágrafos
+### 5.2. Evite excesso de títulos
 
-Utilize parágrafos para explicar conceitos, decisões, comportamentos e contextos.
+Não crie um título ou subtítulo para qualquer informação.
 
-Prefira parágrafos menores, cada um concentrado em uma ideia principal.
+Um novo título deve ser criado apenas quando houver uma mudança clara de assunto ou quando um conjunto de informações realmente precisar ser agrupado em uma seção própria.
 
-Evite grandes blocos de texto quando a informação puder ser organizada de maneira mais clara com:
+Para informações menores, prefira:
 
-- subtítulos;
+- parágrafos;
 - listas;
-- etapas;
-- tabelas;
+- etapas numeradas;
+- texto em negrito;
 - blocos de código;
-- imagens;
-- diagramas.
+- observações.
+
+Evite estruturas excessivamente fragmentadas, como:
+
+\`\`\`text
+2. Execução
+2.1. Acesso
+2.1.1. Usuário
+2.1.2. Senha
+2.1.3. IP
+2.2. Configuração
+2.2.1. Comando
+2.2.2. Resultado
+\`\`\`
+
+quando essas informações poderiam ser apresentadas de forma mais simples dentro de \`2.1. Acesso\` e \`2.2. Configuração\`.
+
+O objetivo da hierarquia é **facilitar a leitura**, e não criar o maior número possível de seções.
 
 ---
 
-# 8. Listas
 
-Utilize listas quando estiver apresentando um conjunto de informações relacionadas que não precisam seguir uma sequência.
+## 6. Listas
 
-### Exemplo
+Use listas não ordenadas quando os itens não dependerem de uma sequência.
 
-A aplicação utiliza:
+Exemplo:
 
-- React no front-end;
-- ASP.NET Core na API;
-- MySQL como banco de dados.
+- ASP.NET Core
+- React
+- MySQL
+- Docker
 
-Quando a ordem de execução for importante, prefira uma lista numerada ou divida o procedimento em etapas.
+Use listas numeradas quando a ordem das ações for importante.
+
+Exemplo:
+
+1. Acesse o servidor.
+2. Pare a aplicação.
+3. Atualize os arquivos.
+4. Inicie a aplicação.
+5. Valide o funcionamento.
 
 ---
 
-# 9. Comandos e código
+## 7. Comandos e código
 
-Comandos, consultas, configurações e trechos de código devem ser destacados utilizando blocos de código.
+Comandos, consultas, configurações e trechos de código devem ser apresentados em blocos de código.
 
-### Recomendado
+Exemplo:
 
 \`\`\`bash
 dotnet ef database update
 \`\`\`
 
-Comandos pequenos também podem aparecer dentro de uma explicação quando fizer sentido.
+Quando possível, informe a linguagem do bloco para melhorar a leitura.
 
-Nunca publique no documento:
+### 7.1. Informações sensíveis
+
+Nunca publique no conteúdo da Wiki:
 
 - senhas;
 - tokens;
 - chaves privadas;
 - secrets;
-- outras credenciais sensíveis.
+- credenciais;
+- dados de autenticação sensíveis.
 
-Utilize valores representativos quando necessário.
+Utilize valores genéricos ou placeholders.
 
-### Exemplo
+Exemplo:
 
-\`\`\`text
+\`\`\`bash
 ssh USUARIO@IP_DO_SERVIDOR
 \`\`\`
 
+Em vez de:
+
+\`\`\`bash
+ssh admin@192.168.0.10
+\`\`\`
+
+quando o endereço ou usuário real não precisar fazer parte da documentação.
+
+
+### 7.2. Caminhos de sistema e navegação
+
+Caminhos de arquivos, diretórios e rotas de navegação devem ser apresentados como código, e não como citação.
+
+Quando o caminho aparecer dentro de uma frase, utilize código inline.
+
+Exemplos:
+
+- O front-end está localizado em \`src/components\`.
+- Os arquivos da API estão em \`/opt/rapidwiki/backend\`.
+- No Windows, o projeto pode estar em \`C:\\RapidWiki\\Api\`.
+
+Quando o caminho precisar aparecer isolado ou for muito longo, utilize um bloco de código:
+
+\`\`\`text
+/opt/rapidwiki/backend/src/RapidWiki.Api
+\`\`\`
+
+Para representar caminhos de navegação dentro de uma interface, utilize o mesmo padrão:
+
+\`Admin > Usuários > Novo usuário\`
+
+Citações devem ser reservadas para observações, trechos explicativos ou informações que precisem de destaque textual.
+
 ---
 
-# 10. Imagens e diagramas
+## 8. Imagens e diagramas
 
-Utilize imagens quando elas ajudarem a identificar uma opção, configuração, equipamento ou comportamento visual.
+Utilize imagens quando elas ajudarem a demonstrar:
 
-Utilize diagramas quando eles facilitarem a compreensão de:
+- interfaces;
+- configurações;
+- telas do sistema;
+- equipamentos;
+- estados visuais importantes.
+
+Utilize diagramas quando precisar representar:
 
 - arquiteturas;
 - fluxos;
 - relacionamentos;
 - topologias;
-- processos.
+- processos;
+- comunicação entre componentes.
 
-Imagens e diagramas devem complementar a documentação, e não substituir completamente a explicação textual.
+Imagens e diagramas devem complementar o conteúdo escrito.
 
-Sempre deixe claro o que o leitor deve observar.
-
----
-
-# 11. Destaques importantes
-
-Quando uma informação exigir atenção especial, destaque-a no conteúdo.
-
-Use esse recurso principalmente para:
-
-- comportamentos inesperados;
-- riscos;
-- impactos;
-- limitações;
-- ações que precisam de atenção adicional.
-
-Evite destacar informações comuns em excesso, pois isso reduz a importância dos avisos realmente relevantes.
+Evite depender exclusivamente de uma imagem para transmitir uma informação importante.
 
 ---
 
-# 12. Antes de publicar
+## 9. Destaques importantes
 
-Antes de publicar ou atualizar um conteúdo, verifique:
+Destaques devem ser utilizados quando uma informação exigir atenção especial.
 
-- O título identifica claramente o assunto ou a ação?
-- O resumo explica o que será encontrado no documento?
-- As informações estão divididas em seções coerentes?
-- O conteúdo segue uma ordem fácil de compreender?
-- Os comandos e códigos estão destacados corretamente?
-- Uma pessoa que não escreveu o documento conseguiria entendê-lo?
-- Existem informações importantes que estão sendo assumidas, mas não foram documentadas?
-- O conteúdo permite identificar o resultado esperado quando isso for necessário?
+Exemplos de situações que justificam destaque:
 
-O objetivo não é fazer todos os documentos seguirem exatamente a mesma estrutura.
+- comportamento inesperado;
+- risco;
+- impacto relevante;
+- limitação;
+- ação que exige atenção;
+- resultado esperado;
+- informação técnica importante.
 
-O objetivo é manter um padrão de **clareza, organização e facilidade de consulta** em toda a Wiki.
+Evite destacar grandes partes do documento. Quando tudo recebe destaque, nada realmente se destaca.
+
+---
+
+## 10. Uso de cores
+
+As cores devem ser utilizadas de forma **semântica**, e não apenas estética. O objetivo é permitir que o leitor identifique rapidamente o tipo de informação apresentada.
+
+- **Padrão:** conteúdo normal, títulos, subtítulos e textos sem necessidade de destaque.
+- **Cinza:** informações secundárias ou complementares, como observações auxiliares, referências e detalhes opcionais.
+- **Vermelho:** erros, riscos graves, ações proibidas ou situações que podem causar impacto relevante.
+- **Laranja:** atenção ou cautela quando uma ação exige cuidado, mas não representa necessariamente um erro ou risco crítico.
+- **Amarelo:** observações importantes, lembretes ou informações que merecem atenção especial.
+- **Verde:** resultado esperado, validação bem-sucedida, estado correto ou prática recomendada.
+- **Azul:** informação técnica relevante, referência, conceito, comando ou dado que merece destaque sem representar alerta, erro ou sucesso.
+- **Roxo:** exceções, particularidades de ambiente ou informações especiais que não se encaixem nas categorias anteriores.
+
+Exemplos:
+
+> **Vermelho:** Não reinicie a OLT durante o processo de atualização.
+
+> **Verde:** A ONU deve aparecer com status **Online** após a autorização.
+
+A mesma cor deve manter o mesmo significado em toda a Wiki. O uso excessivo de cores deve ser evitado; a maior parte do documento deve permanecer na cor padrão.
 `;
-
 
 export function DocumentationStandard() {
     return (
