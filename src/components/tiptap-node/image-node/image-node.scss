@@ -1,4 +1,8 @@
 .tiptap.ProseMirror {
+  /* =========================================================
+     IMAGEM PADRÃO
+     ========================================================= */
+
   img {
     max-width: 100%;
     height: auto;
@@ -15,11 +19,220 @@
     border-radius: var(--tt-radius-xs, 0.25rem);
   }
 
-  img:not([data-type="emoji"] img).ProseMirror-selectednode {
-    outline-color: var(--tt-brand-color-500);
+  /* =========================================================
+     ALINHAMENTO DA IMAGEM - SEM RESIZE WRAPPER
+     ========================================================= */
+
+  img[data-align="left"] {
+    margin-left: 0;
+    margin-right: auto;
   }
 
-  // Thread image handling
+  img[data-align="center"] {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  img[data-align="right"] {
+    margin-left: auto;
+    margin-right: 0;
+  }
+
+  /* =========================================================
+     IMAGEM SELECIONADA - SEM RESIZE WRAPPER
+     ========================================================= */
+
+  img:not([data-type="emoji"] img).ProseMirror-selectednode {
+    outline: 2px solid #3b82f6;
+    outline-offset: 3px;
+    border-radius: var(--tt-radius-xs, 0.25rem);
+
+    box-shadow:
+      0 0 0 1px rgba(59, 130, 246, 0.25),
+      0 0 10px rgba(59, 130, 246, 0.18);
+  }
+
+  /* =========================================================
+     RESIZE - CONTAINER
+     ========================================================= */
+
+  [data-resize-container] {
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    vertical-align: top;
+  }
+
+  /*
+   * O alinhamento precisa mover o container inteiro do
+   * ResizableNodeView, não apenas o <img>.
+   */
+  [data-resize-container]:has(img[data-align="left"]) {
+    margin-left: 0;
+    margin-right: auto;
+  }
+
+  [data-resize-container]:has(img[data-align="center"]) {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  [data-resize-container]:has(img[data-align="right"]) {
+    margin-left: auto;
+    margin-right: 0;
+  }
+
+  /* =========================================================
+     RESIZE - WRAPPER
+     ========================================================= */
+
+  [data-resize-wrapper] {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    line-height: 0;
+    vertical-align: top;
+  }
+
+  [data-resize-wrapper] img {
+    display: block;
+    max-width: 100%;
+    margin: 0;
+    outline: none;
+    border-radius: var(--tt-radius-xs, 0.25rem);
+  }
+
+  /* =========================================================
+     IMAGEM SELECIONADA COM RESIZE
+     ========================================================= */
+
+  [data-resize-container].ProseMirror-selectednode
+    [data-resize-wrapper] {
+    outline: 2px solid #3b82f6;
+    outline-offset: 3px;
+    border-radius: var(--tt-radius-xs, 0.25rem);
+
+    box-shadow:
+      0 0 0 1px rgba(59, 130, 246, 0.25),
+      0 0 10px rgba(59, 130, 246, 0.18);
+  }
+
+  /*
+   * Fallback caso a classe de seleção fique em outro
+   * elemento que contenha a imagem.
+   */
+  .ProseMirror-selectednode:has(img) {
+    outline: 2px solid #3b82f6;
+    outline-offset: 3px;
+    border-radius: var(--tt-radius-xs, 0.25rem);
+
+    box-shadow:
+      0 0 0 1px rgba(59, 130, 246, 0.25),
+      0 0 10px rgba(59, 130, 246, 0.18);
+  }
+
+  .ProseMirror-selectednode:has(img) img {
+    outline: none;
+  }
+
+  /* =========================================================
+     ALÇAS DE REDIMENSIONAMENTO
+     ========================================================= */
+
+  [data-resize-handle] {
+    position: absolute;
+
+    width: 12px;
+    height: 12px;
+
+    border: 2px solid #3b82f6;
+    border-radius: 50%;
+
+    background-color: #3b82f6;
+
+    box-sizing: border-box;
+    z-index: 20;
+
+    pointer-events: auto;
+    touch-action: none;
+
+    opacity: 0;
+
+    transition:
+      transform 120ms ease,
+      opacity 120ms ease,
+      box-shadow 120ms ease;
+  }
+
+  [data-resize-container].ProseMirror-selectednode
+    [data-resize-handle],
+  .ProseMirror-selectednode:has(img)
+    [data-resize-handle] {
+    opacity: 1;
+  }
+
+  [data-resize-handle="top-left"] {
+    top: -6px;
+    left: -6px;
+    cursor: nwse-resize;
+  }
+
+  [data-resize-handle="top-right"] {
+    top: -6px;
+    right: -6px;
+    cursor: nesw-resize;
+  }
+
+  [data-resize-handle="bottom-left"] {
+    bottom: -6px;
+    left: -6px;
+    cursor: nesw-resize;
+  }
+
+  [data-resize-handle="bottom-right"] {
+    right: -6px;
+    bottom: -6px;
+    cursor: nwse-resize;
+  }
+
+  [data-resize-handle]:hover {
+    transform: scale(1.2);
+
+    box-shadow:
+      0 0 0 3px rgba(59, 130, 246, 0.2),
+      0 0 8px rgba(59, 130, 246, 0.35);
+  }
+
+  /* =========================================================
+     ESTADO DE REDIMENSIONAMENTO
+     ========================================================= */
+
+  [data-resize-state="true"] {
+    user-select: none;
+  }
+
+  [data-resize-state="true"]
+    [data-resize-wrapper] {
+    outline: 2px solid #3b82f6;
+    outline-offset: 3px;
+    border-radius: var(--tt-radius-xs, 0.25rem);
+
+    box-shadow:
+      0 0 0 1px rgba(59, 130, 246, 0.25),
+      0 0 12px rgba(59, 130, 246, 0.22);
+  }
+
+  [data-resize-state="true"]
+    [data-resize-handle] {
+    opacity: 1;
+  }
+
+  /* =========================================================
+     THREAD IMAGE HANDLING
+     ========================================================= */
+
   .tiptap-thread:has(> img) {
     margin: 2rem 0;
 
