@@ -12,6 +12,7 @@ import { Login } from "@/pages/Login/Login";
 import { Procedure } from "@/pages/Procedure/Procedure";
 import { ProcedureForm } from "@/pages/ProcedureForm/ProcedureForm";
 import { DocumentationStandard } from "@/pages/DocumentationStandard/DocumentationStandard";
+import { ArquivoForm } from "@/pages/ArquivoForm/ArquivoForm";
 
 export const router = createBrowserRouter([
     {
@@ -60,6 +61,10 @@ export const router = createBrowserRouter([
                         element: (
                             <Department section="procedures" />
                         ),
+                    },
+                    {
+                        path: "arquivos/novo",
+                        element: <ArquivoForm />,
                     },
 
                     {

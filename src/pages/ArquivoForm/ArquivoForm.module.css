@@ -1,0 +1,133 @@
+.page {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px;
+}
+
+.header {
+    margin-bottom: 28px;
+}
+
+.header h1 {
+    margin: 0 0 8px;
+}
+
+.header p {
+    margin: 0;
+    opacity: 0.7;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.section h2 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.fileInput {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    min-height: 120px;
+
+    border: 1px dashed var(--border-color);
+    border-radius: 10px;
+
+    cursor: pointer;
+}
+
+.fileInput input {
+    display: none;
+}
+
+.fileInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.fileInfo div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.fileInfo span {
+    font-size: 0.85rem;
+    opacity: 0.7;
+}
+
+.departments {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.department {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    cursor: pointer;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.actions button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 10px 16px;
+
+    cursor: pointer;
+}
+
+.actions button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.error {
+    margin: 0;
+    color: #ef4444;
+}
+
+.success {
+    margin: 0;
+    color: #22c55e;
+}
+
+.loading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 32px;
+}
+
+.spinner {
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
