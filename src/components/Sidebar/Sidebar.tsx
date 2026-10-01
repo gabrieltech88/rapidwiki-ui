@@ -1,5 +1,6 @@
 import {
     ChevronRight,
+    Files,
     FileText,
     Home,
     LogOut,
@@ -7,7 +8,10 @@ import {
     Settings,
 } from "lucide-react";
 
-import { useEffect, useState } from "react";
+import {
+    useEffect,
+    useState,
+} from "react";
 
 import {
     NavLink,
@@ -22,10 +26,12 @@ import type { Department } from "@/types/Department";
 
 import styles from "./Sidebar.module.css";
 
+
 interface SidebarProps {
     isOpen: boolean;
     onClose: () => void;
 }
+
 
 export function Sidebar({
     isOpen,
@@ -39,7 +45,15 @@ export function Sidebar({
         hasRole,
     } = useAuth();
 
-    const [departments, setDepartments] = useState<Department[]>([]);
+    const [
+        departments,
+        setDepartments,
+    ] = useState<Department[]>([]);
+
+    const [
+        expandedDepartmentId,
+        setExpandedDepartmentId,
+    ] = useState<string | null>(null);
 
     const canCreateProcedure =
         hasRole("Admin") ||
@@ -52,15 +66,19 @@ export function Sidebar({
     const canAccessAdmin =
         hasRole("Admin");
 
+
     useEffect(() => {
         let isMounted = true;
 
         async function loadDepartments() {
             try {
-                const data = await getDepartments();
+                const data =
+                    await getDepartments();
 
                 if (isMounted) {
-                    setDepartments(data ?? []);
+                    setDepartments(
+                        data ?? []
+                    );
                 }
             } catch (error) {
                 console.error(
@@ -81,6 +99,19 @@ export function Sidebar({
         };
     }, []);
 
+
+    function handleDepartmentToggle(
+        departmentId: string
+    ) {
+        setExpandedDepartmentId(
+            (current) =>
+                current === departmentId
+                    ? null
+                    : departmentId
+        );
+    }
+
+
     async function handleLogout() {
         await logout();
 
@@ -94,192 +125,375 @@ export function Sidebar({
         );
     }
 
+
     return (
-        <aside
-            className={`${styles.sidebar} ${
-                isOpen
-                    ? styles.open
-                    : ""
-            }`}
-        >
-            <div className={styles.top}>
-                <div className={styles.header}>
-                    <div className={styles.brand}>
-                        <img
-                            src="/favicon.png"
-                            alt="RapidWiki"
-                            className={styles.logo}
-                        />
-
-                        <span>
-                            RapidWiki
-                        </span>
-                    </div>
-
-                    <div className={styles.utilityActions}>
-                        <div
-                            className={styles.themeToggleCompact}
-                            title="Aparência"
-                        >
-                            <ThemeToggle />
-                        </div>
-
-                        <button
-                            type="button"
-                            className={styles.iconButton}
-                            onClick={handleLogout}
-                            title="Sair"
-                            aria-label="Sair"
-                        >
-                            <LogOut size={16} />
-                        </button>
-                    </div>
-                </div>
-
-                <nav className={styles.navigation}>
-                    <div className={styles.section}>
-                        <span className={styles.sectionTitle}>
-                            Acesso rápido
-                        </span>
-
-                        <NavLink
-                            to="/"
-                            end
-                            onClick={onClose}
-                            className={({ isActive }) =>
-                                `${styles.navItem} ${
-                                    isActive
-                                        ? styles.active
-                                        : ""
-                                }`
-                            }
-                        >
-                            <Home size={16} />
+        <>
+            <aside
+                className={`${styles.sidebar} ${
+                    isOpen
+                        ? styles.open
+                        : ""
+                }`}
+            >
+                <div className={styles.top}>
+                    <div className={styles.header}>
+                        <div className={styles.brand}>
+                            <img
+                                src="/favicon.png"
+                                alt="RapidWiki"
+                                className={styles.logo}
+                            />
 
                             <span>
-                                Início
-                            </span>
-                        </NavLink>
-
-                        {canCreateProcedure && (
-                            <NavLink
-                                to="/procedures/new"
-                                onClick={onClose}
-                                className={({ isActive }) =>
-                                    `${styles.navItem} ${
-                                        isActive
-                                            ? styles.active
-                                            : ""
-                                    }`
-                                }
-                            >
-                                <Plus size={16} />
-
-                                <span>
-                                    Novo procedimento
-                                </span>
-                            </NavLink>
-                        )}
-
-                        {canAccessDrafts && (
-                            <NavLink
-                                to="/drafts"
-                                onClick={onClose}
-                                className={({ isActive }) =>
-                                    `${styles.navItem} ${
-                                        isActive
-                                            ? styles.active
-                                            : ""
-                                    }`
-                                }
-                            >
-                                <FileText size={16} />
-
-                                <span>
-                                    Rascunhos
-                                </span>
-                            </NavLink>
-                        )}
-
-                        {canAccessAdmin && (
-                            <NavLink
-                                to="/admin"
-                                onClick={onClose}
-                                className={({ isActive }) =>
-                                    `${styles.navItem} ${
-                                        isActive
-                                            ? styles.active
-                                            : ""
-                                    }`
-                                }
-                            >
-                                <Settings size={16} />
-
-                                <span>
-                                    Administração
-                                </span>
-                            </NavLink>
-                        )}
-                    </div>
-
-                    <div className={styles.section}>
-                        <div className={styles.sectionHeader}>
-                            <span className={styles.sectionTitle}>
-                                Departamentos
+                                RapidWiki
                             </span>
                         </div>
 
-                        <div className={styles.departmentList}>
-                            {departments.map((department) => (
+                        <div
+                            className={
+                                styles.utilityActions
+                            }
+                        >
+                            <div
+                                className={
+                                    styles.themeToggleCompact
+                                }
+                                title="Aparência"
+                            >
+                                <ThemeToggle />
+                            </div>
+
+                            <button
+                                type="button"
+                                className={
+                                    styles.iconButton
+                                }
+                                onClick={
+                                    handleLogout
+                                }
+                                title="Sair"
+                                aria-label="Sair"
+                            >
+                                <LogOut
+                                    size={16}
+                                />
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <nav
+                        className={
+                            styles.navigation
+                        }
+                    >
+                        <div
+                            className={
+                                styles.section
+                            }
+                        >
+                            <span
+                                className={
+                                    styles.sectionTitle
+                                }
+                            >
+                                Acesso rápido
+                            </span>
+
+                            <NavLink
+                                to="/"
+                                end
+                                onClick={onClose}
+                                className={({
+                                    isActive,
+                                }) =>
+                                    `${styles.navItem} ${
+                                        isActive
+                                            ? styles.active
+                                            : ""
+                                    }`
+                                }
+                            >
+                                <Home
+                                    size={16}
+                                />
+
+                                <span>
+                                    Início
+                                </span>
+                            </NavLink>
+
+
+                            {canCreateProcedure && (
                                 <NavLink
-                                    key={department.id}
-                                    to={`/departments/${department.id}/procedures`}
-                                    onClick={onClose}
-                                    className={({ isActive }) =>
-                                        `${styles.departmentItem} ${
+                                    to="/procedures/new"
+                                    onClick={
+                                        onClose
+                                    }
+                                    className={({
+                                        isActive,
+                                    }) =>
+                                        `${styles.navItem} ${
                                             isActive
-                                                ? styles.departmentItemActive
+                                                ? styles.active
                                                 : ""
                                         }`
                                     }
                                 >
-                                    <span className={styles.departmentName}>
-                                        {department.name}
-                                    </span>
-
-                                    <ChevronRight
-                                        size={14}
-                                        className={styles.departmentChevron}
+                                    <Plus
+                                        size={16}
                                     />
+
+                                    <span>
+                                        Novo procedimento
+                                    </span>
                                 </NavLink>
-                            ))}
+                            )}
+
+
+                            {canAccessDrafts && (
+                                <NavLink
+                                    to="/drafts"
+                                    onClick={
+                                        onClose
+                                    }
+                                    className={({
+                                        isActive,
+                                    }) =>
+                                        `${styles.navItem} ${
+                                            isActive
+                                                ? styles.active
+                                                : ""
+                                        }`
+                                    }
+                                >
+                                    <FileText
+                                        size={16}
+                                    />
+
+                                    <span>
+                                        Rascunhos
+                                    </span>
+                                </NavLink>
+                            )}
+
+
+                            {canAccessAdmin && (
+                                <NavLink
+                                    to="/admin"
+                                    onClick={
+                                        onClose
+                                    }
+                                    className={({
+                                        isActive,
+                                    }) =>
+                                        `${styles.navItem} ${
+                                            isActive
+                                                ? styles.active
+                                                : ""
+                                        }`
+                                    }
+                                >
+                                    <Settings
+                                        size={16}
+                                    />
+
+                                    <span>
+                                        Administração
+                                    </span>
+                                </NavLink>
+                            )}
+                        </div>
+
+
+                        <div
+                            className={
+                                styles.section
+                            }
+                        >
+                            <div
+                                className={
+                                    styles.sectionHeader
+                                }
+                            >
+                                <span
+                                    className={
+                                        styles.sectionTitle
+                                    }
+                                >
+                                    Departamentos
+                                </span>
+                            </div>
+
+                            <div
+                                className={
+                                    styles.departmentList
+                                }
+                            >
+                                {departments.map(
+                                    (
+                                        department
+                                    ) => {
+                                        const isExpanded =
+                                            expandedDepartmentId ===
+                                            department.id;
+
+                                        return (
+                                            <div
+                                                key={
+                                                    department.id
+                                                }
+                                                className={
+                                                    styles.departmentGroup
+                                                }
+                                            >
+                                                <button
+                                                    type="button"
+                                                    className={`${styles.departmentItem} ${
+                                                        isExpanded
+                                                            ? styles.departmentItemActive
+                                                            : ""
+                                                    }`}
+                                                    onClick={() =>
+                                                        handleDepartmentToggle(
+                                                            department.id
+                                                        )
+                                                    }
+                                                >
+                                                    <span
+                                                        className={
+                                                            styles.departmentName
+                                                        }
+                                                    >
+                                                        {
+                                                            department.name
+                                                        }
+                                                    </span>
+
+                                                    <ChevronRight
+                                                        size={14}
+                                                        className={`${styles.departmentChevron} ${
+                                                            isExpanded
+                                                                ? styles.departmentChevronOpen
+                                                                : ""
+                                                        }`}
+                                                    />
+                                                </button>
+
+                                                {isExpanded && (
+                                                    <div
+                                                        className={
+                                                            styles.departmentLinks
+                                                        }
+                                                    >
+                                                        <NavLink
+                                                            to={`/departments/${department.id}/procedures`}
+                                                            onClick={
+                                                                onClose
+                                                            }
+                                                            className={({
+                                                                isActive,
+                                                            }) =>
+                                                                `${styles.departmentSubItem} ${
+                                                                    isActive
+                                                                        ? styles.departmentSubItemActive
+                                                                        : ""
+                                                                }`
+                                                            }
+                                                        >
+                                                            <FileText
+                                                                size={14}
+                                                            />
+
+                                                            <span>
+                                                                Procedimentos
+                                                            </span>
+                                                        </NavLink>
+
+                                                        <NavLink
+                                                            to={`/departments/${department.id}/arquivos`}
+                                                            onClick={
+                                                                onClose
+                                                            }
+                                                            className={({
+                                                                isActive,
+                                                            }) =>
+                                                                `${styles.departmentSubItem} ${
+                                                                    isActive
+                                                                        ? styles.departmentSubItemActive
+                                                                        : ""
+                                                                }`
+                                                            }
+                                                        >
+                                                            <Files
+                                                                size={14}
+                                                            />
+
+                                                            <span>
+                                                                Arquivos
+                                                            </span>
+                                                        </NavLink>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    }
+                                )}
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+
+
+                {user && (
+                    <div
+                        className={
+                            styles.user
+                        }
+                    >
+                        <div
+                            className={
+                                styles.avatar
+                            }
+                        >
+                            {user.name
+                                .split(" ")
+                                .map(
+                                    (name) =>
+                                        name[0]
+                                )
+                                .join("")
+                                .slice(0, 2)
+                                .toUpperCase()}
+                        </div>
+
+                        <div
+                            className={
+                                styles.userInfo
+                            }
+                        >
+                            <strong>
+                                {user.name}
+                            </strong>
+
+                            <span>
+                                {user.role}
+                            </span>
                         </div>
                     </div>
-                </nav>
-            </div>
+                )}
+            </aside>
 
-            {user && (
-                <div className={styles.user}>
-                    <div className={styles.avatar}>
-                        {user.name
-                            .split(" ")
-                            .map((name) => name[0])
-                            .join("")
-                            .slice(0, 2)
-                            .toUpperCase()}
-                    </div>
-
-                    <div className={styles.userInfo}>
-                        <strong>
-                            {user.name}
-                        </strong>
-
-                        <span>
-                            {user.role}
-                        </span>
-                    </div>
-                </div>
+            {isOpen && (
+                <div
+                    className={
+                        styles.overlay
+                    }
+                    onClick={
+                        onClose
+                    }
+                />
             )}
-        </aside>
+        </>
     );
 }
