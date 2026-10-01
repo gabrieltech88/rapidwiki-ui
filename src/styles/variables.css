@@ -1,47 +1,53 @@
 :root {
-    /* Backgrounds */
     --color-background: #ffffff;
     --color-background-secondary: #fafafa;
     --color-background-tertiary: #f4f4f5;
 
-    /* Text */
     --color-text-primary: #18181b;
     --color-text-secondary: #71717a;
     --color-text-muted: #a1a1aa;
 
-    /* Borders */
     --color-border-primary: #e4e4e7;
     --color-border-secondary: #f0f0f1;
 
-    /* Interactive */
     --color-hover: #f4f4f5;
-    --color-active: #e4e4e7;
+    --color-active: #eff6ff;
 
-    /* Button */
-    --color-button-primary: #18181b;
+    --color-primary: #2563eb;
+    --color-primary-hover: #1d4ed8;
+    --color-primary-light: #3b82f6;
+    --color-primary-soft: #eff6ff;
+    --color-primary-soft-hover: #dbeafe;
+    --color-primary-border: #bfdbfe;
+
+    --color-button-primary: #2563eb;
+    --color-button-primary-hover: #1d4ed8;
     --color-button-primary-text: #ffffff;
-    --color-text-selection: rgba(24, 24, 27, 0.16);
 
-    /* Layout */
+    --color-success: #22c55e;
+    --color-warning: #f59e0b;
+    --color-danger: #ef4444;
+    --color-special: #a855f7;
+
+    --color-text-selection: rgba(37, 99, 235, 0.18);
+
+    --color-focus-ring: rgba(37, 99, 235, 0.22);
+
     --sidebar-width: 260px;
 
-    /* Radius */
     --radius-sm: 6px;
     --radius-md: 8px;
     --radius-lg: 12px;
 
-    /* Spacing */
     --spacing-xs: 4px;
     --spacing-sm: 8px;
     --spacing-md: 16px;
     --spacing-lg: 24px;
     --spacing-xl: 32px;
     --spacing-xxl: 48px;
-   
 
     --font-sans: "Geist", sans-serif;
     --font-mono: "Geist Mono", monospace;
-
 }
 
 [data-theme="dark"] {
@@ -50,17 +56,32 @@
     --color-background-tertiary: #18181b;
 
     --color-text-primary: #f4f4f5;
-    
     --color-text-secondary: #a1a1aa;
     --color-text-muted: #71717a;
-    --color-text-selection: rgba(255, 255, 255, 0.18);
 
     --color-border-primary: #27272a;
     --color-border-secondary: #1f1f22;
 
     --color-hover: #1c1c1f;
-    --color-active: #27272a;
+    --color-active: rgba(59, 130, 246, 0.12);
 
-    --color-button-primary: #f4f4f5;
-    --color-button-primary-text: #18181b;
+    --color-primary: #3b82f6;
+    --color-primary-hover: #2563eb;
+    --color-primary-light: #60a5fa;
+    --color-primary-soft: rgba(59, 130, 246, 0.1);
+    --color-primary-soft-hover: rgba(59, 130, 246, 0.16);
+    --color-primary-border: rgba(59, 130, 246, 0.28);
+
+    --color-button-primary: #2563eb;
+    --color-button-primary-hover: #1d4ed8;
+    --color-button-primary-text: #ffffff;
+
+    --color-success: #22c55e;
+    --color-warning: #f59e0b;
+    --color-danger: #ef4444;
+    --color-special: #a855f7;
+
+    --color-text-selection: rgba(59, 130, 246, 0.25);
+
+    --color-focus-ring: rgba(59, 130, 246, 0.3);
 }

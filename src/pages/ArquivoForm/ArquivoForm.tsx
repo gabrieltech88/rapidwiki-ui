@@ -1,16 +1,22 @@
 import {
+    ArrowLeft,
+    Check,
+    FileText,
+    LoaderCircle,
+    Upload,
+    X,
+} from "lucide-react";
+
+import {
     useEffect,
+    useRef,
     useState,
 } from "react";
 
 import {
-    FileText,
-    LoaderCircle,
-    Upload,
-} from "lucide-react";
-
-import {
+    Link,
     Navigate,
+    useSearchParams,
 } from "react-router";
 
 import {
@@ -21,18 +27,82 @@ import {
     uploadArquivo,
 } from "@/services/arquivoService";
 
-import { useAuth } from "@/hooks/useAuth";
+import {
+    useAuth,
+} from "@/hooks/useAuth";
 
-import type { Department } from "@/types/Department";
+import type {
+    Department,
+} from "@/types/Department";
 
 import styles from "./ArquivoForm.module.css";
 
 
-export function ArquivoForm() {
-    const { hasRole } = useAuth();
+const MAX_FILE_SIZE =
+    50 * 1024 * 1024;
 
-    const [file, setFile] =
-        useState<File | null>(null);
+const ALLOWED_EXTENSIONS = [
+    "txt",
+    "cfg",
+    "conf",
+    "ini",
+    "log",
+    "json",
+    "xml",
+    "yaml",
+    "yml",
+    "csv",
+    "pdf",
+    "docx",
+    "xlsx",
+];
+
+
+function formatFileSize(
+    bytes: number
+): string {
+    if (bytes < 1024) {
+        return `${bytes} B`;
+    }
+
+    const kilobytes =
+        bytes / 1024;
+
+    if (kilobytes < 1024) {
+        return `${kilobytes.toFixed(1)} KB`;
+    }
+
+    return `${(
+        kilobytes / 1024
+    ).toFixed(1)} MB`;
+}
+
+
+export function ArquivoForm() {
+    const {
+        hasRole,
+    } = useAuth();
+
+    const [
+        searchParams,
+    ] = useSearchParams();
+
+    const inputRef =
+        useRef<HTMLInputElement | null>(
+            null
+        );
+
+    const departmentId =
+        searchParams.get(
+            "departmentId"
+        );
+
+    const [
+        file,
+        setFile,
+    ] = useState<File | null>(
+        null
+    );
 
     const [
         departments,
@@ -43,6 +113,11 @@ export function ArquivoForm() {
         selectedDepartmentIds,
         setSelectedDepartmentIds,
     ] = useState<string[]>([]);
+
+    const [
+        dragActive,
+        setDragActive,
+    ] = useState(false);
 
     const [
         loading,
@@ -73,8 +148,23 @@ export function ArquivoForm() {
                 const data =
                     await getDepartmentsForProcedure();
 
-                if (!ignore) {
-                    setDepartments(data);
+                if (ignore) {
+                    return;
+                }
+
+                setDepartments(data);
+
+                if (
+                    departmentId &&
+                    data.some(
+                        (department) =>
+                            department.id ===
+                            departmentId
+                    )
+                ) {
+                    setSelectedDepartmentIds(
+                        [departmentId]
+                    );
                 }
             } catch (error) {
                 console.error(
@@ -99,30 +189,103 @@ export function ArquivoForm() {
         return () => {
             ignore = true;
         };
-    }, []);
+    }, [
+        departmentId,
+    ]);
+
+
+    function validateFile(
+        selectedFile: File
+    ): boolean {
+        if (
+            selectedFile.size >
+            MAX_FILE_SIZE
+        ) {
+            setError(
+                "O arquivo deve possuir no máximo 50 MB."
+            );
+
+            return false;
+        }
+
+        const extension =
+            selectedFile.name
+                .split(".")
+                .pop()
+                ?.toLowerCase();
+
+        if (
+            !extension ||
+            !ALLOWED_EXTENSIONS.includes(
+                extension
+            )
+        ) {
+            setError(
+                "Formato de arquivo não permitido."
+            );
+
+            return false;
+        }
+
+        setError("");
+        setSuccess("");
+
+        return true;
+    }
+
+
+    function selectFile(
+        selectedFile: File | null
+    ) {
+        if (!selectedFile) {
+            return;
+        }
+
+        if (
+            !validateFile(
+                selectedFile
+            )
+        ) {
+            return;
+        }
+
+        setFile(
+            selectedFile
+        );
+    }
+
+
+    function handleDrop(
+        event: React.DragEvent<HTMLDivElement>
+    ) {
+        event.preventDefault();
+
+        setDragActive(false);
+
+        selectFile(
+            event.dataTransfer.files?.[0] ??
+                null
+        );
+    }
 
 
     function handleDepartmentToggle(
-        departmentId: string
+        selectedId: string
     ) {
         setSelectedDepartmentIds(
-            (current) => {
-                if (
-                    current.includes(
-                        departmentId
-                    )
-                ) {
-                    return current.filter(
-                        (id) =>
-                            id !== departmentId
-                    );
-                }
-
-                return [
-                    ...current,
-                    departmentId,
-                ];
-            }
+            (current) =>
+                current.includes(
+                    selectedId
+                )
+                    ? current.filter(
+                          (id) =>
+                              id !==
+                              selectedId
+                      )
+                    : [
+                          ...current,
+                          selectedId,
+                      ]
         );
 
         setError("");
@@ -144,7 +307,8 @@ export function ArquivoForm() {
         }
 
         if (
-            selectedDepartmentIds.length === 0
+            selectedDepartmentIds.length ===
+            0
         ) {
             setError(
                 "Selecione pelo menos um departamento."
@@ -158,18 +322,33 @@ export function ArquivoForm() {
         setSuccess("");
 
         try {
-            const id =
-                await uploadArquivo(
-                    file,
-                    selectedDepartmentIds
-                );
+            await uploadArquivo(
+                file,
+                selectedDepartmentIds
+            );
 
             setSuccess(
-                `Arquivo enviado com sucesso. ID: ${id}`
+                "Arquivo enviado com sucesso."
             );
 
             setFile(null);
-            setSelectedDepartmentIds([]);
+
+            if (departmentId) {
+                setSelectedDepartmentIds(
+                    [departmentId]
+                );
+            } else {
+                setSelectedDepartmentIds(
+                    []
+                );
+            }
+
+            if (
+                inputRef.current
+            ) {
+                inputRef.current.value =
+                    "";
+            }
         } catch (error) {
             console.error(
                 "Erro ao enviar arquivo:",
@@ -197,165 +376,381 @@ export function ArquivoForm() {
 
     if (loading) {
         return (
-            <div className={styles.loading}>
+            <div
+                className={
+                    styles.loadingPage
+                }
+            >
                 <LoaderCircle
-                    size={20}
-                    className={styles.spinner}
+                    size={24}
+                    className={
+                        styles.spinner
+                    }
                 />
-
-                Carregando...
             </div>
         );
     }
 
 
-    return (
-        <div className={styles.page}>
-            <header className={styles.header}>
-                <div>
-                    <h1>
-                        Adicionar arquivo
-                    </h1>
+    const backPath =
+        departmentId
+            ? `/departments/${departmentId}/arquivos`
+            : "/";
 
-                    <p>
-                        Envie um arquivo e selecione os departamentos que poderão acessá-lo.
-                    </p>
-                </div>
+
+    return (
+        <div
+            className={
+                styles.page
+            }
+        >
+            <Link
+                to={backPath}
+                className={
+                    styles.back
+                }
+            >
+                <ArrowLeft
+                    size={15}
+                />
+
+                Voltar
+            </Link>
+
+            <header
+                className={
+                    styles.header
+                }
+            >
+                <h1>
+                    Adicionar arquivo
+                </h1>
+
+                <p>
+                    Envie documentos e arquivos que ficarão disponíveis na base de conhecimento.
+                </p>
             </header>
 
-
             <form
-                className={styles.form}
-                onSubmit={handleSubmit}
+                className={
+                    styles.form
+                }
+                onSubmit={
+                    handleSubmit
+                }
             >
-                <section className={styles.section}>
-                    <h2>
-                        Arquivo
-                    </h2>
-
-                    <label
-                        className={styles.fileInput}
+                <section
+                    className={
+                        styles.card
+                    }
+                >
+                    <div
+                        className={
+                            styles.sectionHeader
+                        }
                     >
-                        <Upload size={24} />
+                        <div>
+                            <h2>
+                                Arquivo
+                            </h2>
 
-                        <span>
-                            {file
-                                ? file.name
-                                : "Selecionar arquivo"}
-                        </span>
+                            <p>
+                                Selecione ou arraste o arquivo que deseja enviar.
+                            </p>
+                        </div>
+                    </div>
 
-                        <input
-                            type="file"
-                            onChange={(event) => {
-                                const selectedFile =
-                                    event.target.files?.[0]
-                                    ?? null;
-
-                                setFile(
-                                    selectedFile
-                                );
-
-                                setError("");
-                                setSuccess("");
-                            }}
-                        />
-                    </label>
-
-
-                    {file && (
+                    {!file ? (
                         <div
-                            className={
-                                styles.fileInfo
+                            className={`${styles.dropZone} ${
+                                dragActive
+                                    ? styles.dropZoneActive
+                                    : ""
+                            }`}
+                            onClick={() =>
+                                inputRef.current?.click()
+                            }
+                            onDragEnter={(
+                                event
+                            ) => {
+                                event.preventDefault();
+                                setDragActive(
+                                    true
+                                );
+                            }}
+                            onDragOver={(
+                                event
+                            ) => {
+                                event.preventDefault();
+                                setDragActive(
+                                    true
+                                );
+                            }}
+                            onDragLeave={() =>
+                                setDragActive(
+                                    false
+                                )
+                            }
+                            onDrop={
+                                handleDrop
                             }
                         >
-                            <FileText size={18} />
+                            <div
+                                className={
+                                    styles.uploadIcon
+                                }
+                            >
+                                <Upload
+                                    size={24}
+                                />
+                            </div>
 
-                            <div>
+                            <strong>
+                                Arraste um arquivo para cá
+                            </strong>
+
+                            <span>
+                                ou clique para selecionar
+                            </span>
+
+                            <small>
+                                Tamanho máximo de 50 MB
+                            </small>
+                        </div>
+                    ) : (
+                        <div
+                            className={
+                                styles.selectedFile
+                            }
+                        >
+                            <div
+                                className={
+                                    styles.fileIcon
+                                }
+                            >
+                                <FileText
+                                    size={23}
+                                />
+                            </div>
+
+                            <div
+                                className={
+                                    styles.fileInfo
+                                }
+                            >
                                 <strong>
                                     {file.name}
                                 </strong>
 
                                 <span>
-                                    {(
-                                        file.size /
-                                        1024
-                                    ).toFixed(2)} KB
+                                    {formatFileSize(
+                                        file.size
+                                    )}
                                 </span>
                             </div>
+
+                            <button
+                                type="button"
+                                className={
+                                    styles.removeFile
+                                }
+                                onClick={() => {
+                                    setFile(
+                                        null
+                                    );
+
+                                    if (
+                                        inputRef.current
+                                    ) {
+                                        inputRef.current.value =
+                                            "";
+                                    }
+                                }}
+                                aria-label="Remover arquivo"
+                            >
+                                <X
+                                    size={17}
+                                />
+                            </button>
                         </div>
                     )}
-                </section>
 
-
-                <section className={styles.section}>
-                    <h2>
-                        Departamentos
-                    </h2>
+                    <input
+                        ref={inputRef}
+                        type="file"
+                        className={
+                            styles.hiddenInput
+                        }
+                        accept={ALLOWED_EXTENSIONS.map(
+                            (extension) =>
+                                `.${extension}`
+                        ).join(",")}
+                        onChange={(
+                            event
+                        ) =>
+                            selectFile(
+                                event.target.files?.[0] ??
+                                    null
+                            )
+                        }
+                    />
 
                     <div
                         className={
-                            styles.departments
+                            styles.formats
+                        }
+                    >
+                        <span>
+                            Formatos aceitos:
+                        </span>
+
+                        <p>
+                            TXT, CFG, CONF, INI, LOG, JSON, XML, YAML, CSV, PDF, DOCX e XLSX
+                        </p>
+                    </div>
+                </section>
+
+                <section
+                    className={
+                        styles.card
+                    }
+                >
+                    <div
+                        className={
+                            styles.sectionHeader
+                        }
+                    >
+                        <div>
+                            <h2>
+                                Departamentos
+                            </h2>
+
+                            <p>
+                                Defina quais departamentos poderão visualizar este arquivo.
+                            </p>
+                        </div>
+
+                        <span
+                            className={
+                                styles.selectedCount
+                            }
+                        >
+                            {
+                                selectedDepartmentIds.length
+                            } selecionado
+                            {selectedDepartmentIds.length !==
+                            1
+                                ? "s"
+                                : ""}
+                        </span>
+                    </div>
+
+                    <div
+                        className={
+                            styles.departmentGrid
                         }
                     >
                         {departments.map(
-                            (department) => (
-                                <label
-                                    key={
+                            (
+                                department
+                            ) => {
+                                const selected =
+                                    selectedDepartmentIds.includes(
                                         department.id
-                                    }
-                                    className={
-                                        styles.department
-                                    }
-                                >
-                                    <input
-                                        type="checkbox"
-                                        checked={
-                                            selectedDepartmentIds.includes(
-                                                department.id
-                                            )
+                                    );
+
+                                return (
+                                    <button
+                                        key={
+                                            department.id
                                         }
-                                        onChange={() =>
+                                        type="button"
+                                        className={`${styles.departmentOption} ${
+                                            selected
+                                                ? styles.departmentOptionSelected
+                                                : ""
+                                        }`}
+                                        onClick={() =>
                                             handleDepartmentToggle(
                                                 department.id
                                             )
                                         }
-                                    />
+                                    >
+                                        <span
+                                            className={
+                                                styles.checkbox
+                                            }
+                                        >
+                                            {selected && (
+                                                <Check
+                                                    size={14}
+                                                />
+                                            )}
+                                        </span>
 
-                                    <span>
-                                        {
-                                            department.name
-                                        }
-                                    </span>
-                                </label>
-                            )
+                                        <span>
+                                            {
+                                                department.name
+                                            }
+                                        </span>
+                                    </button>
+                                );
+                            }
                         )}
                     </div>
                 </section>
 
-
                 {error && (
-                    <p className={styles.error}>
+                    <div
+                        className={
+                            styles.error
+                        }
+                    >
                         {error}
-                    </p>
+                    </div>
                 )}
-
 
                 {success && (
-                    <p className={styles.success}>
+                    <div
+                        className={
+                            styles.success
+                        }
+                    >
+                        <Check
+                            size={17}
+                        />
+
                         {success}
-                    </p>
+                    </div>
                 )}
 
+                <div
+                    className={
+                        styles.actions
+                    }
+                >
+                    <Link
+                        to={backPath}
+                        className={
+                            styles.cancelButton
+                        }
+                    >
+                        Cancelar
+                    </Link>
 
-                <div className={styles.actions}>
                     <button
                         type="submit"
-                        disabled={saving}
+                        className={
+                            styles.submitButton
+                        }
+                        disabled={
+                            saving
+                        }
                     >
                         {saving ? (
                             <>
                                 <LoaderCircle
-                                    size={18}
+                                    size={17}
                                     className={
                                         styles.spinner
                                     }
@@ -365,7 +760,9 @@ export function ArquivoForm() {
                             </>
                         ) : (
                             <>
-                                <Upload size={18} />
+                                <Upload
+                                    size={17}
+                                />
 
                                 Enviar arquivo
                             </>
